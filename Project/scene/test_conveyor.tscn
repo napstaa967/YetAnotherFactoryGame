@@ -53,7 +53,7 @@ func _process(_delta):
 				area.set_meta(\"colliding\", self)
 				if area.position.x == position.x && area.position.y == position.y:
 					area.set_meta(\"direction\", get_meta(\"metadata\").direction)
-				if area.get_meta(\"direction\") == null:
+				if area.has_meta(\"direction\") && area.get_meta(\"direction\") == null:
 					area.set_meta(\"direction\", get_meta(\"metadata\").direction)
 "
 
