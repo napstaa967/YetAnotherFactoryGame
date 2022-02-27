@@ -43,18 +43,17 @@ func _on_test_conveyor_body_entered(_body):
 func _process(_delta):
 	var areas = get_overlapping_areas()
 	for area in areas:
-		if area.type == \"conveyor\":
+		if area.get_meta(\"metadata\").type == \"conveyor\":
 			if area.get_meta(\"metadata\") != null:
 				if area.get_meta(\"metadata\").type == \"conveyor\":
 					if area.position == position:
 						return area.free()
-		if area.get(\"type\") != null:
-			if area.type == \"item\":
-				area.set_meta(\"colliding\", self)
-				if area.position.x == position.x && area.position.y == position.y:
-					area.set_meta(\"direction\", get_meta(\"metadata\").direction)
-				if area.has_meta(\"direction\") && area.get_meta(\"direction\") == null:
-					area.set_meta(\"direction\", get_meta(\"metadata\").direction)
+		if area.get_meta(\"metadata\").type == \"item\":
+			area.set_meta(\"colliding\", self)
+			if area.position.x == position.x && area.position.y == position.y:
+				area.set_meta(\"direction\", get_meta(\"metadata\").direction)
+			if area.has_meta(\"direction\") && area.get_meta(\"direction\") == null:
+				area.set_meta(\"direction\", get_meta(\"metadata\").direction)
 "
 
 [sub_resource type="RectangleShape2D" id=1]

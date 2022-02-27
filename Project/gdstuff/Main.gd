@@ -39,7 +39,6 @@ func _unhandled_input(event):
 			print(stuff2)
 			if stuff2 != 0:
 				scene3.position.y = int(scene3.position.y) + 0 - stuff2;
-			print("instanced from alt")
 			print(scene3.metadata)
 			return
 		if mob_scene != null:

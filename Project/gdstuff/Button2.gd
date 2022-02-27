@@ -5,7 +5,12 @@ extends Button
 # var a = 2
 var id = "placeholder_item"
 var type = "item"
-
+var metadata = {
+	"type": "item",
+	"name": "pussyfart",
+	"desc": "pussy shit",
+	"spritepath": "items/flushsit.png"
+}
 
 # Called when the node enters the scene tree for the first time.
 func load_external_tex(path):
@@ -24,5 +29,4 @@ func _ready():
 		icon = load_external_tex("user://TexturePack/textures/placeholder_item.png")
 		
 func _pressed():
-	Main.placing = id
-	Main.scene2 = null
+	Main.place_item("res://scene/item.tscn", metadata.duplicate())

@@ -1,13 +1,24 @@
 [gd_scene load_steps=5 format=2]
 
+[ext_resource path="res://textures/items/flushsit.png" type="Texture" id=1]
+
 [sub_resource type="GDScript" id=2]
 resource_local_to_scene = true
 script/source = "extends Area2D
 
-var type = \"item\"
+export(Dictionary) var metadata = {
+	\"type\": \"item\",
+	\"name\": \"pussyfart\",
+	\"desc\": \"pussy shit\",
+	\"spritepath\": \"items/flushsit.png\"
+}
+
 func _ready():
 	set_meta(\"direction\", null)
-	set_meta(\"metadata\", null)
+	if File.new().file_exists(\"user://TexturePack/textures/\" + get_meta(\"metadata\").spritepath):
+		get_child(1).texture = get_child(1).load_external_tex(\"user://TexturePack/textures/\" + get_meta(\"metadata\").spritepath)
+	else:
+		get_child(1).texture = load(\"res://textures/\" + get_meta(\"metadata\").spritepath)
 
 func _process(_delta):
 	if get_overlapping_areas().empty():
@@ -26,10 +37,6 @@ func _process(_delta):
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 32, 32 )
-
-[sub_resource type="StreamTexture" id=3]
-flags = 4
-load_path = "res://.import/placeholder_item.png-1e4affb28fcdd11ceb83ee6760e7db99.stex"
 
 [sub_resource type="GDScript" id=4]
 resource_local_to_scene = true
@@ -61,6 +68,5 @@ shape = SubResource( 1 )
 
 [node name="PlaceholderItem" type="Sprite" parent="."]
 position = Vector2( 32, 32 )
-scale = Vector2( 2, 2 )
-texture = SubResource( 3 )
+texture = ExtResource( 1 )
 script = SubResource( 4 )
