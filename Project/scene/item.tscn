@@ -1,0 +1,65 @@
+[gd_scene load_steps=5 format=2]
+
+[sub_resource type="GDScript" id=2]
+resource_local_to_scene = true
+script/source = "extends Area2D
+
+var type = \"item\"
+func _ready():
+	set_meta(\"direction\", null)
+	set_meta(\"metadata\", null)
+
+func _process(_delta):
+	if get_overlapping_areas().empty():
+		set_meta(\"direction\", null)
+	match get_meta(\"direction\"):
+		\"down\":
+			position.y += 1
+		\"up\":
+			position.y -= 1
+		\"left\":
+			position.x -= 1
+		\"right\":
+			position.x += 1
+"
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 32, 32 )
+
+[sub_resource type="StreamTexture" id=3]
+flags = 4
+load_path = "res://.import/placeholder_item.png-1e4affb28fcdd11ceb83ee6760e7db99.stex"
+
+[sub_resource type="GDScript" id=4]
+resource_local_to_scene = true
+script/source = "extends Sprite
+
+
+func load_external_tex(path):
+	var tex_file = File.new()
+	tex_file.open(path, File.READ)
+	var bytes = tex_file.get_buffer(tex_file.get_len())
+	var img = Image.new()
+	var _data = img.load_png_from_buffer(bytes)
+	var imgtex = ImageTexture.new()
+	imgtex.create_from_image(img)
+	tex_file.close()
+	return imgtex
+	
+func _ready():
+	if File.new().file_exists(\"user://TexturePack/textures/placeholder_item.png\"):
+		texture = load_external_tex(\"user://TexturePack/textures/placeholder_item.png\")
+"
+
+[node name="Area2D" type="Area2D"]
+script = SubResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 32, 32 )
+shape = SubResource( 1 )
+
+[node name="PlaceholderItem" type="Sprite" parent="."]
+position = Vector2( 32, 32 )
+scale = Vector2( 2, 2 )
+texture = SubResource( 3 )
+script = SubResource( 4 )

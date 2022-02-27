@@ -1,0 +1,22 @@
+{
+	"filetype": "yawfg:item"
+	
+	"modversion": "1.0.0"
+	"gameversion": "0.0.0"
+	
+	"namespace": "yawfg"
+	"denominator": "amongium"
+	"name": "Amongium"
+	"type": "yawfg:resource"
+	"istest": False
+	"creativemodetab": "yawfg:items"
+	"spritesheet": {
+		"type": "files"
+		
+		"icon": "FILE=impostor.png"
+		"sprites": {
+			"texture": "FILE=amongium.png"
+			"animated": False
+		}
+	}
+}

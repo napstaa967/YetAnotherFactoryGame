@@ -1,0 +1,73 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://textures/conveyor_placeholder/down.png" type="Texture" id=1]
+[ext_resource path="res://scene/Sprite.gd" type="Script" id=2]
+
+[sub_resource type="GDScript" id=7]
+resource_local_to_scene = true
+script/source = "extends Area2D
+
+signal conveyor_move
+
+export(Dictionary) var metadata = {
+	\"speed\": 1,
+	\"type\": \"conveyor\",
+	\"direction\": \"down\"
+}
+onready var type = \"conveyor\"
+
+func load_external_tex(path):
+	var tex_file = File.new()
+	tex_file.open(path, File.READ)
+	var bytes = tex_file.get_buffer(tex_file.get_len())
+	var img = Image.new()
+	var _data = img.load_png_from_buffer(bytes)
+	var imgtex = ImageTexture.new()
+	imgtex.create_from_image(img)
+	tex_file.close()
+	return imgtex
+
+func _ready():
+	monitoring = true
+	print(get_meta(\"metadata\").direction)
+	var texturestuff = \"textures/conveyor_placeholder/{direction}.png\".format({\"direction\": get_meta(\"metadata\").direction})
+	if File.new().file_exists(\"user://TexturePack/\" + texturestuff):
+		get_child(1).texture = load_external_tex(\"user://TexturePack/\" + texturestuff)
+	else:
+		get_child(1).texture = load(\"res://\" + texturestuff)
+
+
+func _on_test_conveyor_body_entered(_body):
+	emit_signal(\"conveyor_move\")
+
+func _process(_delta):
+	var areas = get_overlapping_areas()
+	for area in areas:
+		if area.type == \"conveyor\":
+			if area.get_meta(\"metadata\") != null:
+				if area.get_meta(\"metadata\").type == \"conveyor\":
+					if area.position == position:
+						return area.free()
+		if area.get(\"type\") != null:
+			if area.type == \"item\":
+				area.set_meta(\"colliding\", self)
+				if area.position.x == position.x && area.position.y == position.y:
+					area.set_meta(\"direction\", get_meta(\"metadata\").direction)
+				if area.get_meta(\"direction\") == null:
+					area.set_meta(\"direction\", get_meta(\"metadata\").direction)
+"
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 32, 32 )
+
+[node name="test_conveyor" type="Area2D"]
+script = SubResource( 7 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 32, 32 )
+shape = SubResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+position = Vector2( 32, 32 )
+texture = ExtResource( 1 )
+script = ExtResource( 2 )

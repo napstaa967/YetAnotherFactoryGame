@@ -1,0 +1,9 @@
+Z:\factory game stuff\.mono\temp\obj\Debug\YAWFG.csproj.AssemblyReference.cache
+Z:\factory game stuff\.mono\temp\obj\Debug\YAWFG.GeneratedMSBuildEditorConfig.editorconfig
+Z:\factory game stuff\.mono\temp\obj\Debug\YAWFG.AssemblyInfoInputs.cache
+Z:\factory game stuff\.mono\temp\obj\Debug\YAWFG.AssemblyInfo.cs
+Z:\factory game stuff\.mono\temp\obj\Debug\YAWFG.csproj.CoreCompileInputs.cache
+Z:\factory game stuff\.mono\temp\bin\Debug\YAWFG.dll
+Z:\factory game stuff\.mono\temp\bin\Debug\YAWFG.pdb
+Z:\factory game stuff\.mono\temp\obj\Debug\YAWFG.dll
+Z:\factory game stuff\.mono\temp\obj\Debug\YAWFG.pdb
