@@ -5,10 +5,17 @@
 
 this is a small factory game project that i started
 
-current ver is -0.5
+current ver is -0.4.9
 
-Screenshots (Demo -0.6)
+### Screenshots
+
+#### Demo -0.6
 ![image](https://user-images.githubusercontent.com/57607350/155862943-a2e1f0a8-77f6-45fa-bd65-4ad0c144048f.png)
+#### Demo -0.4.9
+![image](https://user-images.githubusercontent.com/57607350/156663799-f3907d6e-bbdd-4cf3-a8a9-a425e4f9ad30.png)
+#### Demo -0.4.9
+![image](https://user-images.githubusercontent.com/57607350/156670509-1646661c-7dc2-4455-8e6b-899ff514abab.png)
+
 
 credits:
 -Testing: Me
