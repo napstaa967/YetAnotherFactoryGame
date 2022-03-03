@@ -74,3 +74,7 @@ script = ExtResource( 8 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[connection signal="gui_input" from="GUI/HBoxContainer/Conveyor" to="GUI/HBoxContainer/Conveyor" method="gui_input"]
+[connection signal="gui_input" from="GUI/HBoxContainer/Splitter" to="GUI/HBoxContainer/Splitter" method="gui_input"]
+[connection signal="gui_input" from="GUI/HBoxContainer/Remove" to="GUI/HBoxContainer/Remove" method="gui_input"]

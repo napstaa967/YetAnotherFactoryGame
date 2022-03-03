@@ -7,24 +7,27 @@ resource_local_to_scene = true
 script/source = "extends Area2D
 
 export(Dictionary) var metadata = {
-	\"type\": \"remove\"
+	\"type\": \"remove\",
+	\"mode\": \"oneshot\"
 }
 
 func _ready():
-	var texturestuff = \"textures/misc/remove.png\"
+	var texturestuff = \"textures/misc/remove_{mode}.png\".format({\"mode\": get_meta(\"metadata\").mode})
 	get_child(1).texture = Main.load_texture(texturestuff)
 	get_child(1).scale = Vector2(64/get_child(1).texture.get_size().x, 64/get_child(1).texture.get_size().y)
 
 func _process(_delta):
-	print(\"remove\")
-	var areas = get_overlapping_areas()
-	var itemareas = []
-	for area in areas:
-		print(area)
-		area.free()
-	return(free())
-
-
+	metadata = get_meta(\"metadata\")
+	for area in get_overlapping_areas():
+		if !area.is_queued_for_deletion():
+			if metadata.mode == \"oneshot\":
+				area.queue_free()
+				self.queue_free()
+				return
+			if metadata.mode == \"persistent\":
+				if area.position.x == position.x && area.position.y == position.y:
+					area.queue_free()
+					return
 "
 
 [sub_resource type="RectangleShape2D" id=1]
@@ -39,4 +42,5 @@ shape = SubResource( 1 )
 
 [node name="Sprite" type="Sprite" parent="."]
 position = Vector2( 32, 32 )
+z_index = 2
 texture = ExtResource( 1 )

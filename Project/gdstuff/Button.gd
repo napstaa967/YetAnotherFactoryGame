@@ -15,8 +15,9 @@ func _ready():
 		
 func _pressed():
 	Main.place_item("res://scene/test_conveyor.tscn", metadata.duplicate())
-	
-func _unhandled_key_input(event):
+
+
+func gui_input(event):
 	if event is InputEventKey and event.pressed and pressed:
 		if Input.is_action_just_pressed("change_item_left"):
 			metadata.direction = "left"

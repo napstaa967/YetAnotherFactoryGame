@@ -21,11 +21,9 @@ func _ready():
 
 func _process(_delta):
 	var conveyor = false
-	var conv = null
 	for area in get_overlapping_areas():
 		if area.is_in_group(\"Conveyor\"):
 			conveyor = true
-			conv = area
 			break
 	if get_overlapping_areas().empty() || conveyor == false:
 		var stuff = get_meta(\"metadata\")

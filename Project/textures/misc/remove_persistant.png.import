@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/down.png-50867bafb846ad974d608d5a4b5a71ef.stex"
+path="res://.import/remove_persistant.png-8bc9caa7799a4aaa98e624172fcf3687.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://textures/conveyor_placeholder/down.png"
-dest_files=[ "res://.import/down.png-50867bafb846ad974d608d5a4b5a71ef.stex" ]
+source_file="res://textures/misc/remove_persistant.png"
+dest_files=[ "res://.import/remove_persistant.png-8bc9caa7799a4aaa98e624172fcf3687.stex" ]
 
 [params]
 

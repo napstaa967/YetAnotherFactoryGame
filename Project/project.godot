@@ -30,6 +30,10 @@ config/icon="res://icon.png"
 
 Main="*res://gdstuff/Main.gd"
 
+[debug]
+
+settings/crash_handler/message="Report this error to DoesStuff#5723 on discord/@wtpts on twitter"
+
 [input]
 
 save_game={
