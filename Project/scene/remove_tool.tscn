@@ -1,0 +1,42 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://textures/misc/remove.png" type="Texture" id=1]
+
+[sub_resource type="GDScript" id=7]
+resource_local_to_scene = true
+script/source = "extends Area2D
+
+export(Dictionary) var metadata = {
+	\"type\": \"remove\"
+}
+
+func _ready():
+	var texturestuff = \"textures/misc/remove.png\"
+	get_child(1).texture = Main.load_texture(texturestuff)
+	get_child(1).scale = Vector2(64/get_child(1).texture.get_size().x, 64/get_child(1).texture.get_size().y)
+
+func _process(_delta):
+	print(\"remove\")
+	var areas = get_overlapping_areas()
+	var itemareas = []
+	for area in areas:
+		print(area)
+		area.free()
+	return(free())
+
+
+"
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 28, 28 )
+
+[node name="Area2D" type="Area2D" groups=["Conveyor"]]
+script = SubResource( 7 )
+
+[node name="the erase" type="CollisionShape2D" parent="."]
+position = Vector2( 32, 32 )
+shape = SubResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+position = Vector2( 32, 32 )
+texture = ExtResource( 1 )

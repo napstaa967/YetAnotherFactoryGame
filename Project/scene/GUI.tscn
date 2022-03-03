@@ -1,9 +1,13 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://gdstuff/Button.gd" type="Script" id=1]
 [ext_resource path="res://textures/items/flushsit.png" type="Texture" id=2]
-[ext_resource path="res://textures/conveyor_placeholder/down.png" type="Texture" id=3]
+[ext_resource path="res://textures/conveyor/normal/down.png" type="Texture" id=3]
 [ext_resource path="res://gdstuff/Button2.gd" type="Script" id=4]
+[ext_resource path="res://textures/conveyor/splitter/down_up.png" type="Texture" id=5]
+[ext_resource path="res://gdstuff/Button3.gd" type="Script" id=6]
+[ext_resource path="res://textures/misc/remove.png" type="Texture" id=7]
+[ext_resource path="res://gdstuff/Remove.gd" type="Script" id=8]
 
 [sub_resource type="Theme" id=1]
 
@@ -20,13 +24,13 @@ __meta__ = {
 }
 
 [node name="HBoxContainer" type="HBoxContainer" parent="GUI"]
-margin_right = 192.0
+margin_right = 316.0
 margin_bottom = 70.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Button" type="Button" parent="GUI/HBoxContainer"]
+[node name="Conveyor" type="Button" parent="GUI/HBoxContainer"]
 margin_right = 76.0
 margin_bottom = 70.0
 theme = SubResource( 1 )
@@ -35,12 +39,38 @@ custom_colors/font_color_focus = Color( 0, 0, 0, 1 )
 icon = ExtResource( 3 )
 script = ExtResource( 1 )
 
-[node name="Button2" type="Button" parent="GUI/HBoxContainer"]
+[node name="Splitter" type="Button" parent="GUI/HBoxContainer"]
 margin_left = 80.0
 margin_right = 156.0
 margin_bottom = 70.0
+theme = SubResource( 1 )
+custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
+custom_colors/font_color_focus = Color( 0, 0, 0, 1 )
+icon = ExtResource( 5 )
+script = ExtResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PLaceholder" type="Button" parent="GUI/HBoxContainer"]
+margin_left = 160.0
+margin_right = 236.0
+margin_bottom = 70.0
 icon = ExtResource( 2 )
 script = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Remove" type="Button" parent="GUI/HBoxContainer"]
+margin_left = 240.0
+margin_right = 316.0
+margin_bottom = 70.0
+theme = SubResource( 1 )
+custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
+custom_colors/font_color_focus = Color( 0, 0, 0, 1 )
+icon = ExtResource( 7 )
+script = ExtResource( 8 )
 __meta__ = {
 "_edit_use_anchors_": false
 }

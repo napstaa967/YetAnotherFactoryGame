@@ -17,11 +17,4 @@ func _ready():
 	#match get_parent().conveyor_direction:
 	#if File.new().file_exists("user://TexturePack/textures/conveyor_placeholder/down.png"):
 	#	texture = load_external_tex("user://TexturePack/textures/conveyor_placeholder/down.png")
-
-func change_texture(type, texture):
-	match type:
-		"local":
-			texture = load(texture)
-		"external":
-			texture = load_external_tex(texture)
 	
