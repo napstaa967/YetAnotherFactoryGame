@@ -21,3 +21,6 @@ credits:
 -Testing: Me
 -Coding: Myself
 -Art: I
+
+make sure to read the wiki for texture packs
+if i even add some
