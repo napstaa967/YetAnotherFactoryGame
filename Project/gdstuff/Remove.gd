@@ -16,7 +16,7 @@ func _pressed():
 
 func gui_input(event):
 	if event is InputEventKey and event.pressed and pressed:
-		if Input.is_action_just_pressed("change_item_down"):
+		if Input.is_action_just_pressed("ui_select"):
 			if metadata.mode == "oneshot":
 				metadata.mode = "persistent"
 				var temp = Main.load_texture("textures/misc/remove_{mode}.png".format({ "mode": metadata.mode }))

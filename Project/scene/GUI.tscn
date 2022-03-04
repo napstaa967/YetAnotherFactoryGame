@@ -6,7 +6,7 @@
 [ext_resource path="res://gdstuff/Button2.gd" type="Script" id=4]
 [ext_resource path="res://textures/conveyor/splitter/down_up.png" type="Texture" id=5]
 [ext_resource path="res://gdstuff/Button3.gd" type="Script" id=6]
-[ext_resource path="res://textures/misc/remove.png" type="Texture" id=7]
+[ext_resource path="res://textures/misc/remove_oneshot.png" type="Texture" id=7]
 [ext_resource path="res://gdstuff/Remove.gd" type="Script" id=8]
 
 [sub_resource type="Theme" id=1]
