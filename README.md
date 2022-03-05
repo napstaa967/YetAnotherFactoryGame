@@ -1,4 +1,4 @@
-# Yet Another (Weird) Factory Game
+# Yet Another Factory Game
 
 ## **all versions that aren't considered a working base/demo will be negative versions**
 
