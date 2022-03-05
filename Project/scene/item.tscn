@@ -22,14 +22,28 @@ func _ready():
 
 func _process(_delta):
 	var conveyor = false
-	for area in get_overlapping_areas():
+	var childcheck = get_child(2).get_overlapping_areas().duplicate()
+	for area in childcheck:
 		if area.is_in_group(\"Conveyor\"):
 			conveyor = true
 			break
-	if get_overlapping_areas().empty() || conveyor == false:
+	childcheck.erase(self)
+	if get_overlapping_areas().empty() || conveyor == false || childcheck.empty():
 		var stuff = get_meta(\"metadata\")
+		match stuff.direction:
+			\"down\":
+				position.y -= 1
+			\"up\":
+				position.y += 1
+			\"left\":
+				position.x += 1
+			\"right\":
+				position.x -= 1
+			null:
+				position = position
 		stuff.direction = null
 		set_meta(\"metadata\", stuff.duplicate())
+		return
 	if has_meta(\"metadata\"):
 		match get_meta(\"metadata\").direction:
 			\"down\":
