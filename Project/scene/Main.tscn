@@ -1,14 +1,115 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://scene/GUI.tscn" type="PackedScene" id=1]
 [ext_resource path="res://gdstuff/Camera2D.gd" type="Script" id=2]
 [ext_resource path="res://gdstuff/Main.gd" type="Script" id=3]
+[ext_resource path="res://gdstuff/bg.gd" type="Script" id=4]
+[ext_resource path="res://textures/misc/background.png" type="Texture" id=5]
+[ext_resource path="res://scene/Lock.tscn" type="PackedScene" id=6]
+[ext_resource path="res://textures/gui/border/right.png" type="Texture" id=7]
+[ext_resource path="res://textures/gui/border/tl_corner.png" type="Texture" id=8]
+[ext_resource path="res://textures/gui/border/left.png" type="Texture" id=9]
+[ext_resource path="res://textures/gui/border/up.png" type="Texture" id=10]
+[ext_resource path="res://textures/gui/border/down.png" type="Texture" id=11]
+
+[sub_resource type="GDScript" id=4]
+resource_local_to_scene = true
+script/source = "extends TextureRect
+
+func _ready():
+	Main.load_texture(\"textures/gui/border/left.png\")
+	
+func _process(_delta):
+	set_size(Vector2(16,get_viewport_rect().size.y - 32))
+	rect_position = Vector2(0,16)
+"
+
+[sub_resource type="GDScript" id=6]
+resource_local_to_scene = true
+script/source = "extends TextureRect
+
+func _ready():
+	Main.load_texture(\"textures/gui/border/right.png\")
+	
+func _process(_delta):
+	set_size(Vector2(16, get_viewport_rect().size.y - 32))
+	rect_position = Vector2(get_viewport_rect().size.x - 16,16)
+"
+
+[sub_resource type="GDScript" id=8]
+resource_local_to_scene = true
+script/source = "extends TextureRect
+
+func _ready():
+	Main.load_texture(\"textures/gui/border/up.png\")
+	
+func _process(_delta):
+	set_size(Vector2(get_viewport_rect().size.x - 32,16))
+	rect_position = Vector2(16,0)
+"
+
+[sub_resource type="GDScript" id=10]
+resource_local_to_scene = true
+script/source = "extends TextureRect
+
+func _ready():
+	Main.load_texture(\"textures/gui/border/down.png\")
+	
+func _process(_delta):
+	set_size(Vector2(get_viewport_rect().size.x - 32,16))
+	rect_position = Vector2(16,get_viewport_rect().size.y-16)
+"
+
+[sub_resource type="GDScript" id=12]
+resource_local_to_scene = true
+script/source = "extends TextureRect
+
+func _ready():
+	Main.load_texture(\"textures/gui/border/tl_corner.png\")
+"
+
+[sub_resource type="StreamTexture" id=13]
+flags = 4
+load_path = "res://.import/tr_corner.png-1c419e92a11debd35c3a9f57d5cc023f.stex"
+
+[sub_resource type="GDScript" id=14]
+resource_local_to_scene = true
+script/source = "extends TextureRect
+
+func _ready():
+	Main.load_texture(\"textures/gui/border/tr_corner.png\")
+"
+
+[sub_resource type="StreamTexture" id=15]
+flags = 4
+load_path = "res://.import/bl_corner.png-82d47f57f766e7a30b62f8c866a31673.stex"
+
+[sub_resource type="GDScript" id=16]
+resource_local_to_scene = true
+script/source = "extends TextureRect
+
+func _ready():
+	Main.load_texture(\"textures/gui/border/bl_corner.png\")
+"
+
+[sub_resource type="StreamTexture" id=17]
+flags = 4
+load_path = "res://.import/br_corner.png-cb5f9ba6c67d5a49bb1a4e192afe32a6.stex"
+
+[sub_resource type="GDScript" id=18]
+resource_local_to_scene = true
+script/source = "extends TextureRect
+
+func _ready():
+	Main.load_texture(\"textures/gui/border/br_corner.png\")
+"
 
 [node name="Main" type="Node2D"]
 script = ExtResource( 3 )
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2( 512, 300 )
+anchor_mode = 0
+current = true
 script = ExtResource( 2 )
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
@@ -16,4 +117,118 @@ script = ExtResource( 2 )
 [node name="GUI" parent="CanvasLayer" instance=ExtResource( 1 )]
 anchor_top = 1.0
 anchor_bottom = 1.0
-margin_top = -72.0
+margin_left = 16.0
+margin_top = -88.0
+
+[node name="Lock" parent="CanvasLayer" instance=ExtResource( 6 )]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -92.0
+margin_top = 16.0
+
+[node name="Left" type="TextureRect" parent="CanvasLayer"]
+margin_top = 16.0
+margin_right = 16.0
+margin_bottom = 584.0
+texture = ExtResource( 9 )
+stretch_mode = 1
+script = SubResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Right" type="TextureRect" parent="CanvasLayer"]
+margin_left = 1008.0
+margin_top = 16.0
+margin_right = 1024.0
+margin_bottom = 584.0
+texture = ExtResource( 7 )
+stretch_mode = 1
+script = SubResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Up" type="TextureRect" parent="CanvasLayer"]
+margin_left = 16.0
+margin_right = 1008.0
+margin_bottom = 16.0
+texture = ExtResource( 10 )
+stretch_mode = 1
+script = SubResource( 8 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Down" type="TextureRect" parent="CanvasLayer"]
+margin_left = 16.0
+margin_top = 584.0
+margin_right = 1008.0
+margin_bottom = 600.0
+texture = ExtResource( 11 )
+stretch_mode = 1
+script = SubResource( 10 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TL" type="TextureRect" parent="CanvasLayer"]
+margin_right = 16.0
+margin_bottom = 16.0
+texture = ExtResource( 8 )
+stretch_mode = 1
+script = SubResource( 12 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TR" type="TextureRect" parent="CanvasLayer"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -16.0
+margin_bottom = 16.0
+texture = SubResource( 13 )
+stretch_mode = 1
+script = SubResource( 14 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BL" type="TextureRect" parent="CanvasLayer"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_top = -16.0
+margin_right = 16.0
+texture = SubResource( 15 )
+stretch_mode = 1
+script = SubResource( 16 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BR" type="TextureRect" parent="CanvasLayer"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -16.0
+margin_top = -16.0
+texture = SubResource( 17 )
+stretch_mode = 1
+script = SubResource( 18 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+scroll_ignore_camera_zoom = true
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+
+[node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer"]
+texture = ExtResource( 5 )
+centered = false
+region_enabled = true
+region_rect = Rect2( 0, 0, 64, 64 )
+region_filter_clip = true
+script = ExtResource( 4 )

@@ -5,6 +5,8 @@ export(String) var placing
 export(PackedScene) var scene2
 var type = "conveyor"
 var placemeta
+var camera
+var camlock = true
 
 func load_external_tex(path):
 	var tex_file = File.new()
@@ -29,11 +31,15 @@ func _ready():
 	print("one")
 
 func place_item(scene, meta):
+	if scene == null:
+		placemeta = null
+		scene2 = null
+		return
 	scene2 = load(scene)
 	placemeta = meta
 	
-	
 func _unhandled_input(event):
+
 	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_LEFT:
 		match placing:
 			"placeholder_item":

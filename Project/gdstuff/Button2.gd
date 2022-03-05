@@ -21,3 +21,10 @@ func _ready():
 		
 func _pressed():
 	Main.place_item("res://scene/item.tscn", metadata.duplicate())
+	
+func gui_input(event):
+	if event is InputEventKey and event.pressed:
+		if Input.is_action_just_pressed("ui_cancel"):
+			Main.place_item(null, null)
+			release_focus()
+			return

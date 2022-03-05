@@ -15,6 +15,11 @@ func _pressed():
 	Main.place_item("res://scene/remove_tool.tscn", metadata.duplicate())
 
 func gui_input(event):
+	if event is InputEventKey and event.pressed:
+		if Input.is_action_just_pressed("ui_cancel"):
+			Main.place_item(null, null)
+			release_focus()
+			return
 	if event is InputEventKey and event.pressed and pressed:
 		if Input.is_action_just_pressed("ui_select"):
 			if metadata.mode == "oneshot":

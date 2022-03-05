@@ -18,6 +18,11 @@ func _pressed():
 
 
 func gui_input(event):
+	if event is InputEventKey and event.pressed:
+		if Input.is_action_just_pressed("ui_cancel"):
+			Main.place_item(null, null)
+			release_focus()
+			return
 	if event is InputEventKey and event.pressed and pressed:
 		if Input.is_action_just_pressed("change_item_left"):
 			metadata.direction = "left"
@@ -31,3 +36,5 @@ func gui_input(event):
 		var temp = Main.load_texture("textures/conveyor/normal/{direction}.png".format({ "direction": metadata.direction }))
 		temp.set_size_override(Vector2(32, 32))
 		set_button_icon(temp)
+		return
+

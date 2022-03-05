@@ -18,6 +18,7 @@ var innercollision = false
 
 func _ready():
 	get_child(1).texture = Main.load_texture(\"textures/\" + get_meta(\"metadata\").spritepath)
+	get_child(1).scale = Vector2(64/get_child(1).texture.get_size().x, 64/get_child(1).texture.get_size().y)
 
 func _process(_delta):
 	var conveyor = false
