@@ -18,18 +18,19 @@ func load_external_tex(path):
 	imgtex.create_from_image(img)
 	tex_file.close()
 	return imgtex
-	
+
 func load_texture(path):
 	if File.new().file_exists("user://TexturePack/" + path):
 		return load_external_tex("user://TexturePack/" + path)
 	else:
 		return load("res://" + path)
+		
+func save_game(path):
+	SimpleSave.save_scene(get_tree(), path)
 
-func _ready():
-	#placing = "conveyor_down"
-	randomize()
-	print("one")
-
+func load_game(path):
+	SimpleSave.load_scene(get_tree(), path)
+			
 func place_item(scene, meta):
 	if scene == null:
 		placemeta = null
@@ -39,7 +40,9 @@ func place_item(scene, meta):
 	placemeta = meta
 	
 func _unhandled_input(event):
-
+	if event is InputEventKey and event.pressed:
+		if Input.is_action_just_pressed("save_game"):
+			SimpleSave.save_scene(get_tree(), "user://saves/cur.tscn")
 	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_LEFT:
 		match placing:
 			"placeholder_item":
@@ -53,7 +56,9 @@ func _unhandled_input(event):
 			scene3.set_meta("metadata", placemeta)
 			scene3.position.x = ceil(get_global_mouse_position().x / 10) * 10
 			scene3.position.y = ceil(get_global_mouse_position().y / 10) * 10
-			add_child(scene3)
+			print(self.name)
+			get_tree().current_scene.add_child(scene3)
+			scene3.set_owner(get_tree().current_scene)
 			var stuff = int(scene3.position.x) % 64
 			print(stuff)
 			if stuff != 0:

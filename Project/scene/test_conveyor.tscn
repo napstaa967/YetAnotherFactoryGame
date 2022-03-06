@@ -15,7 +15,6 @@ export(Dictionary) var metadata = {
 	\"type2\": \"normal\"
 }
 onready var type = \"conveyor\"
-var busy = false
 
 func _ready():
 	metadata = get_meta(\"metadata\")
@@ -23,12 +22,13 @@ func _ready():
 	get_child(2).set_wait_time(1)
 	get_child(2).one_shot = true
 	monitoring = true
-	print(get_meta(\"metadata\").direction)
 	var texturestuff
-	if get_meta(\"metadata\").type2 == \"splitter\":
-		texturestuff = \"textures/conveyor/{type}/{hori}.png\".format({\"hori\": get_meta(\"metadata\").horientation, \"type\": get_meta(\"metadata\").type2})
-	else:
-		texturestuff = \"textures/conveyor/{type}/{direction}.png\".format({\"direction\": get_meta(\"metadata\").direction, \"type\": get_meta(\"metadata\").type2})
+	if get_meta(\"metadata\").type == \"splitter\":
+		texturestuff = \"textures/conveyor/splitter/{hori}.png\".format({\"hori\": get_meta(\"metadata\").horientation, \"type\": get_meta(\"metadata\").type})
+	if get_meta(\"metadata\").type == \"trisplitter\":
+		texturestuff = \"textures/conveyor/splitter/threeway/{hori}.png\".format({\"hori\": get_meta(\"metadata\").horientation, \"type\": get_meta(\"metadata\").type})
+	if get_meta(\"metadata\").type == \"conveyor\":
+		texturestuff = \"textures/conveyor/normal/{direction}.png\".format({\"direction\": get_meta(\"metadata\").direction, \"type\": get_meta(\"metadata\").type})
 	print(texturestuff)
 	get_child(1).texture = Main.load_texture(texturestuff)
 	get_child(1).scale = Vector2(64/get_child(1).texture.get_size().x, 64/get_child(1).texture.get_size().y)
@@ -54,32 +54,36 @@ func _process(_delta):
 		if area.has_meta(\"metadata\"):
 			var metadatacopy = area.get_meta(\"metadata\")
 			if ((area.position.x == position.x && area.position.y == position.y) || metadatacopy.direction == null) && area.get_child(2).get_overlapping_areas().has(self):
-				if get_meta(\"metadata\").type2 == \"normal\":
+				if get_meta(\"metadata\").type == \"conveyor\":
 					metadatacopy.direction = get_meta(\"metadata\").direction
 					return area.set_meta(\"metadata\", metadatacopy.duplicate())
-				if get_meta(\"metadata\").type2 == \"splitter\":
+				if get_meta(\"metadata\").type == \"splitter\":
 					metadata = get_meta(\"metadata\")
 					metadatacopy.direction = metadata.direction
 					area.set_meta(\"metadata\", metadatacopy.duplicate())
 					metadata = get_meta(\"metadata\")
-					if (metadata.horientation == \"left_right\"):
-						if metadata.direction == \"left\":
-							metadata.direction = \"right\"
-							return set_meta(\"metadata\", metadata.duplicate())
-						if metadata.direction == \"right\":
-							metadata.direction = \"left\"
-							return set_meta(\"metadata\", metadata.duplicate())
-					if (metadata.horientation == \"down_up\"):
-						if metadata.direction == \"down\":
-							metadata.direction = \"up\"
-							return set_meta(\"metadata\", metadata.duplicate())
-						if metadata.direction == \"up\":
-							metadata.direction = \"down\"
-							return set_meta(\"metadata\", metadata.duplicate())
-func area_exit(area):
-	if (area.has_meta(\"metadata\") && area.get_meta(\"metadata\").type != \"conveyor\" && area.get_meta(\"metadata\").type != \"delayed_conveyor\") || (!area.get(\"innercollision\") == null && !area.innercollision):
-		busy = false
-
+					var thing = metadata.horientation.split(\"_\")
+					if metadata.direction == thing[0]:
+						metadata.direction = thing[1]
+						return set_meta(\"metadata\", metadata.duplicate())
+					if metadata.direction == thing[1]:
+						metadata.direction = thing[0]
+						return set_meta(\"metadata\", metadata.duplicate())
+				if get_meta(\"metadata\").type == \"trisplitter\":
+					metadata = get_meta(\"metadata\")
+					metadatacopy.direction = metadata.direction
+					area.set_meta(\"metadata\", metadatacopy.duplicate())
+					metadata = get_meta(\"metadata\")
+					var thing = metadata.horientation.split(\"_\")
+					if metadata.direction == thing[0]:
+						metadata.direction = thing[1]
+						return set_meta(\"metadata\", metadata.duplicate())
+					if metadata.direction == thing[1]:
+						metadata.direction = thing[2]
+						return set_meta(\"metadata\", metadata.duplicate())
+					if metadata.direction == thing[2]:
+						metadata.direction = thing[0]
+						return set_meta(\"metadata\", metadata.duplicate())
 
 "
 
@@ -98,5 +102,3 @@ position = Vector2( 32, 32 )
 texture = ExtResource( 1 )
 
 [node name="DelayTimer" type="Timer" parent="."]
-
-[connection signal="area_exited" from="." to="." method="area_exit"]

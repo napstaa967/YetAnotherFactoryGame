@@ -123,7 +123,7 @@ margin_top = -88.0
 [node name="Lock" parent="CanvasLayer" instance=ExtResource( 6 )]
 anchor_left = 1.0
 anchor_right = 1.0
-margin_left = -92.0
+margin_left = -174.0
 margin_top = 16.0
 
 [node name="Left" type="TextureRect" parent="CanvasLayer"]
