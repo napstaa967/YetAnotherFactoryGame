@@ -5,7 +5,7 @@
 
 this is a small factory game project that i started
 
-current ver is -0.3.8
+current ver is -0.3
 
 ### Screenshots
 
