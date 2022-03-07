@@ -2,10 +2,15 @@
 
 ## **all versions that aren't considered a working base/demo will be negative versions**
 
+Dependencies:
+https://github.com/samsface/godot-discord-game-sdk for discord rich presence
+
+
+i use a modified version of [this script](https://github.com/iatenine/SimpleSave) for saving/loading
 
 this is a small factory game project that i started
 
-current ver is -0.3
+current ver is -0.2
 
 ### Screenshots
 
@@ -17,6 +22,8 @@ current ver is -0.3
 ![image](https://user-images.githubusercontent.com/57607350/156670509-1646661c-7dc2-4455-8e6b-899ff514abab.png)
 #### Demo -0.3
 ![image](https://user-images.githubusercontent.com/57607350/156867321-ea6c7887-e255-4b26-8870-d386f373740b.png)
+#### Demo -0.2
+![image](https://user-images.githubusercontent.com/57607350/156981912-dc9d695c-aa17-4511-80d1-fa1c8aa8cc82.png)
 
 
 
