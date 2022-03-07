@@ -18,7 +18,7 @@ resource_local_to_scene = true
 script/source = "extends Button
 
 func _ready():
-	var temp = Main.load_texture(\"textures/gui/save_{name}.png\".format({\"name\": self.name}))
+	var temp = get_tree().current_scene.load_texture(\"textures/gui/save_{name}.png\".format({\"name\": self.name}))
 	temp.set_size_override(Vector2(64, 64))
 	set_button_icon(temp)
 		
@@ -26,7 +26,7 @@ func _pressed():
 	get_child(0).popup()
 	
 func file_selected(path):
-	Main.load_game(path)
+	get_tree().current_scene.load_game(path)
 	return
 "
 
@@ -41,7 +41,7 @@ resource_local_to_scene = true
 script/source = "extends Button
 
 func _ready():
-	var temp = Main.load_texture(\"textures/gui/save_{name}.png\".format({\"name\": self.name}))
+	var temp = get_tree().current_scene.load_texture(\"textures/gui/save_{name}.png\".format({\"name\": self.name}))
 	temp.set_size_override(Vector2(64, 64))
 	set_button_icon(temp)
 		
@@ -49,7 +49,7 @@ func _pressed():
 	get_child(0).popup()
 
 func file_selected(path):
-	Main.save_game(path)
+	get_tree().current_scene.save_game(path)
 	return
 "
 
@@ -120,7 +120,7 @@ visible = true
 margin_left = 80.0
 margin_right = 840.0
 margin_bottom = 398.0
-window_title = "Load Save"
+window_title = "Open a File"
 resizable = true
 mode = 0
 access = 1

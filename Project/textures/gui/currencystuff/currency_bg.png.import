@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/seller_off.png-bc8cec68dfbc103eefaeb711c969e9b4.stex"
+path="res://.import/currency_bg.png-008215003faaaa132ac9d88f58094b20.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://textures/seller/seller_off.png"
-dest_files=[ "res://.import/seller_off.png-bc8cec68dfbc103eefaeb711c969e9b4.stex" ]
+source_file="res://textures/gui/currencystuff/currency_bg.png"
+dest_files=[ "res://.import/currency_bg.png-008215003faaaa132ac9d88f58094b20.stex" ]
 
 [params]
 

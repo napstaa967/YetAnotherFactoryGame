@@ -16,8 +16,25 @@ export(Dictionary) var metadata = {
 
 var innercollision = false
 
+func fix_placing(direction):
+	match direction:
+		\"down\":
+			position.y -= 1
+			return
+		\"up\":
+			position.y += 1
+			return
+		\"left\":
+			position.x += 1
+			return
+		\"right\":
+			position.x -= 1
+			return
+		null:
+			position = position
+
 func _ready():
-	get_child(1).texture = Main.load_texture(\"textures/\" + get_meta(\"metadata\").spritepath)
+	get_child(1).texture = get_tree().current_scene.load_texture(\"textures/\" + get_meta(\"metadata\").spritepath)
 	get_child(1).scale = Vector2(64/get_child(1).texture.get_size().x, 64/get_child(1).texture.get_size().y)
 
 func _process(_delta):
@@ -25,26 +42,16 @@ func _process(_delta):
 	var childcheck = get_child(2).get_overlapping_areas().duplicate()
 	for area in childcheck:
 		if area.is_in_group(\"Conveyor\"):
+			childcheck.append(area)
 			conveyor = true
 			break
 	childcheck.erase(self)
 	if get_overlapping_areas().empty() || conveyor == false || childcheck.empty():
 		var stuff = get_meta(\"metadata\")
-		match stuff.direction:
-			\"down\":
-				position.y -= 1
-			\"up\":
-				position.y += 1
-			\"left\":
-				position.x += 1
-			\"right\":
-				position.x -= 1
-			null:
-				position = position
 		stuff.direction = null
 		set_meta(\"metadata\", stuff.duplicate())
 		return
-	if has_meta(\"metadata\"):
+	if has_meta(\"metadata\") && conveyor == true:
 		match get_meta(\"metadata\").direction:
 			\"down\":
 				position.y += 1
@@ -61,6 +68,13 @@ func _process(_delta):
 			null:
 				position = position
 				return
+
+func _area_exited(area):
+	if area.has_meta(\"metadata\"):
+		if area.get_meta(\"metadata\").type != \"item\":
+			var copy = get_meta(\"metadata\")
+			copy.direction = null
+			set_meta(\"metadata\",copy.duplicate())
 "
 
 [sub_resource type="RectangleShape2D" id=1]
@@ -74,7 +88,7 @@ var innercollision = true
 "
 
 [sub_resource type="RectangleShape2D" id=3]
-extents = Vector2( 31, 31 )
+extents = Vector2( 30, 30 )
 
 [node name="Area2D" type="Area2D"]
 script = SubResource( 2 )
@@ -95,3 +109,5 @@ script = SubResource( 4 )
 [node name="CollisionShape2D" type="CollisionShape2D" parent="InnerCollision"]
 position = Vector2( 32, 32 )
 shape = SubResource( 3 )
+
+[connection signal="area_exited" from="InnerCollision" to="." method="_area_exited"]

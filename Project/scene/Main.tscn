@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=2]
+[gd_scene load_steps=25 format=2]
 
 [ext_resource path="res://scene/GUI.tscn" type="PackedScene" id=1]
 [ext_resource path="res://gdstuff/Camera2D.gd" type="Script" id=2]
@@ -11,13 +11,15 @@
 [ext_resource path="res://textures/gui/border/left.png" type="Texture" id=9]
 [ext_resource path="res://textures/gui/border/up.png" type="Texture" id=10]
 [ext_resource path="res://textures/gui/border/down.png" type="Texture" id=11]
+[ext_resource path="res://scene/Stats.tscn" type="PackedScene" id=12]
+[ext_resource path="res://gdstuff/rpctimeout.gd" type="Script" id=13]
 
 [sub_resource type="GDScript" id=4]
 resource_local_to_scene = true
 script/source = "extends TextureRect
 
 func _ready():
-	Main.load_texture(\"textures/gui/border/left.png\")
+	get_tree().current_scene.load_texture(\"textures/gui/border/left.png\")
 	
 func _process(_delta):
 	set_size(Vector2(16,get_viewport_rect().size.y - 32))
@@ -29,7 +31,7 @@ resource_local_to_scene = true
 script/source = "extends TextureRect
 
 func _ready():
-	Main.load_texture(\"textures/gui/border/right.png\")
+	get_tree().current_scene.load_texture(\"textures/gui/border/right.png\")
 	
 func _process(_delta):
 	set_size(Vector2(16, get_viewport_rect().size.y - 32))
@@ -41,7 +43,7 @@ resource_local_to_scene = true
 script/source = "extends TextureRect
 
 func _ready():
-	Main.load_texture(\"textures/gui/border/up.png\")
+	get_tree().current_scene.load_texture(\"textures/gui/border/up.png\")
 	
 func _process(_delta):
 	set_size(Vector2(get_viewport_rect().size.x - 32,16))
@@ -53,7 +55,7 @@ resource_local_to_scene = true
 script/source = "extends TextureRect
 
 func _ready():
-	Main.load_texture(\"textures/gui/border/down.png\")
+	get_tree().current_scene.load_texture(\"textures/gui/border/down.png\")
 	
 func _process(_delta):
 	set_size(Vector2(get_viewport_rect().size.x - 32,16))
@@ -65,7 +67,7 @@ resource_local_to_scene = true
 script/source = "extends TextureRect
 
 func _ready():
-	Main.load_texture(\"textures/gui/border/tl_corner.png\")
+	get_tree().current_scene.load_texture(\"textures/gui/border/tl_corner.png\")
 "
 
 [sub_resource type="StreamTexture" id=13]
@@ -77,7 +79,7 @@ resource_local_to_scene = true
 script/source = "extends TextureRect
 
 func _ready():
-	Main.load_texture(\"textures/gui/border/tr_corner.png\")
+	get_tree().current_scene.load_texture(\"textures/gui/border/tr_corner.png\")
 "
 
 [sub_resource type="StreamTexture" id=15]
@@ -89,7 +91,7 @@ resource_local_to_scene = true
 script/source = "extends TextureRect
 
 func _ready():
-	Main.load_texture(\"textures/gui/border/bl_corner.png\")
+	get_tree().current_scene.load_texture(\"textures/gui/border/bl_corner.png\")
 "
 
 [sub_resource type="StreamTexture" id=17]
@@ -101,7 +103,7 @@ resource_local_to_scene = true
 script/source = "extends TextureRect
 
 func _ready():
-	Main.load_texture(\"textures/gui/border/br_corner.png\")
+	get_tree().current_scene.load_texture(\"textures/gui/border/br_corner.png\")
 "
 
 [node name="Main" type="Node2D"]
@@ -220,6 +222,10 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Control" parent="CanvasLayer" instance=ExtResource( 12 )]
+margin_left = 16.0
+margin_top = 16.0
+
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 scroll_ignore_camera_zoom = true
 
@@ -232,3 +238,8 @@ region_enabled = true
 region_rect = Rect2( 0, 0, 64, 64 )
 region_filter_clip = true
 script = ExtResource( 4 )
+
+[node name="RPCTimer" type="Timer" parent="."]
+script = ExtResource( 13 )
+
+[connection signal="timeout" from="RPCTimer" to="RPCTimer" method="timeout"]

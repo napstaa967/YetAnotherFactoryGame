@@ -1,0 +1,49 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://scene/NinePatchRect.gd" type="Script" id=1]
+[ext_resource path="res://textures/gui/currencystuff/currency_bg.png" type="Texture" id=2]
+[ext_resource path="res://textures/gui/currencystuff/currency.png" type="Texture" id=3]
+[ext_resource path="res://gdstuff/Label.gd" type="Script" id=4]
+[ext_resource path="res://gdstuff/currency.gd" type="Script" id=5]
+
+[node name="Control" type="Control"]
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GUI" type="MarginContainer" parent="."]
+margin_right = 256.0
+margin_bottom = 64.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NinePatchRect" type="NinePatchRect" parent="GUI"]
+margin_right = 256.0
+margin_bottom = 64.0
+texture = ExtResource( 2 )
+script = ExtResource( 1 )
+
+[node name="currency" type="TextureRect" parent="GUI/NinePatchRect"]
+margin_left = 192.0
+margin_right = 256.0
+margin_bottom = 64.0
+texture = ExtResource( 3 )
+stretch_mode = 4
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="GUI/NinePatchRect"]
+anchor_top = 0.5
+anchor_bottom = 0.5
+margin_top = -32.0
+margin_right = 192.0
+margin_bottom = 32.0
+align = 1
+valign = 1
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

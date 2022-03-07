@@ -9,10 +9,90 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "Node2D",
-"class": "Conveyor",
+"base": "Resource",
+"class": "ChatMessage",
 "language": "GDScript",
-"path": "res://scene/conveyor.gd"
+"path": "res://addons/discord_game_sdk/example/lobby/chat_message.gd"
+}, {
+"base": "",
+"class": "DiscordActivity",
+"language": "NativeScript",
+"path": "res://addons/discord_game_sdk/discord_activity.gdns"
+}, {
+"base": "",
+"class": "DiscordActivityAssets",
+"language": "NativeScript",
+"path": "res://addons/discord_game_sdk/discord_activity_assets.gdns"
+}, {
+"base": "",
+"class": "DiscordActivityManager",
+"language": "NativeScript",
+"path": "res://addons/discord_game_sdk/discord_activity_manager.gdns"
+}, {
+"base": "",
+"class": "DiscordActivityParty",
+"language": "NativeScript",
+"path": "res://addons/discord_game_sdk/discord_activity_party.gdns"
+}, {
+"base": "",
+"class": "DiscordActivitySecrets",
+"language": "NativeScript",
+"path": "res://addons/discord_game_sdk/discord_activity_secrets.gdns"
+}, {
+"base": "",
+"class": "DiscordActivityTimestamps",
+"language": "NativeScript",
+"path": "res://addons/discord_game_sdk/discord_activity_timestamps.gdns"
+}, {
+"base": "",
+"class": "DiscordCore",
+"language": "NativeScript",
+"path": "res://addons/discord_game_sdk/discord_core.gdns"
+}, {
+"base": "",
+"class": "DiscordLobby",
+"language": "NativeScript",
+"path": "res://addons/discord_game_sdk/discord_lobby.gdns"
+}, {
+"base": "",
+"class": "DiscordLobbyManager",
+"language": "NativeScript",
+"path": "res://addons/discord_game_sdk/discord_lobby_manager.gdns"
+}, {
+"base": "",
+"class": "DiscordLobbyTransaction",
+"language": "NativeScript",
+"path": "res://addons/discord_game_sdk/discord_lobby_transaction.gdns"
+}, {
+"base": "",
+"class": "DiscordOverlayManager",
+"language": "NativeScript",
+"path": "res://addons/discord_game_sdk/discord_overlay_manager.gdns"
+}, {
+"base": "",
+"class": "DiscordPartySize",
+"language": "NativeScript",
+"path": "res://addons/discord_game_sdk/discord_party_size.gdns"
+}, {
+"base": "",
+"class": "DiscordResult",
+"language": "NativeScript",
+"path": "res://addons/discord_game_sdk/discord_result.gdns"
+}, {
+"base": "",
+"class": "DiscordUser",
+"language": "NativeScript",
+"path": "res://addons/discord_game_sdk/discord_user.gdns"
+}, {
+"base": "Resource",
+"class": "GameState",
+"language": "GDScript",
+"path": "res://addons/discord_game_sdk/example/lobby/game_state.gd"
+}, {
+"base": "Resource",
+"class": "Member",
+"language": "GDScript",
+"path": "res://addons/discord_game_sdk/example/lobby/member.gd"
 }, {
 "base": "Reference",
 "class": "SimpleSave",
@@ -20,7 +100,23 @@ _global_script_classes=[ {
 "path": "res://gdstuff/simple_save.gd"
 } ]
 _global_script_class_icons={
-"Conveyor": "",
+"ChatMessage": "",
+"DiscordActivity": "",
+"DiscordActivityAssets": "",
+"DiscordActivityManager": "",
+"DiscordActivityParty": "",
+"DiscordActivitySecrets": "",
+"DiscordActivityTimestamps": "",
+"DiscordCore": "",
+"DiscordLobby": "",
+"DiscordLobbyManager": "",
+"DiscordLobbyTransaction": "",
+"DiscordOverlayManager": "",
+"DiscordPartySize": "",
+"DiscordResult": "",
+"DiscordUser": "",
+"GameState": "",
+"Member": "",
 "SimpleSave": ""
 }
 
@@ -34,11 +130,16 @@ config/icon="res://icon.png"
 
 [autoload]
 
-Main="*res://gdstuff/Main.gd"
+Discord="*res://addons/discord_game_sdk/discord.gd"
+DiscordRpc="*res://gdstuff/discord_rpc.gd"
 
 [debug]
 
 settings/crash_handler/message="Report this error to DoesStuff#5723 on discord/@wtpts on twitter"
+
+[editor_plugins]
+
+enabled=PoolStringArray( "res://addons/discord_game_sdk/plugin.cfg" )
 
 [input]
 

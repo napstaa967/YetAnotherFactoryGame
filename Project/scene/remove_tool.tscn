@@ -8,26 +8,55 @@ script/source = "extends Area2D
 
 export(Dictionary) var metadata = {
 	\"type\": \"remove\",
-	\"mode\": \"oneshot\"
+	\"mode\": \"oneshot\",
+	\"sell\": 0
 }
 
 func _ready():
 	var texturestuff = \"textures/misc/remove_{mode}.png\".format({\"mode\": get_meta(\"metadata\").mode})
-	get_child(1).texture = Main.load_texture(texturestuff)
+	get_child(1).texture = get_tree().current_scene.load_texture(texturestuff)
 	get_child(1).scale = Vector2(64/get_child(1).texture.get_size().x, 64/get_child(1).texture.get_size().y)
+	get_child(2).set_wait_time(1)
 
 func _process(_delta):
 	metadata = get_meta(\"metadata\")
 	for area in get_overlapping_areas():
 		if !area.is_queued_for_deletion():
-			if metadata.mode == \"oneshot\":
-				area.queue_free()
-				self.queue_free()
-				return
-			if metadata.mode == \"persistent\":
-				if area.position.x == position.x && area.position.y == position.y:
+			match metadata.mode:
+				\"oneshot\":
+					get_child(1).z_index = 2
 					area.queue_free()
+					self.queue_free()
 					return
+				\"persistent\":
+					get_child(1).z_index = 2
+					if area.position.x == position.x && area.position.y == position.y:
+						area.queue_free()
+						return
+				\"seller\":
+					get_child(1).z_index = 0
+					if area.position.x > position.x-4 && area.position.y > position.y-4 && area.position.x < position.x+4 && area.position.y < position.y+4:
+						var money = get_tree().current_scene.get_meta(\"metadata\").duplicate()
+						if area.get_meta(\"metadata\").has(\"sell\"):
+							money.money += area.get_meta(\"metadata\").sell
+						area.queue_free()
+						print(get_tree().current_scene.get_meta(\"metadata\"))
+						get_tree().current_scene.set_meta(\"metadata\", money.duplicate()) 
+						var texturestuff = \"textures/misc/remove_{mode}_on.png\".format({\"mode\": get_meta(\"metadata\").mode})
+						get_child(1).texture = get_tree().current_scene.load_texture(texturestuff)
+						get_child(1).scale = Vector2(64/get_child(1).texture.get_size().x, 64/get_child(1).texture.get_size().y)
+						if !get_child(2).is_stopped():
+							get_child(2).stop()
+						get_child(2).start()
+						return
+						
+						
+					
+func seller_timeout():
+	var texturestuff = \"textures/misc/remove_{mode}.png\".format({\"mode\": get_meta(\"metadata\").mode})
+	get_child(1).texture = get_tree().current_scene.load_texture(texturestuff)
+	get_child(1).scale = Vector2(64/get_child(1).texture.get_size().x, 64/get_child(1).texture.get_size().y)
+	return
 "
 
 [sub_resource type="RectangleShape2D" id=1]
@@ -44,3 +73,7 @@ shape = SubResource( 1 )
 position = Vector2( 32, 32 )
 z_index = 2
 texture = ExtResource( 1 )
+
+[node name="SellerTimer" type="Timer" parent="."]
+
+[connection signal="timeout" from="SellerTimer" to="." method="seller_timeout"]

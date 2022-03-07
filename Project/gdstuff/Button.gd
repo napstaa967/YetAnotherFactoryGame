@@ -3,23 +3,24 @@ extends Button
 var metadata = {
 	"speed": 1,
 	"type": "conveyor",
-	"direction": "down"
+	"direction": "down",
+	"sell": 10
 }
 
 func _ready():
 	text = "Conveyor"
-	var temp = Main.load_texture("textures/conveyor/normal/{direction}.png".format({ "direction": metadata.direction }))
+	var temp = get_tree().current_scene.load_texture("textures/conveyor/normal/{direction}.png".format({ "direction": metadata.direction }))
 	temp.set_size_override(Vector2(32, 32))
 	set_button_icon(temp)
 		
 func _pressed():
-	Main.place_item("res://scene/test_conveyor.tscn", metadata.duplicate())
+	get_tree().current_scene.place_item("res://scene/test_conveyor.tscn", metadata.duplicate())
 
 
 func gui_input(event):
 	if event is InputEventKey and event.pressed:
 		if Input.is_action_just_pressed("ui_cancel"):
-			Main.place_item(null, null)
+			get_tree().current_scene.place_item(null, null)
 			release_focus()
 			return
 	if event is InputEventKey and event.pressed and pressed:
@@ -31,7 +32,7 @@ func gui_input(event):
 			metadata.direction = "up"
 		if Input.is_action_just_pressed("change_item_down"):
 			metadata.direction = "down"
-		var temp = Main.load_texture("textures/conveyor/normal/{direction}.png".format({ "direction": metadata.direction }))
+		var temp = get_tree().current_scene.load_texture("textures/conveyor/normal/{direction}.png".format({ "direction": metadata.direction }))
 		temp.set_size_override(Vector2(32, 32))
 		set_button_icon(temp)
 		return

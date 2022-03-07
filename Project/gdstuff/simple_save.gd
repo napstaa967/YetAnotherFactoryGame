@@ -26,7 +26,19 @@ static func save_scene(tree:SceneTree, filename:String) -> int:
 
 static func load_scene(tree:SceneTree, filename:String) -> int:
 	tree.current_scene.queue_free()
-	return tree.change_scene(filename)
+	tree.change_scene(filename)
+	print(tree.current_scene.get_meta("metadata"))
+	for child in tree.current_scene.get_children():
+		if child.has_meta("metadata"):
+			match child.get_meta("metadata").type:
+				"item":
+					var stff = load("res://scene/item.tscn").instance()
+					var newchild = stff.duplicate()
+					newchild.set_meta("metadata", child.get_meta("metadata"))
+					newchild.position = child.position
+					child.queue_free()
+					tree.current_scene.add_child(newchild)
+	return 0
 
 static func load_scene_partial(top_node:Node, filename:String) -> int:
 	var f = File.new()
@@ -41,6 +53,7 @@ static func save_scene_partial(node:Node, filename:String) -> int:
 	return _save_scene(node, filename)
 
 static func _save_scene(top_node:Node, filename:String) -> int:
+	print(top_node.get_meta("metadata"))
 	var d = Directory.new()
 	d.make_dir_recursive(filename.get_base_dir())
 	var scene = PackedScene.new()
