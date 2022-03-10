@@ -125,9 +125,9 @@ resizable = true
 mode = 0
 access = 1
 filters = PoolStringArray( "*.tscn ; Godot Text Scene" )
-show_hidden_files = true
-current_dir = "user://"
-current_path = "user://"
+current_dir = "user://saves"
+current_file = "hell.tscn"
+current_path = "user://saves/hell.tscn"
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -155,8 +155,9 @@ resizable = true
 access = 1
 filters = PoolStringArray( "*.tscn ; Godot Text Scene" )
 show_hidden_files = true
-current_dir = "user://"
-current_path = "user://"
+current_dir = "user://saves"
+current_file = "hell.tscn"
+current_path = "user://saves/hell.tscn"
 __meta__ = {
 "_edit_use_anchors_": false
 }

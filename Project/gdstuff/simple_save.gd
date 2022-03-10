@@ -11,34 +11,46 @@ static func set_owner(node, root):
 		else:
 			child.owner = root
 
-
 static func is_instanced_from_scene(p_node):
 	if not p_node.filename.empty():
 		return true
 	return false
 
 static func save_scene(tree:SceneTree, filename:String) -> int:
-	print(tree)
-	print(filename)
 	var root = tree.current_scene
-	print(root)
 	return _save_scene(root, filename)
 
 static func load_scene(tree:SceneTree, filename:String) -> int:
-	tree.current_scene.queue_free()
-	tree.change_scene(filename)
-	print(tree.current_scene.get_meta("metadata"))
-	for child in tree.current_scene.get_children():
+	var main = "res://scene/Main.tscn"
+	var stuff3 = load(filename).instance()
+# warning-ignore:return_value_discarded
+	tree.change_scene(main)
+	yield(tree.current_scene, "tree_exited")
+	yield(tree, "idle_frame")
+	var newmet = stuff3.get_meta("metadata").duplicate()
+	newmet.source = filename
+	tree.current_scene.set_meta("metadata", newmet)
+	for child in stuff3.get_children():
 		if child.has_meta("metadata"):
+			var stff = null
 			match child.get_meta("metadata").type:
 				"item":
-					var stff = load("res://scene/item.tscn").instance()
-					var newchild = stff.duplicate()
-					newchild.set_meta("metadata", child.get_meta("metadata"))
-					newchild.position = child.position
-					child.queue_free()
-					tree.current_scene.add_child(newchild)
-	return 0
+					stff = load("res://scene/item.tscn").instance()
+				"conveyor", "splitter", "trisplitter", "producer":
+					stff = load("res://scene/test_conveyor.tscn").instance()
+				"converter":
+					stff = load("res://scene/Machine.tscn").instance()
+				"remove":
+					stff = load("res://scene/remove_tool.tscn").instance()
+			if stff != null:
+				var newchild = stff.duplicate()
+				newchild.set_meta("metadata", child.get_meta("metadata"))
+				newchild.position = child.position
+				tree.current_scene.add_child(newchild.duplicate())
+				child.queue_free()
+				stuff3.remove_child(child)
+	stuff3.queue_free()
+	return save_scene(tree, filename)
 
 static func load_scene_partial(top_node:Node, filename:String) -> int:
 	var f = File.new()
@@ -53,11 +65,12 @@ static func save_scene_partial(node:Node, filename:String) -> int:
 	return _save_scene(node, filename)
 
 static func _save_scene(top_node:Node, filename:String) -> int:
-	print(top_node.get_meta("metadata"))
 	var d = Directory.new()
 	d.make_dir_recursive(filename.get_base_dir())
 	var scene = PackedScene.new()
 	for x in top_node.get_children():
+		if x.has_meta("metadata") && x.get_meta("metadata").placing == true:
+			continue
 		set_owner(x, top_node)
 	print(top_node.get_children())
 	scene.pack(top_node)

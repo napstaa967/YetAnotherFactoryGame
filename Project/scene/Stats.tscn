@@ -1,10 +1,12 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://scene/NinePatchRect.gd" type="Script" id=1]
 [ext_resource path="res://textures/gui/currencystuff/currency_bg.png" type="Texture" id=2]
 [ext_resource path="res://textures/gui/currencystuff/currency.png" type="Texture" id=3]
 [ext_resource path="res://gdstuff/Label.gd" type="Script" id=4]
 [ext_resource path="res://gdstuff/currency.gd" type="Script" id=5]
+[ext_resource path="res://textures/gui/electricty.png" type="Texture" id=6]
+[ext_resource path="res://gdstuff/Electricity.gd" type="Script" id=7]
 
 [node name="Control" type="Control"]
 __meta__ = {
@@ -47,3 +49,15 @@ script = ExtResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Electricity" type="TextureRect" parent="."]
+margin_left = 256.0
+margin_right = 272.0
+margin_bottom = 16.0
+texture = ExtResource( 6 )
+script = ExtResource( 7 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="FadeoutTimer" type="Timer" parent="Electricity"]

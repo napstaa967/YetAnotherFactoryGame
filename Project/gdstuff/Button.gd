@@ -4,7 +4,10 @@ var metadata = {
 	"speed": 1,
 	"type": "conveyor",
 	"direction": "down",
-	"sell": 10
+	"sell": 50,
+	"buy": 100,
+	"elec": 5,
+	"placing": false
 }
 
 func _ready():

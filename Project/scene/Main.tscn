@@ -242,4 +242,7 @@ script = ExtResource( 4 )
 [node name="RPCTimer" type="Timer" parent="."]
 script = ExtResource( 13 )
 
+[node name="DueTimer" type="Timer" parent="."]
+
 [connection signal="timeout" from="RPCTimer" to="RPCTimer" method="timeout"]
+[connection signal="timeout" from="DueTimer" to="." method="on_due_pay"]

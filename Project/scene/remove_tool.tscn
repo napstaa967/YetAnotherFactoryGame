@@ -9,54 +9,72 @@ script/source = "extends Area2D
 export(Dictionary) var metadata = {
 	\"type\": \"remove\",
 	\"mode\": \"oneshot\",
-	\"sell\": 0
+	\"sell\": 0,
+	\"buy\": 0,
+	\"elec\": 5
 }
 
 func _ready():
+	$ElecTimer.set_wait_time(8)
+	$ElecTimer.start()
 	var texturestuff = \"textures/misc/remove_{mode}.png\".format({\"mode\": get_meta(\"metadata\").mode})
-	get_child(1).texture = get_tree().current_scene.load_texture(texturestuff)
-	get_child(1).scale = Vector2(64/get_child(1).texture.get_size().x, 64/get_child(1).texture.get_size().y)
-	get_child(2).set_wait_time(1)
+	$Sprite.texture = get_tree().current_scene.load_texture(texturestuff)
+	$Sprite.scale = Vector2(64/$Sprite.texture.get_size().x, 64/$Sprite.texture.get_size().y)
+	$Sprite.texture.set_flags(0)
+	$SellerTimer.set_wait_time(1)
 
 func _process(_delta):
-	metadata = get_meta(\"metadata\")
-	for area in get_overlapping_areas():
-		if !area.is_queued_for_deletion():
-			match metadata.mode:
-				\"oneshot\":
-					get_child(1).z_index = 2
-					area.queue_free()
-					self.queue_free()
-					return
-				\"persistent\":
-					get_child(1).z_index = 2
-					if area.position.x == position.x && area.position.y == position.y:
+	if get_meta(\"metadata\").placing == true:
+		$Sprite.z_index = 99
+		return
+	if get_meta(\"metadata\").placing == false:
+		metadata = get_meta(\"metadata\")
+		for area in get_overlapping_areas():
+			if !area.is_queued_for_deletion() && area.has_meta(\"metadata\") && area.get_meta(\"metadata\").placing == false:
+				match metadata.mode:
+					\"oneshot\":
+						$Sprite.z_index = 2
 						area.queue_free()
-						return
-				\"seller\":
-					get_child(1).z_index = 0
-					if area.position.x > position.x-4 && area.position.y > position.y-4 && area.position.x < position.x+4 && area.position.y < position.y+4:
 						var money = get_tree().current_scene.get_meta(\"metadata\").duplicate()
 						if area.get_meta(\"metadata\").has(\"sell\"):
 							money.money += area.get_meta(\"metadata\").sell
-						area.queue_free()
-						print(get_tree().current_scene.get_meta(\"metadata\"))
-						get_tree().current_scene.set_meta(\"metadata\", money.duplicate()) 
-						var texturestuff = \"textures/misc/remove_{mode}_on.png\".format({\"mode\": get_meta(\"metadata\").mode})
-						get_child(1).texture = get_tree().current_scene.load_texture(texturestuff)
-						get_child(1).scale = Vector2(64/get_child(1).texture.get_size().x, 64/get_child(1).texture.get_size().y)
-						if !get_child(2).is_stopped():
-							get_child(2).stop()
-						get_child(2).start()
+						self.queue_free()
 						return
+					\"persistent\":
+						$Sprite.z_index = 2
+						if area.position.x > position.x-4 && area.position.y > position.y-4 && area.position.x < position.x+4 && area.position.y < position.y+4:
+							area.queue_free()
+							return
+					\"seller\":
+						$Sprite.z_index = 0
+						if area.position.x > position.x-4 && area.position.y > position.y-4 && area.position.x < position.x+4 && area.position.y < position.y+4:
+							var money = get_tree().current_scene.get_meta(\"metadata\").duplicate()
+							if area.get_meta(\"metadata\").has(\"sell\"):
+								money.money += area.get_meta(\"metadata\").sell
+							area.queue_free()
+							get_tree().current_scene.set_meta(\"metadata\", money.duplicate()) 
+							var texturestuff = \"textures/misc/remove_{mode}_on.png\".format({\"mode\": get_meta(\"metadata\").mode})
+							$Sprite.texture = get_tree().current_scene.load_texture(texturestuff)
+							$Sprite.scale = Vector2(64/$Sprite.texture.get_size().x, 64/$Sprite.texture.get_size().y)
+							$Sprite.texture.set_flags(0)
+							if !$SellerTimer.is_stopped():
+								$SellerTimer.stop()
+							$SellerTimer.start()
+							return
 						
 						
 					
 func seller_timeout():
 	var texturestuff = \"textures/misc/remove_{mode}.png\".format({\"mode\": get_meta(\"metadata\").mode})
-	get_child(1).texture = get_tree().current_scene.load_texture(texturestuff)
-	get_child(1).scale = Vector2(64/get_child(1).texture.get_size().x, 64/get_child(1).texture.get_size().y)
+	$Sprite.texture = get_tree().current_scene.load_texture(texturestuff)
+	$Sprite.scale = Vector2(64/$Sprite.texture.get_size().x, 64/$Sprite.texture.get_size().y)
+	$Sprite.texture.set_flags(0)
 	return
+
+
+func electrical_due():
+	get_tree().current_scene.due += get_meta(\"metadata\").elec
+	$ElecTimer.start()
 "
 
 [sub_resource type="RectangleShape2D" id=1]
@@ -65,15 +83,18 @@ extents = Vector2( 28, 28 )
 [node name="Area2D" type="Area2D" groups=["Conveyor"]]
 script = SubResource( 7 )
 
-[node name="the erase" type="CollisionShape2D" parent="."]
-position = Vector2( 32, 32 )
-shape = SubResource( 1 )
-
 [node name="Sprite" type="Sprite" parent="."]
 position = Vector2( 32, 32 )
 z_index = 2
 texture = ExtResource( 1 )
 
+[node name="the erase" type="CollisionShape2D" parent="."]
+position = Vector2( 32, 32 )
+shape = SubResource( 1 )
+
 [node name="SellerTimer" type="Timer" parent="."]
 
+[node name="ElecTimer" type="Timer" parent="."]
+
 [connection signal="timeout" from="SellerTimer" to="." method="seller_timeout"]
+[connection signal="timeout" from="ElecTimer" to="." method="electrical_due"]

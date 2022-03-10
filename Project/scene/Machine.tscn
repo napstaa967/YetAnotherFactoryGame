@@ -1,0 +1,122 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://textures/machinery/converter/down.png" type="Texture" id=1]
+
+[sub_resource type="GDScript" id=7]
+resource_local_to_scene = true
+script/source = "extends Area2D
+
+export(Dictionary) var metadata = {
+	\"type\": \"converter\",
+	\"direction\": \"down\",
+	\"sell\": 300,
+	\"buy\": 600,
+	\"elec\": 15,
+	\"items\": [],
+	\"placing\": false
+}
+
+func _ready():
+	$ElecTimer.set_wait_time(8)
+	$ElecTimer.start()
+	metadata = get_meta(\"metadata\")
+	set_meta(\"metadata\", metadata)
+	$ConvertTimer.one_shot = true
+	monitoring = true
+	var texturestuff = \"textures/machinery/converter/{hori}.png\".format({\"hori\": get_meta(\"metadata\").direction})
+	$Sprite.texture = get_tree().current_scene.load_texture(texturestuff)
+	$Sprite.scale = Vector2(64/$Sprite.texture.get_size().x, 64/$Sprite.texture.get_size().y)
+	$Sprite.texture.set_flags(0)
+
+func _process(_delta):
+	if get_meta(\"metadata\").placing == true:
+		$Sprite.z_index = 99
+		return
+	if get_meta(\"metadata\").placing == false:
+		var areas = get_overlapping_areas()
+		var itemareas = []
+		for area in areas:
+			if area.is_queued_for_deletion():
+				return
+			if area.has_meta(\"metadata\") && area.get_meta(\"metadata\").placing == true:
+				return
+			if area.has_meta(\"metadata\") && area.get_meta(\"metadata\").type != \"remove\":
+				if area.get_meta(\"metadata\").type == \"item\":
+					itemareas.append(area)
+				if area.get_meta(\"metadata\").type != \"item\":
+					if area.position == position:
+						return area.free()
+		for area in itemareas:
+			if area.is_queued_for_deletion():
+				break
+			if area.has_meta(\"metadata\"):
+				var metadatacopy = area.get_meta(\"metadata\")
+				if ((area.position.x > position.x-4 && area.position.y > position.y-4 && area.position.x < position.x+4 && area.position.y < position.y+4) || (metadatacopy.direction == null)) && area.get_child(2).get_overlapping_areas().has(self):
+					metadatacopy.direction = get_meta(\"metadata\").direction
+					area.set_meta(\"metadata\", metadatacopy.duplicate())
+					print(metadatacopy)
+					if area.position == position && metadatacopy.justplaced == false:
+						var metashitt = get_meta(\"metadata\")
+						metashitt.items.append(metadatacopy)
+						set_meta(\"metadata\", metashitt.duplicate())
+						area.queue_free()
+					else:
+						metadatacopy.direction = get_meta(\"metadata\").direction
+						area.set_meta(\"metadata\", metadatacopy.duplicate())
+					
+		$ConvertTimer.set_wait_time(1)
+		if $ConvertTimer.is_stopped() == true && get_meta(\"metadata\").items.empty() == false:
+			$ConvertTimer.start()
+			var metacopystff = get_meta(\"metadata\")
+			var itemmeta
+			match metacopystff.items[0].denom:
+				\"flush_sit\":
+					itemmeta = {
+						\"type\": \"item\",
+						\"denom\": \"bop\",
+						\"name\": \"La creatura\",
+						\"desc\": \"No Way\",
+						\"spritepath\": \"items/bop.png\",
+						\"direction\": metacopystff.direction,
+						\"colliding\": null,
+						\"sell\": 200,
+						\"placing\": false,
+						\"justplaced\": true
+					}
+			metacopystff.items.pop_at(0)
+			var itempos = position
+		
+			if itemmeta != null:
+				get_tree().current_scene.place_item_now(\"res://scene/item.tscn\", itemmeta.duplicate(), itempos, true)
+			$ConvertTimer.start()
+
+
+func timeout():
+	$ConvertTimer.stop()
+
+
+func electrical_dew():
+	get_tree().current_scene.due += get_meta(\"metadata\").elec
+	$ElecTimer.start()
+"
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 32, 32 )
+
+[node name="Machine" type="Area2D" groups=["Conveyor"]]
+script = SubResource( 7 )
+
+[node name="Sprite" type="Sprite" parent="."]
+position = Vector2( 32, 32 )
+texture = ExtResource( 1 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 32, 32 )
+shape = SubResource( 1 )
+
+[node name="ConvertTimer" type="Timer" parent="."]
+
+[node name="ElecTimer" type="Timer" parent="."]
+
+[connection signal="timeout" from="ConvertTimer" to="." method="timeout"]
+[connection signal="timeout" from="ElecTimer" to="." method="electrical_dew"]

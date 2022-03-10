@@ -5,7 +5,10 @@ var metadata = {
 	"type": "splitter",
 	"horientation": "down_up",
 	"direction": "down",
-	"sell": 10
+	"sell": 100,
+	"buy": 200,
+	"elec": 10,
+	"placing": false
 }
 var currentmode = "horientation"
 
@@ -25,7 +28,7 @@ func gui_input(event):
 			release_focus()
 			return
 	if event is InputEventKey and event.pressed:
-		if Input.is_action_just_pressed("ui_select"):
+		if Input.is_action_just_pressed("change_item_general"):
 			match currentmode:
 				"horientation":
 					currentmode = "direction"

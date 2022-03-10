@@ -9,82 +9,127 @@ script/source = "extends Area2D
 signal conveyor_move
 
 export(Dictionary) var metadata = {
-	\"speed\": 1,
 	\"type\": \"conveyor\",
 	\"direction\": \"down\",
-	\"type2\": \"normal\"
+	\"sell\": 100,
+	\"buy\": 200,
+	\"elec\": 5
 }
 onready var type = \"conveyor\"
 
 func _ready():
+	$ElecTimer.set_wait_time(8)
+	$ElecTimer.start()
 	metadata = get_meta(\"metadata\")
 	set_meta(\"metadata\", metadata)
-	get_child(2).set_wait_time(1)
-	get_child(2).one_shot = true
+	$ProduceTimer.one_shot = true
 	monitoring = true
 	var texturestuff
-	if get_meta(\"metadata\").type == \"splitter\":
-		texturestuff = \"textures/conveyor/splitter/{hori}.png\".format({\"hori\": get_meta(\"metadata\").horientation, \"type\": get_meta(\"metadata\").type})
-	if get_meta(\"metadata\").type == \"trisplitter\":
-		texturestuff = \"textures/conveyor/splitter/threeway/{hori}.png\".format({\"hori\": get_meta(\"metadata\").horientation, \"type\": get_meta(\"metadata\").type})
-	if get_meta(\"metadata\").type == \"conveyor\":
-		texturestuff = \"textures/conveyor/normal/{direction}.png\".format({\"direction\": get_meta(\"metadata\").direction, \"type\": get_meta(\"metadata\").type})
-	print(texturestuff)
-	get_child(1).texture = get_tree().current_scene.load_texture(texturestuff)
-	get_child(1).scale = Vector2(64/get_child(1).texture.get_size().x, 64/get_child(1).texture.get_size().y)
-	get_child(1).texture.set_flags(0)
+	match get_meta(\"metadata\").type:
+		\"splitter\":
+			texturestuff = \"textures/conveyor/splitter/{hori}.png\".format({\"hori\": get_meta(\"metadata\").horientation, \"type\": get_meta(\"metadata\").type})
+		\"trisplitter\":
+			texturestuff = \"textures/conveyor/splitter/threeway/{hori}.png\".format({\"hori\": get_meta(\"metadata\").horientation, \"type\": get_meta(\"metadata\").type})
+		\"conveyor\":
+			texturestuff = \"textures/conveyor/normal/{direction}.png\".format({\"direction\": get_meta(\"metadata\").direction, \"type\": get_meta(\"metadata\").type})
+		\"producer\":
+			texturestuff = \"textures/producer/normal/{direction}.png\".format({\"direction\": get_meta(\"metadata\").direction, \"type\": get_meta(\"metadata\").type})
+	$Sprite.texture = get_tree().current_scene.load_texture(texturestuff)
+	$Sprite.scale = Vector2(64/$Sprite.texture.get_size().x, 64/$Sprite.texture.get_size().y)
+	$Sprite.texture.set_flags(0)
 
 func _on_test_conveyor_body_entered(_body):
 	emit_signal(\"conveyor_move\")
 
 func _process(_delta):
-	var areas = get_overlapping_areas()
-	var itemareas = []
-	for area in areas:
-		if area.is_queued_for_deletion():
-			break
-		if area.has_meta(\"metadata\") && area.get_meta(\"metadata\").type != \"remove\":
-			if area.get_meta(\"metadata\").type == \"item\":
-				itemareas.append(area)
-			if area.get_meta(\"metadata\").type != \"item\":
-				if area.position == position:
-					return area.free()
-	for area in itemareas:
-		if area.is_queued_for_deletion():
-			break
-		if area.has_meta(\"metadata\"):
-			var metadatacopy = area.get_meta(\"metadata\")
-			if ((area.position.x == position.x && area.position.y == position.y) || metadatacopy.direction == null) && area.get_child(2).get_overlapping_areas().has(self):
-				if get_meta(\"metadata\").type == \"conveyor\":
-					metadatacopy.direction = get_meta(\"metadata\").direction
-					return area.set_meta(\"metadata\", metadatacopy.duplicate())
-				if get_meta(\"metadata\").type == \"splitter\":
-					metadata = get_meta(\"metadata\")
-					metadatacopy.direction = metadata.direction
-					area.set_meta(\"metadata\", metadatacopy.duplicate())
-					metadata = get_meta(\"metadata\")
-					var thing = metadata.horientation.split(\"_\")
-					if metadata.direction == thing[0]:
-						metadata.direction = thing[1]
-						return set_meta(\"metadata\", metadata.duplicate())
-					if metadata.direction == thing[1]:
-						metadata.direction = thing[0]
-						return set_meta(\"metadata\", metadata.duplicate())
-				if get_meta(\"metadata\").type == \"trisplitter\":
-					metadata = get_meta(\"metadata\")
-					metadatacopy.direction = metadata.direction
-					area.set_meta(\"metadata\", metadatacopy.duplicate())
-					metadata = get_meta(\"metadata\")
-					var thing = metadata.horientation.split(\"_\")
-					if metadata.direction == thing[0]:
-						metadata.direction = thing[1]
-						return set_meta(\"metadata\", metadata.duplicate())
-					if metadata.direction == thing[1]:
-						metadata.direction = thing[2]
-						return set_meta(\"metadata\", metadata.duplicate())
-					if metadata.direction == thing[2]:
-						metadata.direction = thing[0]
-						return set_meta(\"metadata\", metadata.duplicate())
+	if get_meta(\"metadata\").placing == true:
+		$Sprite.z_index = 99
+		return
+	if get_meta(\"metadata\").placing == false:
+		match get_meta(\"metadata\").type:
+			\"conveyor\", \"splitter\", \"trisplitter\", \"producer\":
+				var areas = get_overlapping_areas()
+				var itemareas = []
+				for area in areas:
+					if area.is_queued_for_deletion():
+						return
+					if area.has_meta(\"metadata\") && area.get_meta(\"metadata\").placing == true:
+						return
+					if area.has_meta(\"metadata\") && area.get_meta(\"metadata\").type != \"remove\":
+						if area.get_meta(\"metadata\").type == \"item\":
+							itemareas.append(area)
+						if area.get_meta(\"metadata\").type != \"item\":
+							if area.position == position:
+								return area.free()
+				for area in itemareas:
+					if area.is_queued_for_deletion():
+						break
+					if area.has_meta(\"metadata\"):
+						var metadatacopy = area.get_meta(\"metadata\")
+						if (((area.position.x > position.x-4 && area.position.y > position.y-4 && area.position.x < position.x+4 && area.position.y < position.y+4)) || (metadatacopy.direction == null)) && area.get_child(2).get_overlapping_areas().has(self):
+							match get_meta(\"metadata\").type:
+								\"conveyor\":
+									metadatacopy.direction = get_meta(\"metadata\").direction
+									return area.set_meta(\"metadata\", metadatacopy.duplicate())
+								\"splitter\":
+									metadata = get_meta(\"metadata\")
+									metadatacopy.direction = metadata.direction
+									area.set_meta(\"metadata\", metadatacopy.duplicate())
+									metadata = get_meta(\"metadata\")
+									var thing = metadata.horientation.split(\"_\")
+									if metadata.direction == thing[0]:
+										metadata.direction = thing[1]
+										return set_meta(\"metadata\", metadata.duplicate())
+									if metadata.direction == thing[1]:
+										metadata.direction = thing[0]
+										return set_meta(\"metadata\", metadata.duplicate())
+								\"trisplitter\":
+									metadata = get_meta(\"metadata\")
+									metadatacopy.direction = metadata.direction
+									area.set_meta(\"metadata\", metadatacopy.duplicate())
+									metadata = get_meta(\"metadata\")
+									var thing = metadata.horientation.split(\"_\")
+									if metadata.direction == thing[0]:
+										metadata.direction = thing[1]
+										return set_meta(\"metadata\", metadata.duplicate())
+									if metadata.direction == thing[1]:
+										metadata.direction = thing[2]
+										return set_meta(\"metadata\", metadata.duplicate())
+									if metadata.direction == thing[2]:
+										metadata.direction = thing[0]
+										return set_meta(\"metadata\", metadata.duplicate())
+								\"producer\":
+									metadatacopy.direction = get_meta(\"metadata\").direction
+									area.set_meta(\"metadata\", metadatacopy.duplicate())
+				if get_meta(\"metadata\").type == \"producer\":
+					continue
+			\"producer\":
+				$ProduceTimer.set_wait_time(5)
+				if $ProduceTimer.is_stopped() == true:
+					$ProduceTimer.start()
+					var itemmeta = {
+						\"type\": \"item\",
+						\"denom\": \"flush_sit\",
+						\"name\": \"pussyfart\",
+						\"desc\": \"pussy shit\",
+						\"spritepath\": \"items/flushsit.png\",
+						\"direction\": null,
+						\"colliding\": null,
+						\"sell\": 100,
+						\"placing\": false
+					}
+					var itempos = position
+					get_tree().current_scene.place_item_now(\"res://scene/item.tscn\", itemmeta.duplicate(), itempos)
+					$ProduceTimer.start()
+
+
+func timeout():
+	$ProduceTimer.stop()
+
+
+func electrical_dew():
+	get_tree().current_scene.due += get_meta(\"metadata\").elec
+	$ElecTimer.start()
 "
 
 [sub_resource type="RectangleShape2D" id=1]
@@ -93,12 +138,17 @@ extents = Vector2( 32, 32 )
 [node name="test_conveyor" type="Area2D" groups=["Conveyor"]]
 script = SubResource( 7 )
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2( 32, 32 )
-shape = SubResource( 1 )
-
 [node name="Sprite" type="Sprite" parent="."]
 position = Vector2( 32, 32 )
 texture = ExtResource( 1 )
 
-[node name="DelayTimer" type="Timer" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 32, 32 )
+shape = SubResource( 1 )
+
+[node name="ProduceTimer" type="Timer" parent="."]
+
+[node name="ElecTimer" type="Timer" parent="."]
+
+[connection signal="timeout" from="ProduceTimer" to="." method="timeout"]
+[connection signal="timeout" from="ElecTimer" to="." method="electrical_dew"]
