@@ -15,7 +15,7 @@ this is a small factory game project that i started
 [Join the discord server if you want](https://discord.gg/RXgf9985FE)
 
 
-current ver is -0.2
+current ver is -0.1
 
 ### Screenshots
 
