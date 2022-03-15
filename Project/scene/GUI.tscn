@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://gdstuff/Button.gd" type="Script" id=1]
 [ext_resource path="res://textures/items/flushsit.png" type="Texture" id=2]
@@ -10,6 +10,8 @@
 [ext_resource path="res://gdstuff/Remove.gd" type="Script" id=8]
 [ext_resource path="res://gdstuff/Machine.gd" type="Script" id=9]
 [ext_resource path="res://textures/machinery/converter/down.png" type="Texture" id=10]
+[ext_resource path="res://other/ButtonGui.tres" type="StyleBox" id=11]
+[ext_resource path="res://other/ButtonGuiPressed.tres" type="StyleBox" id=12]
 
 [sub_resource type="Theme" id=1]
 
@@ -33,10 +35,19 @@ var metadata = {
 }
 
 func _ready():
+	var styleboxnew = get_stylebox(\"normal\")
+	styleboxnew.texture = get_tree().current_scene.load_texture(\"textures/gui/button.png\")
+	styleboxnew.texture.set_flags(0)
+	add_stylebox_override(\"normal\" ,styleboxnew)
+	styleboxnew = get_stylebox(\"pressed\")
+	styleboxnew.texture = get_tree().current_scene.load_texture(\"textures/gui/button_pressed.png\")
+	styleboxnew.texture.set_flags(0)
+	add_stylebox_override(\"pressed\" ,styleboxnew)
 	text = \"Producer\"
 	var temp = get_tree().current_scene.load_texture(\"textures/producer/normal/{direction}.png\".format({ \"direction\": metadata.direction }))
 	temp.set_size_override(Vector2(32, 32))
 	set_button_icon(temp)
+	icon.set_flags(0)
 		
 func _pressed():
 	get_tree().current_scene.place_item(\"res://scene/test_conveyor.tscn\", metadata.duplicate())
@@ -70,35 +81,43 @@ __meta__ = {
 }
 
 [node name="GUI" type="MarginContainer" parent="."]
-margin_right = 192.0
+margin_right = 404.0
 margin_bottom = 64.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="HBoxContainer" type="HBoxContainer" parent="GUI"]
-margin_right = 476.0
-margin_bottom = 70.0
+margin_right = 584.0
+margin_bottom = 96.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Conveyor" type="Button" parent="GUI/HBoxContainer"]
-margin_right = 76.0
-margin_bottom = 70.0
+margin_right = 94.0
+margin_bottom = 96.0
 theme = SubResource( 1 )
 custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
 custom_colors/font_color_focus = Color( 0, 0, 0, 1 )
+custom_styles/hover = ExtResource( 11 )
+custom_styles/pressed = ExtResource( 12 )
+custom_styles/disabled = ExtResource( 11 )
+custom_styles/normal = ExtResource( 11 )
 icon = ExtResource( 3 )
 script = ExtResource( 1 )
 
 [node name="Splitter" type="Button" parent="GUI/HBoxContainer"]
-margin_left = 80.0
-margin_right = 156.0
-margin_bottom = 70.0
+margin_left = 98.0
+margin_right = 192.0
+margin_bottom = 96.0
 theme = SubResource( 1 )
 custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
 custom_colors/font_color_focus = Color( 0, 0, 0, 1 )
+custom_styles/hover = ExtResource( 11 )
+custom_styles/pressed = ExtResource( 12 )
+custom_styles/disabled = ExtResource( 11 )
+custom_styles/normal = ExtResource( 11 )
 icon = ExtResource( 5 )
 script = ExtResource( 6 )
 __meta__ = {
@@ -106,29 +125,41 @@ __meta__ = {
 }
 
 [node name="Producer" type="Button" parent="GUI/HBoxContainer"]
-margin_left = 160.0
-margin_right = 236.0
-margin_bottom = 70.0
+margin_left = 196.0
+margin_right = 290.0
+margin_bottom = 96.0
 theme = SubResource( 2 )
 custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
 custom_colors/font_color_focus = Color( 0, 0, 0, 1 )
+custom_styles/hover = ExtResource( 11 )
+custom_styles/pressed = ExtResource( 12 )
+custom_styles/disabled = ExtResource( 11 )
+custom_styles/normal = ExtResource( 11 )
 icon = SubResource( 3 )
 script = SubResource( 4 )
 
 [node name="Machine" type="Button" parent="GUI/HBoxContainer"]
-margin_left = 240.0
-margin_right = 316.0
-margin_bottom = 70.0
+margin_left = 294.0
+margin_right = 388.0
+margin_bottom = 96.0
 theme = SubResource( 2 )
 custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
 custom_colors/font_color_focus = Color( 0, 0, 0, 1 )
+custom_styles/hover = ExtResource( 11 )
+custom_styles/pressed = ExtResource( 12 )
+custom_styles/disabled = ExtResource( 11 )
+custom_styles/normal = ExtResource( 11 )
 icon = ExtResource( 10 )
 script = ExtResource( 9 )
 
 [node name="Item" type="Button" parent="GUI/HBoxContainer"]
-margin_left = 320.0
-margin_right = 396.0
-margin_bottom = 70.0
+margin_left = 392.0
+margin_right = 486.0
+margin_bottom = 96.0
+custom_styles/hover = ExtResource( 11 )
+custom_styles/pressed = ExtResource( 12 )
+custom_styles/disabled = ExtResource( 11 )
+custom_styles/normal = ExtResource( 11 )
 icon = ExtResource( 2 )
 script = ExtResource( 4 )
 __meta__ = {
@@ -136,12 +167,16 @@ __meta__ = {
 }
 
 [node name="Remove" type="Button" parent="GUI/HBoxContainer"]
-margin_left = 400.0
-margin_right = 476.0
-margin_bottom = 70.0
+margin_left = 490.0
+margin_right = 584.0
+margin_bottom = 96.0
 theme = SubResource( 1 )
 custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
 custom_colors/font_color_focus = Color( 0, 0, 0, 1 )
+custom_styles/hover = ExtResource( 11 )
+custom_styles/pressed = ExtResource( 12 )
+custom_styles/disabled = ExtResource( 11 )
+custom_styles/normal = ExtResource( 11 )
 icon = ExtResource( 7 )
 script = ExtResource( 8 )
 __meta__ = {

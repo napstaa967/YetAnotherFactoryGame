@@ -20,8 +20,15 @@ static func save_scene(tree:SceneTree, filename:String) -> int:
 	var root = tree.current_scene
 	return _save_scene(root, filename)
 
+static func new_game(tree, path):
+	tree.change_scene("res://scene/Main.tscn")
+	yield(tree.current_scene, "tree_exited")
+	yield(tree, "idle_frame")
+	return save_scene(tree, path)
+
 static func load_scene(tree:SceneTree, filename:String) -> int:
 	var main = "res://scene/Main.tscn"
+	print(filename)
 	var stuff3 = load(filename).instance()
 # warning-ignore:return_value_discarded
 	tree.change_scene(main)

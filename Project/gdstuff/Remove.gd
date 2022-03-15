@@ -6,14 +6,23 @@ var metadata = {
 	"placing": false,
 	"sell": 0,
 	"buy": 0,
-	"elec": 0
+	"elec": 5
 }
 
 func _ready():
+	var styleboxnew = get_stylebox("normal")
+	styleboxnew.texture = get_tree().current_scene.load_texture("textures/gui/button.png")
+	styleboxnew.texture.set_flags(0)
+	add_stylebox_override("normal" ,styleboxnew)
+	styleboxnew = get_stylebox("pressed")
+	styleboxnew.texture = get_tree().current_scene.load_texture("textures/gui/button_pressed.png")
+	styleboxnew.texture.set_flags(0)
+	add_stylebox_override("pressed" ,styleboxnew)
 	text = metadata.mode
 	var temp = get_tree().current_scene.load_texture("textures/misc/remove_{mode}.png".format({ "mode": metadata.mode }))
 	temp.set_size_override(Vector2(32, 32))
 	set_button_icon(temp)
+	icon.set_flags(0)
 		
 func _pressed():
 	get_tree().current_scene.place_item("res://scene/remove_tool.tscn", metadata.duplicate())

@@ -2,25 +2,40 @@
 
 [ext_resource path="res://textures/machinery/converter/down.png" type="Texture" id=1]
 
-[sub_resource type="GDScript" id=7]
+[sub_resource type="GDScript" id=2]
 resource_local_to_scene = true
 script/source = "extends Area2D
 
-export(Dictionary) var metadata = {
+export (Dictionary) var metadata = {
 	\"type\": \"converter\",
 	\"direction\": \"down\",
 	\"sell\": 300,
 	\"buy\": 600,
 	\"elec\": 15,
-	\"items\": [],
+	\"items\": {
+		\"slot1\": {
+			\"denom\": null,
+			\"icon\": null,
+			\"amount\": 0
+		},
+		\"slot2\": {
+			\"denom\": null,
+			\"icon\": null,
+			\"amount\": 0
+		}
+	},
 	\"placing\": false
 }
 
+var inventory_open = false
+
 func _ready():
-	$ElecTimer.set_wait_time(8)
+	
+	$ElecTimer.set_wait_time(1)
 	$ElecTimer.start()
-	metadata = get_meta(\"metadata\")
-	set_meta(\"metadata\", metadata)
+	metadata = get_meta(\"metadata\").duplicate(true)
+	self.set_meta(\"metadata\", get_meta(\"metadata\").duplicate(true))
+	$ConvertTimer.set_wait_time(1)
 	$ConvertTimer.one_shot = true
 	monitoring = true
 	var texturestuff = \"textures/machinery/converter/{hori}.png\".format({\"hori\": get_meta(\"metadata\").direction})
@@ -29,17 +44,14 @@ func _ready():
 	$Sprite.texture.set_flags(0)
 
 func _process(_delta):
-	if get_meta(\"metadata\").placing == true:
-		$Sprite.z_index = 99
-		return
 	if get_meta(\"metadata\").placing == false:
 		var areas = get_overlapping_areas()
 		var itemareas = []
 		for area in areas:
 			if area.is_queued_for_deletion():
-				return
+				continue
 			if area.has_meta(\"metadata\") && area.get_meta(\"metadata\").placing == true:
-				return
+				continue
 			if area.has_meta(\"metadata\") && area.get_meta(\"metadata\").type != \"remove\":
 				if area.get_meta(\"metadata\").type == \"item\":
 					itemareas.append(area)
@@ -48,63 +60,97 @@ func _process(_delta):
 						return area.free()
 		for area in itemareas:
 			if area.is_queued_for_deletion():
-				break
+				continue
 			if area.has_meta(\"metadata\"):
-				var metadatacopy = area.get_meta(\"metadata\")
-				if ((area.position.x > position.x-4 && area.position.y > position.y-4 && area.position.x < position.x+4 && area.position.y < position.y+4) || (metadatacopy.direction == null)) && area.get_child(2).get_overlapping_areas().has(self):
-					metadatacopy.direction = get_meta(\"metadata\").direction
-					area.set_meta(\"metadata\", metadatacopy.duplicate())
-					print(metadatacopy)
-					if area.position == position && metadatacopy.justplaced == false:
-						var metashitt = get_meta(\"metadata\")
-						metashitt.items.append(metadatacopy)
-						set_meta(\"metadata\", metashitt.duplicate())
+				var metadatacopy = area.get_meta(\"metadata\").duplicate(true)
+				if (area.position == position || metadatacopy.direction == null) && area.get_child(2).get_overlapping_areas().has(self):
+					if metadatacopy.justplaced == false:
+						if get_meta(\"metadata\").items.slot1.denom == null:
+							var copying = get_meta(\"metadata\")
+							copying.items.slot1.denom = metadatacopy.denom
+							copying.items.slot1.icon = metadatacopy.spritepath
+							copying.items.slot1.amount = 1
+							set_meta(\"metadata\", copying.duplicate(true))
+						elif metadatacopy.denom == get_meta(\"metadata\").items.slot1.denom && get_meta(\"metadata\").items.slot1.amount < 99:
+							var copying = get_meta(\"metadata\")
+							copying.items.slot1.amount += 1
+							set_meta(\"metadata\", copying.duplicate(true))
+						elif get_meta(\"metadata\").items.slot2.denom == null:
+							var copying = get_meta(\"metadata\")
+							copying.items.slot2.denom = metadatacopy.denom
+							copying.items.slot2.icon = metadatacopy.spritepath
+							copying.items.slot2.amount = 1
+							set_meta(\"metadata\", copying.duplicate(true))
+						elif metadatacopy.denom == get_meta(\"metadata\").items.slot2.denom && get_meta(\"metadata\").items.slot1.amount < 99:
+							var copying = get_meta(\"metadata\")
+							copying.items.slot2.amount += 1
+							set_meta(\"metadata\", copying.duplicate(true))
 						area.queue_free()
-					else:
-						metadatacopy.direction = get_meta(\"metadata\").direction
-						area.set_meta(\"metadata\", metadatacopy.duplicate())
-					
-		$ConvertTimer.set_wait_time(1)
-		if $ConvertTimer.is_stopped() == true && get_meta(\"metadata\").items.empty() == false:
+						set_meta(\"metadata\", get_meta(\"metadata\").duplicate(true))
+					metadatacopy.direction = get_meta(\"metadata\").direction
+					return area.set_meta(\"metadata\", metadatacopy.duplicate(true))
+		if get_meta(\"metadata\").items.slot1.amount == 0:
+			var copying = get_meta(\"metadata\")
+			copying.items.slot1.denom = null
+			copying.items.slot1.icon = null
+			set_meta(\"metadata\", copying.duplicate(true))
+		if get_meta(\"metadata\").items.slot1.denom == null && get_meta(\"metadata\").items.slot2.denom != null:
+			var copying = get_meta(\"metadata\")
+			copying.items.slot1 = get_meta(\"metadata\").items.slot2
+			copying.items.slot2 = {\"denom\": null, \"icon\": null, \"amount\": 0}.duplicate(true)
+			set_meta(\"metadata\", copying.duplicate(true))
+		set_meta(\"metadata\", get_meta(\"metadata\").duplicate(true))
+		if $ConvertTimer.is_stopped() && get_meta(\"metadata\").items.slot1.denom != null:
 			$ConvertTimer.start()
-			var metacopystff = get_meta(\"metadata\")
-			var itemmeta
-			match metacopystff.items[0].denom:
-				\"flush_sit\":
-					itemmeta = {
+			yield($ConvertTimer, \"timeout\")
+			var newplacing = null
+			match get_meta(\"metadata\").items.slot1.denom:
+				\"flush_sit\", \"bop\":
+					newplacing = {
 						\"type\": \"item\",
 						\"denom\": \"bop\",
-						\"name\": \"La creatura\",
-						\"desc\": \"No Way\",
-						\"spritepath\": \"items/bop.png\",
-						\"direction\": metacopystff.direction,
+						\"name\": \"pussyfart\",
+						\"desc\": \"pussy shit\",
+						\"spritepath\": \"textures/items/bop.png\",
+						\"direction\": null,
 						\"colliding\": null,
 						\"sell\": 200,
 						\"placing\": false,
 						\"justplaced\": true
-					}
-			metacopystff.items.pop_at(0)
-			var itempos = position
-		
-			if itemmeta != null:
-				get_tree().current_scene.place_item_now(\"res://scene/item.tscn\", itemmeta.duplicate(), itempos, true)
-			$ConvertTimer.start()
-
+					}.duplicate(true)
+			var copying = get_meta(\"metadata\")
+			if newplacing != null:
+				copying.items.slot1.amount -= 1
+				get_tree().current_scene.place_item_now(\"res://scene/item.tscn\", newplacing.duplicate(true), position)
+				if get_meta(\"metadata\").items.slot1.amount == 0:
+					copying.items.slot1.denom = null
+					copying.items.slot1.icon = null
+				if get_meta(\"metadata\").items.slot1.denom == null && get_meta(\"metadata\").items.slot2.denom != null:
+					copying.items.slot1 = get_meta(\"metadata\").items.slot2
+					copying.items.slot2 = {\"denom\": null, \"icon\": null, \"amount\": 0}.duplicate(true)
+			set_meta(\"metadata\", copying.duplicate(true))
+			print(get_meta(\"metadata\").items.slot1)
 
 func timeout():
 	$ConvertTimer.stop()
 
 
 func electrical_dew():
-	get_tree().current_scene.due += get_meta(\"metadata\").elec
+	get_tree().current_scene.due += self.get_meta(\"metadata\").elec
 	$ElecTimer.start()
+
+
+func on_input_event(_viewport, event, _shape_idx):
+	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_RIGHT and inventory_open == false and get_meta(\"metadata\").placing == false:
+		add_child(load(\"res://scene/MachineInventory.tscn\").instance())
+		inventory_open = true
 "
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 32, 32 )
 
-[node name="Machine" type="Area2D" groups=["Conveyor"]]
-script = SubResource( 7 )
+[node name="Machine" type="Area2D"]
+script = SubResource( 2 )
 
 [node name="Sprite" type="Sprite" parent="."]
 position = Vector2( 32, 32 )
@@ -118,5 +164,6 @@ shape = SubResource( 1 )
 
 [node name="ElecTimer" type="Timer" parent="."]
 
+[connection signal="input_event" from="." to="." method="on_input_event"]
 [connection signal="timeout" from="ConvertTimer" to="." method="timeout"]
 [connection signal="timeout" from="ElecTimer" to="." method="electrical_dew"]

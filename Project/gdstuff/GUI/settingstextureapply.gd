@@ -1,5 +1,15 @@
 extends Button
 
+func _ready():
+	var styleboxnew = get_stylebox("normal")
+	styleboxnew.texture = get_tree().current_scene.load_texture("textures/gui/button.png")
+	styleboxnew.texture.set_flags(0)
+	add_stylebox_override("normal" ,styleboxnew)
+	styleboxnew = get_stylebox("pressed")
+	styleboxnew.texture = get_tree().current_scene.load_texture("textures/gui/button_pressed.png")
+	styleboxnew.texture.set_flags(0)
+	add_stylebox_override("pressed" ,styleboxnew)
+
 func _pressed():
 	print("1")
 	var file = File.new()
@@ -24,10 +34,13 @@ func _pressed():
 		print("7")
 		dict = parse_json(file.get_as_text())
 		dict.texturepack = get_parent().get_node("Label/TextEdit").text
+		print(dict)
 		print("8")
 		var stff = (to_json(dict))
+		print(stff)
 		print("9")
-		file.store_line(stff)
+		file.store_string(stff)
+		print(file.get_as_text())
 		print("10")
 		file.close()
 		print("11")

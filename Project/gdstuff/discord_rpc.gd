@@ -1,10 +1,15 @@
 extends Node
 
+var disabled = false
+
 func _ready():
-	get_tree().current_scene.get_node("RPCTimer").set_wait_time(0.5)
-	get_tree().current_scene.get_node("RPCTimer").start()
+	if get_tree().current_scene.has_node("RPCtimer"):
+		get_tree().current_scene.get_node("RPCTimer").set_wait_time(0.5)
+		get_tree().current_scene.get_node("RPCTimer").start()
 		
 func start_rpc(statestuff, source) -> void:
+	if disabled:
+		return
 	var activity = Discord.Activity.new()
 	activity.set_type(Discord.ActivityType.Playing)
 	var stuff = "Money: " + statestuff
@@ -15,4 +20,7 @@ func start_rpc(statestuff, source) -> void:
 	assets.set_large_text("Playing V -0.2")
 	var result = yield(Discord.activity_manager.update_activity(activity), "result").result
 	if result != Discord.Result.Ok:
-		push_error(result)
+		if result == Discord.Result.InternalError:
+			disabled = true
+			return
+		print(result)

@@ -7,16 +7,25 @@ var metadata = {
 	"direction": "down",
 	"sell": 100,
 	"buy": 200,
-	"elec": 10,
+	"elec": 3,
 	"placing": false
 }
 var currentmode = "horientation"
 
 func _ready():
+	var styleboxnew = get_stylebox("normal")
+	styleboxnew.texture = get_tree().current_scene.load_texture("textures/gui/button.png")
+	styleboxnew.texture.set_flags(0)
+	add_stylebox_override("normal" ,styleboxnew)
+	styleboxnew = get_stylebox("pressed")
+	styleboxnew.texture = get_tree().current_scene.load_texture("textures/gui/button_pressed.png")
+	styleboxnew.texture.set_flags(0)
+	add_stylebox_override("pressed" ,styleboxnew)
 	text = "2-Way Splitter"
 	var temp = get_tree().current_scene.load_texture("textures/conveyor/splitter/{hori}.png".format({ "hori": metadata.horientation }))
 	temp.set_size_override(Vector2(32, 32))
 	set_button_icon(temp)
+	icon.set_flags(0)
 		
 func _pressed():
 	get_tree().current_scene.place_item("res://scene/test_conveyor.tscn", metadata.duplicate())

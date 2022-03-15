@@ -8,15 +8,17 @@ script/source = "extends Area2D
 
 export(Dictionary) var metadata = {
 	\"type\": \"item\",
+	\"denom\": \"flush_sit\",
 	\"name\": \"pussyfart\",
 	\"desc\": \"pussy shit\",
-	\"spritepath\": \"items/flushsit.png\",
+	\"spritepath\": \"textures/items/flushsit.png\",
 	\"direction\": null,
-	\"sell\": 50,
+	\"colliding\": null,
+	\"sell\": 100,
 	\"placing\": false,
 	\"justplaced\": false
 }
-
+	
 var innercollision = false
 
 func fix_placing(direction):
@@ -37,20 +39,17 @@ func fix_placing(direction):
 			position = position
 
 func _ready():
-	$Sprite.texture = get_tree().current_scene.load_texture(\"textures/\" + get_meta(\"metadata\").spritepath)
+	$Sprite.texture = get_tree().current_scene.load_texture(get_meta(\"metadata\").spritepath)
 	$Sprite.scale = Vector2(32/$Sprite.texture.get_size().x, 32/$Sprite.texture.get_size().y)
 	$Sprite.texture.set_flags(0)
 
 func _process(_delta):
-	if get_meta(\"metadata\").placing == true:
-		$Sprite.z_index = 99
-		return
 	if get_meta(\"metadata\").placing == false:
 		var conveyor = false
-		var childcheck = $InnerCollision.get_overlapping_areas().duplicate()
+		var childcheck = $InnerCollision.get_overlapping_areas().duplicate(true)
 		for area in childcheck:
 			if area.has_meta(\"metadata\") && area.get_meta(\"metadata\").placing == false:
-				if area.is_in_group(\"Conveyor\"):
+				if area.get_meta(\"metadata\").type == \"conveyor\" or area.get_meta(\"metadata\").type == \"splitter\" or area.get_meta(\"metadata\").type == \"trisplitter\" or area.get_meta(\"metadata\").type == \"producer\" or area.get_meta(\"metadata\").type == \"converter\":
 					childcheck.append(area)
 					conveyor = true
 					break
@@ -58,7 +57,7 @@ func _process(_delta):
 		if get_overlapping_areas().empty() || conveyor == false || childcheck.empty():
 			var stuff = get_meta(\"metadata\")
 			stuff.direction = null
-			set_meta(\"metadata\", stuff.duplicate())
+			set_meta(\"metadata\", stuff.duplicate(true))
 			return
 		if has_meta(\"metadata\") && conveyor == true:
 			match get_meta(\"metadata\").direction:
@@ -77,13 +76,17 @@ func _process(_delta):
 				null:
 					position = position
 					return
+	elif get_meta(\"metadata\").placing == true:
+		$Sprite.z_index = 99
+		return
 
 func _area_exited(area):
 	if area.has_meta(\"metadata\"):
-		if area.get_meta(\"metadata\").type != \"item\" && area.get_meta(\"metadata\").placing == false:
-			var copy = get_meta(\"metadata\")
+		if area.get_meta(\"metadata\").type != \"item\" && area.get_meta(\"metadata\").placing == false && get_meta(\"metadata\").placing == false:
+			var copy = get_meta(\"metadata\").duplicate(true)
 			copy.direction = null
-			set_meta(\"metadata\",copy.duplicate())
+			copy.justplaced = false
+			set_meta(\"metadata\",copy.duplicate(true))
 "
 
 [sub_resource type="RectangleShape2D" id=1]

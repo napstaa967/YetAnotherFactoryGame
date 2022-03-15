@@ -7,9 +7,10 @@ var camlock = true
 var camera
 var can_place
 var placingscene
-var newmeta = {
+export (Dictionary) var newmeta = {
 	"money": 2000,
-	"source": "res://scene/Main.tscn"
+	"source": "res://scene/Main.tscn",
+	"difficulty": "regular"
 }
 var due = 0
 
@@ -28,8 +29,10 @@ func _ready():
 			file.close()
 	if !has_meta("metadata"):
 		set_meta("metadata", newmeta.duplicate())
-	get_tree().current_scene.get_node("DueTimer").set_wait_time(5)
+	get_tree().current_scene.get_node("DueTimer").set_wait_time(20)
+	get_tree().current_scene.get_node("ItemMoveTimer").set_wait_time(1)
 	get_tree().current_scene.get_node("DueTimer").start()
+	get_tree().current_scene.get_node("RPCTimer").start()
 	DiscordRpc.start_rpc(str(get_tree().current_scene.get_meta("metadata").money), get_tree().current_scene.get_meta("metadata").source)
 
 func load_external_tex(path):
@@ -88,14 +91,14 @@ func place_item(scene, meta):
 		placingscene = null
 		return
 	scene2 = load(scene)
-	placemeta = meta
+	placemeta = meta.duplicate()
 	var placemeta2 = placemeta.duplicate()
 	placemeta2.placing = true
 	placingscene = scene2.duplicate().instance()
 	placingscene.set_meta("metadata",placemeta2.duplicate())
 	get_tree().current_scene.add_child(placingscene)
 	
-func _process(_delta):
+func _process(delta):
 	if placingscene != null:
 		var newpos = get_global_mouse_position()
 		newpos.x = ceil(newpos.x / 10) * 10
@@ -106,7 +109,7 @@ func _process(_delta):
 		var stuff2 = int(newpos.y) % 64
 		if stuff2 != 0:
 			newpos.y = int(newpos.y) + 0 - stuff2;
-		placingscene.position = newpos
+		placingscene.position = placingscene.position.linear_interpolate(newpos, delta * 20)
 		if placingscene.get_overlapping_areas().empty() == false:
 			for area in placingscene.get_overlapping_areas():
 				if area.position.x >= placingscene.position.x && area.position.x <= placingscene.position.x + placingscene.get_child(0).texture.get_size().x - 1 && area.position.y >= placingscene.position.y && area.position.y <= placingscene.position.y + placingscene.get_child(0).texture.get_size().y - 1 && area.has_meta("metadata"):
@@ -143,20 +146,26 @@ func _unhandled_input(event):
 		if Input.is_action_just_pressed("save_game"):
 			return SimpleSave.save_scene(get_tree(), "user://saves/cur.tscn")
 	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_LEFT:
-		if scene2 != null && can_place == true:
-			var scene3 = scene2.duplicate().instance().duplicate()
-			scene3.set_meta("metadata", placemeta.duplicate())
-			scene3.position.x = ceil(get_global_mouse_position().x / 10) * 10
-			scene3.position.y = ceil(get_global_mouse_position().y / 10) * 10
-			get_tree().current_scene.add_child(scene3)
-			scene3.set_owner(get_tree().current_scene)
-			var stuff = int(scene3.position.x) % 64
-			if stuff != 0:
-				scene3.position.x = int(scene3.position.x) + 0 - stuff;
-			var stuff2 = int(scene3.position.y) % 64
-			if stuff2 != 0:
-				scene3.position.y = int(scene3.position.y) + 0 - stuff2;
-			return
+		if scene2 != null && can_place == true && placemeta != null:
+			if !placemeta.has("buy"):
+				placemeta.buy = 0
+			if get_tree().current_scene.get_meta("metadata").money >= placemeta.buy:
+				var update = get_tree().current_scene.get_meta("metadata").duplicate()
+				update.money -= placemeta.buy
+				get_tree().current_scene.set_meta("metadata", update.duplicate())
+				var scene3 = scene2.duplicate().instance().duplicate()
+				scene3.set_meta("metadata", placemeta.duplicate(true))
+				scene3.position.x = ceil(get_global_mouse_position().x / 10) * 10
+				scene3.position.y = ceil(get_global_mouse_position().y / 10) * 10
+				get_tree().current_scene.add_child(scene3)
+				scene3.set_owner(get_tree().current_scene)
+				var stuff = int(scene3.position.x) % 64
+				if stuff != 0:
+					scene3.position.x = int(scene3.position.x) + 0 - stuff;
+				var stuff2 = int(scene3.position.y) % 64
+				if stuff2 != 0:
+					scene3.position.y = int(scene3.position.y) + 0 - stuff2;
+				return
 
 
 func on_due_pay():
@@ -166,3 +175,10 @@ func on_due_pay():
 	due = 0 
 	set_meta("metadata", metcopy.duplicate())
 	get_tree().current_scene.get_node("CanvasLayer/Control/Electricity").update()
+
+func itemtimertimeout():
+	get_tree().current_scene.get_node("ItemMoveTimer").stop()
+
+func RPCTimer_timeout():
+	DiscordRpc.start_rpc(str(get_tree().current_scene.get_meta("metadata").money), get_tree().current_scene.get_meta("metadata").source)
+	get_node("RPCTimer").start()

@@ -11,11 +11,11 @@ export(Dictionary) var metadata = {
 	\"mode\": \"oneshot\",
 	\"sell\": 0,
 	\"buy\": 0,
-	\"elec\": 5
+	\"elec\": 10
 }
 
 func _ready():
-	$ElecTimer.set_wait_time(8)
+	$ElecTimer.set_wait_time(2)
 	$ElecTimer.start()
 	var texturestuff = \"textures/misc/remove_{mode}.png\".format({\"mode\": get_meta(\"metadata\").mode})
 	$Sprite.texture = get_tree().current_scene.load_texture(texturestuff)
@@ -35,7 +35,7 @@ func _process(_delta):
 					\"oneshot\":
 						$Sprite.z_index = 2
 						area.queue_free()
-						var money = get_tree().current_scene.get_meta(\"metadata\").duplicate()
+						var money = get_tree().current_scene.get_meta(\"metadata\").duplicate(true)
 						if area.get_meta(\"metadata\").has(\"sell\"):
 							money.money += area.get_meta(\"metadata\").sell
 						self.queue_free()
@@ -48,11 +48,11 @@ func _process(_delta):
 					\"seller\":
 						$Sprite.z_index = 0
 						if area.position.x > position.x-4 && area.position.y > position.y-4 && area.position.x < position.x+4 && area.position.y < position.y+4:
-							var money = get_tree().current_scene.get_meta(\"metadata\").duplicate()
+							var money = get_tree().current_scene.get_meta(\"metadata\").duplicate(true)
 							if area.get_meta(\"metadata\").has(\"sell\"):
 								money.money += area.get_meta(\"metadata\").sell
 							area.queue_free()
-							get_tree().current_scene.set_meta(\"metadata\", money.duplicate()) 
+							get_tree().current_scene.set_meta(\"metadata\", money.duplicate(true)) 
 							var texturestuff = \"textures/misc/remove_{mode}_on.png\".format({\"mode\": get_meta(\"metadata\").mode})
 							$Sprite.texture = get_tree().current_scene.load_texture(texturestuff)
 							$Sprite.scale = Vector2(64/$Sprite.texture.get_size().x, 64/$Sprite.texture.get_size().y)
@@ -80,7 +80,7 @@ func electrical_due():
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 28, 28 )
 
-[node name="Area2D" type="Area2D" groups=["Conveyor"]]
+[node name="Area2D" type="Area2D"]
 script = SubResource( 7 )
 
 [node name="Sprite" type="Sprite" parent="."]

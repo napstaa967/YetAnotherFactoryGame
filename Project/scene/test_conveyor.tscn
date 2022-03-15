@@ -13,12 +13,11 @@ export(Dictionary) var metadata = {
 	\"direction\": \"down\",
 	\"sell\": 100,
 	\"buy\": 200,
-	\"elec\": 5
+	\"elec\": 3
 }
-onready var type = \"conveyor\"
 
 func _ready():
-	$ElecTimer.set_wait_time(8)
+	$ElecTimer.set_wait_time(1)
 	$ElecTimer.start()
 	metadata = get_meta(\"metadata\")
 	set_meta(\"metadata\", metadata)
@@ -52,9 +51,9 @@ func _process(_delta):
 				var itemareas = []
 				for area in areas:
 					if area.is_queued_for_deletion():
-						return
+						continue
 					if area.has_meta(\"metadata\") && area.get_meta(\"metadata\").placing == true:
-						return
+						continue
 					if area.has_meta(\"metadata\") && area.get_meta(\"metadata\").type != \"remove\":
 						if area.get_meta(\"metadata\").type == \"item\":
 							itemareas.append(area)
@@ -63,44 +62,44 @@ func _process(_delta):
 								return area.free()
 				for area in itemareas:
 					if area.is_queued_for_deletion():
-						break
+						continue
 					if area.has_meta(\"metadata\"):
 						var metadatacopy = area.get_meta(\"metadata\")
-						if (((area.position.x > position.x-4 && area.position.y > position.y-4 && area.position.x < position.x+4 && area.position.y < position.y+4)) || (metadatacopy.direction == null)) && area.get_child(2).get_overlapping_areas().has(self):
+						if (area.position == position || metadatacopy.direction == null) && area.get_child(2).get_overlapping_areas().has(self):
 							match get_meta(\"metadata\").type:
 								\"conveyor\":
 									metadatacopy.direction = get_meta(\"metadata\").direction
-									return area.set_meta(\"metadata\", metadatacopy.duplicate())
+									return area.set_meta(\"metadata\", metadatacopy.duplicate(true))
 								\"splitter\":
 									metadata = get_meta(\"metadata\")
 									metadatacopy.direction = metadata.direction
-									area.set_meta(\"metadata\", metadatacopy.duplicate())
+									area.set_meta(\"metadata\", metadatacopy.duplicate(true))
 									metadata = get_meta(\"metadata\")
 									var thing = metadata.horientation.split(\"_\")
 									if metadata.direction == thing[0]:
 										metadata.direction = thing[1]
-										return set_meta(\"metadata\", metadata.duplicate())
+										return set_meta(\"metadata\", metadata.duplicate(true))
 									if metadata.direction == thing[1]:
 										metadata.direction = thing[0]
-										return set_meta(\"metadata\", metadata.duplicate())
+										return set_meta(\"metadata\", metadata.duplicate(true))
 								\"trisplitter\":
 									metadata = get_meta(\"metadata\")
 									metadatacopy.direction = metadata.direction
-									area.set_meta(\"metadata\", metadatacopy.duplicate())
+									area.set_meta(\"metadata\", metadatacopy.duplicate(true))
 									metadata = get_meta(\"metadata\")
 									var thing = metadata.horientation.split(\"_\")
 									if metadata.direction == thing[0]:
 										metadata.direction = thing[1]
-										return set_meta(\"metadata\", metadata.duplicate())
+										return set_meta(\"metadata\", metadata.duplicate(true))
 									if metadata.direction == thing[1]:
 										metadata.direction = thing[2]
-										return set_meta(\"metadata\", metadata.duplicate())
+										return set_meta(\"metadata\", metadata.duplicate(true))
 									if metadata.direction == thing[2]:
 										metadata.direction = thing[0]
-										return set_meta(\"metadata\", metadata.duplicate())
+										return set_meta(\"metadata\", metadata.duplicate(true))
 								\"producer\":
 									metadatacopy.direction = get_meta(\"metadata\").direction
-									area.set_meta(\"metadata\", metadatacopy.duplicate())
+									area.set_meta(\"metadata\", metadatacopy.duplicate(true))
 				if get_meta(\"metadata\").type == \"producer\":
 					continue
 			\"producer\":
@@ -112,14 +111,15 @@ func _process(_delta):
 						\"denom\": \"flush_sit\",
 						\"name\": \"pussyfart\",
 						\"desc\": \"pussy shit\",
-						\"spritepath\": \"items/flushsit.png\",
+						\"spritepath\": \"textures/items/flushsit.png\",
 						\"direction\": null,
 						\"colliding\": null,
 						\"sell\": 100,
-						\"placing\": false
+						\"placing\": false,
+						\"justplaced\": false
 					}
 					var itempos = position
-					get_tree().current_scene.place_item_now(\"res://scene/item.tscn\", itemmeta.duplicate(), itempos)
+					get_tree().current_scene.place_item_now(\"res://scene/item.tscn\", itemmeta.duplicate(true), itempos)
 					$ProduceTimer.start()
 
 
@@ -135,7 +135,7 @@ func electrical_dew():
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 32, 32 )
 
-[node name="test_conveyor" type="Area2D" groups=["Conveyor"]]
+[node name="test_conveyor" type="Area2D"]
 script = SubResource( 7 )
 
 [node name="Sprite" type="Sprite" parent="."]

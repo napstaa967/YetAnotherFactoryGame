@@ -5,16 +5,34 @@ var metadata = {
 	"direction": "down",
 	"sell": 300,
 	"buy": 600,
-	"elec": 15,
-	"items": [],
+	"elec": 10,
+	"items": {
+		"slot1": {
+			"denom": null,
+			"amount": 0
+		},
+		"slot2": {
+			"denom": null,
+			"amount": 0
+		}
+	},
 	"placing": false
 }
 
 func _ready():
+	var styleboxnew = get_stylebox("normal")
+	styleboxnew.texture = get_tree().current_scene.load_texture("textures/gui/button.png")
+	styleboxnew.texture.set_flags(0)
+	add_stylebox_override("normal" ,styleboxnew)
+	styleboxnew = get_stylebox("pressed")
+	styleboxnew.texture = get_tree().current_scene.load_texture("textures/gui/button_pressed.png")
+	styleboxnew.texture.set_flags(0)
+	add_stylebox_override("pressed" ,styleboxnew)
 	text = "Converter"
 	var temp = get_tree().current_scene.load_texture("textures/machinery/converter/{direction}.png".format({ "direction": metadata.direction }))
 	temp.set_size_override(Vector2(32, 32))
 	set_button_icon(temp)
+	icon.set_flags(0)
 	
 func _pressed():
 	get_tree().current_scene.place_item("res://scene/Machine.tscn", metadata.duplicate())
