@@ -16,6 +16,7 @@ this is a small factory game project that i started
 
 
 current ver is 2022.03.14 | -0.0
+indev ver is 2022.03.?? | 0.0.0
 
 ### Screenshots
 
@@ -29,6 +30,8 @@ current ver is 2022.03.14 | -0.0
 ![image](https://user-images.githubusercontent.com/57607350/156867321-ea6c7887-e255-4b26-8870-d386f373740b.png)
 #### Demo -0.2
 ![image](https://user-images.githubusercontent.com/57607350/156981912-dc9d695c-aa17-4511-80d1-fa1c8aa8cc82.png)
+#### Version 2022.03.15
+![image](https://user-images.githubusercontent.com/57607350/158500981-b75f1bf6-5ac5-4ab1-a08c-2272f63483a4.png)
 
 
 
