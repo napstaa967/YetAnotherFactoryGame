@@ -35,10 +35,10 @@ indev ver is 2022.03.?? | 0.-2
 
 
 
-credits:
--Testing: Me
--Coding: Myself
--Art: I
+credits:  
+-Testing: Me  
+-Coding: Myself  
+-Art: I  
 
 make sure to read the wiki for texture packs
 if i even add some
