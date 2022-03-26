@@ -14,7 +14,7 @@
 script/source = "extends NinePatchRect
 
 func _ready():
-	texture = get_tree().current_scene.load_texture(\"textures/gui/inv/machine_inv_slot.png\")
+	texture = BaseFuncs.load_texture(\"textures/gui/inv/machine_inv_slot.png\")
 "
 
 [sub_resource type="GDScript" id=6]
@@ -24,7 +24,7 @@ script/source = "extends TextureRect
 var slotdata
 
 func _process(_delta):
-	slotdata = get_parent().get_parent().get_parent().get_parent().get_parent().get_meta(\"metadata\").items.slot2
+	slotdata = get_node(\"../../../../..\").get_meta(\"metadata\").items.slot2
 	if slotdata.amount == 0 || slotdata.amount == null:
 		get_parent().get_node(\"amount\").text = str(\"\")
 	else:
@@ -32,7 +32,7 @@ func _process(_delta):
 	if slotdata.denom == null || slotdata.icon == null:
 		texture = null
 		return
-	texture = get_tree().current_scene.load_texture(slotdata.icon)
+	texture = BaseFuncs.load_texture(slotdata.icon)
 	texture.set_flags(0)
 	rect_scale = Vector2(32/texture.get_size().x, 32/texture.get_size().y)
 	set_size(Vector2(32, 32))
@@ -42,7 +42,7 @@ func _process(_delta):
 script/source = "extends NinePatchRect
 
 func _ready():
-	texture = get_tree().current_scene.load_texture(\"textures/gui/inv/machine_inv_slot.png\")
+	texture = BaseFuncs.load_texture(\"textures/gui/inv/machine_inv_slot.png\")
 "
 
 [sub_resource type="GDScript" id=5]
@@ -52,7 +52,7 @@ script/source = "extends TextureRect
 var slotdata
 
 func _process(_delta):
-	slotdata = get_parent().get_parent().get_parent().get_parent().get_parent().get_meta(\"metadata\").items.slot1
+	slotdata = get_node(\"../../../../..\").get_meta(\"metadata\").items.slot1
 	if slotdata.amount == 0 || slotdata.amount == null:
 		get_parent().get_node(\"amount\").text = str(\"\")
 	else:
@@ -60,7 +60,7 @@ func _process(_delta):
 	if slotdata.denom == null || slotdata.icon == null:
 		texture = null
 		return
-	texture = get_tree().current_scene.load_texture(slotdata.icon)
+	texture = BaseFuncs.load_texture(slotdata.icon)
 	texture.set_flags(0)
 	rect_scale = Vector2(32/texture.get_size().x, 32/texture.get_size().y)
 	set_size(Vector2(32, 32))
@@ -70,7 +70,7 @@ func _process(_delta):
 script/source = "extends NinePatchRect
 
 func _ready():
-	texture = get_tree().current_scene.load_texture(\"textures/gui/inv/machine_inv_slot.png\")
+	texture = BaseFuncs.load_texture(\"textures/gui/inv/machine_inv_slot.png\")
 "
 
 [sub_resource type="GDScript" id=7]
@@ -80,7 +80,7 @@ func _process(_delta):
 	var slotone = get_node(\"../../Slot1/Item1\")
 	match slotone.slotdata.denom:
 		\"flush_sit\", \"bop\":
-			texture = get_tree().current_scene.load_texture(\"textures/items/bop.png\")
+			texture = BaseFuncs.load_texture(\"textures/items/bop.png\")
 			texture.set_flags(0)
 			rect_scale = Vector2(32/texture.get_size().x, 32/texture.get_size().y)
 			set_size(Vector2(32, 32))
@@ -93,36 +93,14 @@ resource_local_to_scene = true
 script/source = "extends TextureProgress
 
 func _ready():
-	texture_under = get_tree().current_scene.load_texture(\"textures/gui/inv/machine_arrow_off.png\")
-	texture_progress = get_tree().current_scene.load_texture(\"textures/gui/inv/machine_arrow_on.png\")
+	texture_under = BaseFuncs.load_texture(\"textures/gui/inv/machine_arrow_on.png\")
+	texture_progress = BaseFuncs.load_texture(\"textures/gui/inv/machine_arrow_off.png\")
 	
 func _process(_delta):
-	if get_parent().get_parent().get_parent().get_parent().get_node(\"ConvertTimer\").is_stopped():
-		value = 0
+	if get_node(\"../../../../ConvertTimer\").is_stopped():
+		value = 5
 		return
-	match stepify(get_parent().get_parent().get_parent().get_parent().get_node(\"ConvertTimer\").time_left * 5, 0.1):
-		5.0:
-			value = 0
-		4.5:
-			value = 0.5
-		4.0:
-			value = 1
-		3.5:
-			value = 1.5
-		3.0:
-			value = 2
-		2.5:
-			value = 2.5
-		2.0:
-			value = 3
-		1.5:
-			value = 3.5
-		1.0:
-			value = 4
-		0.5:
-			value = 4.5
-		0.0:
-			value = 5
+	value = stepify(get_node(\"../../../../ConvertTimer\").time_left * 5, 0.01)
 		
 "
 
@@ -292,11 +270,13 @@ margin_top = 72.0
 margin_right = 172.0
 margin_bottom = 104.0
 max_value = 5.0
-step = 0.5
+step = 0.01
+value = 5.0
 allow_greater = true
 allow_lesser = true
-texture_under = ExtResource( 1 )
-texture_progress = ExtResource( 3 )
+texture_under = ExtResource( 3 )
+texture_progress = ExtResource( 1 )
+fill_mode = 1
 script = SubResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false

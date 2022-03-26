@@ -11,17 +11,78 @@ export(Dictionary) var metadata = {
 	\"mode\": \"oneshot\",
 	\"sell\": 0,
 	\"buy\": 0,
-	\"elec\": 10
+	\"elec\": 10,
+	\"on\": false
 }
 
 func _ready():
 	$ElecTimer.set_wait_time(2)
 	$ElecTimer.start()
-	var texturestuff = \"textures/misc/remove_{mode}.png\".format({\"mode\": get_meta(\"metadata\").mode})
-	$Sprite.texture = get_tree().current_scene.load_texture(texturestuff)
-	$Sprite.scale = Vector2(64/$Sprite.texture.get_size().x, 64/$Sprite.texture.get_size().y)
-	$Sprite.texture.set_flags(0)
 	$SellerTimer.set_wait_time(1)
+	texupdate()
+
+func texupdate():
+	var texturestuff
+	var textureoverrides = {}
+	var file = File.new()
+	match get_meta(\"metadata\").mode:
+		\"seller\":
+			if !file.file_exists(BaseFuncs.moddedload(\"textures/machinery/seller/texture_override.json\")):
+				texturestuff = \"textures/machinery/seller/seller.png\"
+			else:
+				file.open(BaseFuncs.moddedload(\"textures/machinery/seller/texture_override.json\"), File.READ)
+		\"oneshot\":
+			if !file.file_exists(BaseFuncs.moddedload(\"textures/misc/remove_oneshot_texture_override.json\")):
+				texturestuff = \"textures/misc/remove_oneshot.png\"
+			else:
+				file.open(BaseFuncs.moddedload(\"textures/misc/remove_oneshot_texture_override.json\"), File.READ)
+		\"persistent\":
+			if !file.file_exists(BaseFuncs.moddedload(\"textures/misc/remove_persistent_texture_override.json\")):
+				texturestuff = \"textures/misc/remove_persistent.png\"
+			else:
+				file.open(BaseFuncs.moddedload(\"textures/misc/remove_persistent_texture_override.json\"), File.READ)
+	if file.is_open():
+		textureoverrides = parse_json(file.get_as_text())
+	texturestuff = BaseFuncs.loadoverrides(textureoverrides, get_node(\"Sprite\"), get_meta(\"metadata\"), texturestuff, \"normal\")
+	if get_meta(\"metadata\").mode == \"seller\":
+		if texturestuff.has(\"unhandled_overrides\"):
+			if texturestuff.unhandled_overrides.has(\"normal\"):
+				for i in texturestuff.unhandled_overrides.normal:
+					var override = texturestuff.unhandled_overrides.normal[i]
+					if !override.has(\"enable\") || override.enable == true:
+						if i == \"all\":
+							for ii in override:
+								match ii:
+									\"rotation\":
+										if get_node(\"Sprite\") is Sprite:
+											get_node(\"Sprite\").rotation_degrees = override.rotation
+										else:
+											get_node(\"Sprite\").rect_pivot_offset = Vector2(get_node(\"Sprite\").rect_size.x/2, get_node(\"Sprite\").rect_size.y/2)
+											get_node(\"Sprite\").rect_rotation = override.rotation
+									\"tex_off\":
+										if File.new().file_exists(BaseFuncs.moddedload(override.tex_off)):
+											if typeof(texturestuff.tex) != TYPE_DICTIONARY:
+												texturestuff.tex = {}
+											texturestuff.tex.off = override.tex_off
+									\"tex_on\":
+										if File.new().file_exists(BaseFuncs.moddedload(override.tex_on)):
+											if typeof(texturestuff.tex) != TYPE_DICTIONARY:
+												texturestuff.tex = {}
+											texturestuff.tex.on = override.tex_on
+									\"flipx\":
+										get_node(\"Sprite\").flip_h = bool(override.flipx)
+									\"flipy\":
+										get_node(\"Sprite\").flip_v = bool(override.flipy)
+	if get_meta(\"metadata\").mode != \"seller\":
+		$Sprite.texture = BaseFuncs.load_texture(texturestuff.tex)
+	else:
+		match get_meta(\"metadata\").on:
+			true:
+				$Sprite.texture = BaseFuncs.load_texture(texturestuff.tex.on)
+			false:
+				$Sprite.texture = BaseFuncs.load_texture(texturestuff.tex.off)
+	$Sprite.texture.set_size_override(Vector2(64,64))
+	$Sprite.texture.set_flags(0)
 
 func _process(_delta):
 	if get_meta(\"metadata\").placing == true:
@@ -53,10 +114,10 @@ func _process(_delta):
 								money.money += area.get_meta(\"metadata\").sell
 							area.queue_free()
 							get_tree().current_scene.set_meta(\"metadata\", money.duplicate(true)) 
-							var texturestuff = \"textures/misc/remove_{mode}_on.png\".format({\"mode\": get_meta(\"metadata\").mode})
-							$Sprite.texture = get_tree().current_scene.load_texture(texturestuff)
-							$Sprite.scale = Vector2(64/$Sprite.texture.get_size().x, 64/$Sprite.texture.get_size().y)
-							$Sprite.texture.set_flags(0)
+							var updatething = get_meta(\"metadata\")
+							updatething.on = true
+							set_meta(\"metadata\", updatething.duplicate(true))
+							texupdate()
 							if !$SellerTimer.is_stopped():
 								$SellerTimer.stop()
 							$SellerTimer.start()
@@ -65,15 +126,16 @@ func _process(_delta):
 						
 					
 func seller_timeout():
-	var texturestuff = \"textures/misc/remove_{mode}.png\".format({\"mode\": get_meta(\"metadata\").mode})
-	$Sprite.texture = get_tree().current_scene.load_texture(texturestuff)
-	$Sprite.scale = Vector2(64/$Sprite.texture.get_size().x, 64/$Sprite.texture.get_size().y)
-	$Sprite.texture.set_flags(0)
+	var updatething = get_meta(\"metadata\")
+	updatething.on = false
+	set_meta(\"metadata\", updatething.duplicate(true))
+	texupdate()
 	return
 
 
 func electrical_due():
-	get_tree().current_scene.due += get_meta(\"metadata\").elec
+	if !get_meta(\"metadata\").placing:
+		get_tree().current_scene.due += get_meta(\"metadata\").elec
 	$ElecTimer.start()
 "
 

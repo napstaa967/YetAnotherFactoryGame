@@ -9,9 +9,6 @@
 [ext_resource path="res://gdstuff/Electricity.gd" type="Script" id=7]
 
 [node name="Control" type="Control"]
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="GUI" type="MarginContainer" parent="."]
 margin_right = 256.0

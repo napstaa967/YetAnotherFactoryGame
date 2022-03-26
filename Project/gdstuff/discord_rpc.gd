@@ -9,6 +9,7 @@ func _ready():
 		
 func start_rpc(statestuff, source) -> void:
 	if disabled:
+		print(disabled)
 		return
 	var activity = Discord.Activity.new()
 	activity.set_type(Discord.ActivityType.Playing)

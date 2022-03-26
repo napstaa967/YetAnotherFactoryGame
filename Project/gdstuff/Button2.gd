@@ -27,14 +27,14 @@ var curselected = 0
 	
 func _ready():
 	var styleboxnew = get_stylebox("normal")
-	styleboxnew.texture = get_tree().current_scene.load_texture("textures/gui/button.png")
+	styleboxnew.texture = BaseFuncs.load_texture("textures/gui/button.png")
 	styleboxnew.texture.set_flags(0)
 	add_stylebox_override("normal" ,styleboxnew)
 	styleboxnew = get_stylebox("pressed")
-	styleboxnew.texture = get_tree().current_scene.load_texture("textures/gui/button_pressed.png")
+	styleboxnew.texture = BaseFuncs.load_texture("textures/gui/button_pressed.png")
 	styleboxnew.texture.set_flags(0)
 	add_stylebox_override("pressed" ,styleboxnew)
-	var temp = get_tree().current_scene.load_texture(metadata.spritepath)
+	var temp = BaseFuncs.load_texture(metadata.spritepath)
 	temp.set_size_override(Vector2(32, 32))
 	set_button_icon(temp)
 	icon.set_flags(0)
@@ -50,7 +50,7 @@ func gui_input(event):
 			else:
 				curselected = 0
 			metadata = itemdata[curselected]
-			var temp = get_tree().current_scene.load_texture(metadata.spritepath)
+			var temp = BaseFuncs.load_texture(metadata.spritepath)
 			temp.set_size_override(Vector2(32, 32))
 			set_button_icon(temp)
 			return

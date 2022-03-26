@@ -89,6 +89,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/discord_game_sdk/example/lobby/game_state.gd"
 }, {
+"base": "PanelContainer",
+"class": "JsonDock",
+"language": "GDScript",
+"path": "res://addons/json_editor/json_dock.gd"
+}, {
 "base": "Resource",
 "class": "Member",
 "language": "GDScript",
@@ -116,6 +121,7 @@ _global_script_class_icons={
 "DiscordResult": "",
 "DiscordUser": "",
 "GameState": "",
+"JsonDock": "",
 "Member": "",
 "SimpleSave": ""
 }
@@ -130,6 +136,7 @@ config/icon="res://icon.png"
 
 [autoload]
 
+BaseFuncs="*res://gdstuff/Scripts/basefunctions.gd"
 Discord="*res://addons/discord_game_sdk/discord.gd"
 DiscordRpc="*res://gdstuff/discord_rpc.gd"
 
@@ -139,12 +146,12 @@ settings/crash_handler/message="Report this error to DoesStuff#5723 on discord/@
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/discord_game_sdk/plugin.cfg" )
+enabled=PoolStringArray( "res://addons/discord_game_sdk/plugin.cfg", "res://addons/json_editor/plugin.cfg" )
 
 [global]
 
-Version="2022.03.14"
-ReleaseNumber="-0.0.0"
+Version="2022.03.25"
+ReleaseNumber="0.-1"
 
 [input]
 

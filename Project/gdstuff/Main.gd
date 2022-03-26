@@ -25,7 +25,7 @@ func _ready():
 			var defaults = {
 				"texturepack": null
 			}
-			file.store_line(to_json(defaults))
+			file.store_string(to_json(defaults))
 			file.close()
 	if !has_meta("metadata"):
 		set_meta("metadata", newmeta.duplicate())
@@ -35,40 +35,6 @@ func _ready():
 	get_tree().current_scene.get_node("RPCTimer").start()
 	DiscordRpc.start_rpc(str(get_tree().current_scene.get_meta("metadata").money), get_tree().current_scene.get_meta("metadata").source)
 
-func load_external_tex(path):
-	var tex_file = File.new()
-	tex_file.open(path, File.READ)
-	var _bytes = tex_file.get_buffer(tex_file.get_len())
-	var img = Image.new()
-	var _data = img.load_png_from_buffer(_bytes)
-	var imgtex = ImageTexture.new()
-	imgtex.create_from_image(img)
-	tex_file.close()
-	return imgtex
-
-func load_texture(paththing):
-	var file = File.new()
-	if !file.file_exists("user://settings.json"):
-		file.open("user://settings.json", File.WRITE)
-		var defaults = {
-			"texturepack": null
-		}
-		file.store_line(to_json(defaults))
-		file.close()
-	file.open("user://settings.json", File.READ)
-	var dict = {}
-	dict = parse_json(file.get_as_text())
-	if dict.has("texturepack") && dict.texturepack != null:
-		if File.new().file_exists(dict.texturepack + "/" + paththing):
-			file.close()
-			return load_external_tex(dict.texturepack + "/" + paththing)
-		else:
-			file.close()
-			return load_external_tex("res://" + paththing)
-	else:
-		file.close()
-		return load_external_tex("res://" + paththing)
-		
 func save_game(path):
 	return SimpleSave.save_scene(get_tree(), path)
 
@@ -112,14 +78,24 @@ func _process(delta):
 		placingscene.position = placingscene.position.linear_interpolate(newpos, delta * 20)
 		if placingscene.get_overlapping_areas().empty() == false:
 			for area in placingscene.get_overlapping_areas():
-				if area.position.x >= placingscene.position.x && area.position.x <= placingscene.position.x + placingscene.get_child(0).texture.get_size().x - 1 && area.position.y >= placingscene.position.y && area.position.y <= placingscene.position.y + placingscene.get_child(0).texture.get_size().y - 1 && area.has_meta("metadata"):
-					if placingscene.get_meta("metadata").type != "item" && placingscene.get_meta("metadata").type != "remove" && area.has_meta("metadata") && area.get_meta("metadata").type != "item":
-						can_place = false
-						placingscene.get_child(0).modulate = Color(1, 0.5, 0.5)
-					return
+				if placingscene.get_meta("metadata").type == "converter" || placingscene.get_meta("metadata").type == "producer":
+					if area.position.x >= placingscene.position.x && area.position.x <= placingscene.position.x + placingscene.get_node("TextureProgress").texture_under.get_size().x - 1 && area.position.y >= placingscene.position.y && area.position.y <= placingscene.position.y + placingscene.get_node("TextureProgress").texture_under.get_size().y - 1 && area.has_meta("metadata"):
+						if placingscene.get_meta("metadata").type != "item" && placingscene.get_meta("metadata").type != "remove" && area.has_meta("metadata") && area.get_meta("metadata").type != "item":
+							can_place = false
+							placingscene.get_child(0).modulate = Color(1, 0.5, 0.5)
+						return
+					else:
+						can_place = true
+						placingscene.get_child(0).modulate = Color(0.5, 1, 0.5)
 				else:
-					can_place = true
-					placingscene.get_child(0).modulate = Color(0.5, 1, 0.5)
+					if area.position.x >= placingscene.position.x && area.position.x <= placingscene.position.x + placingscene.get_child(0).texture.get_size().x - 1 && area.position.y >= placingscene.position.y && area.position.y <= placingscene.position.y + placingscene.get_child(0).texture.get_size().y - 1 && area.has_meta("metadata"):
+						if placingscene.get_meta("metadata").type != "item" && placingscene.get_meta("metadata").type != "remove" && area.has_meta("metadata") && area.get_meta("metadata").type != "item":
+							can_place = false
+							placingscene.get_child(0).modulate = Color(1, 0.5, 0.5)
+						return
+					else:
+						can_place = true
+						placingscene.get_child(0).modulate = Color(0.5, 1, 0.5)
 		else:
 			can_place = true
 			placingscene.get_child(0).modulate = Color(0.5, 1, 0.5)

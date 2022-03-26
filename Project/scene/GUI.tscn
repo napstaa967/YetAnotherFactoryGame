@@ -1,25 +1,24 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://gdstuff/Button.gd" type="Script" id=1]
 [ext_resource path="res://textures/items/flushsit.png" type="Texture" id=2]
-[ext_resource path="res://textures/conveyor/normal/down.png" type="Texture" id=3]
+[ext_resource path="res://textures/conveyor/normal/conveyor.png" type="Texture" id=3]
 [ext_resource path="res://gdstuff/Button2.gd" type="Script" id=4]
 [ext_resource path="res://textures/conveyor/splitter/down_up.png" type="Texture" id=5]
 [ext_resource path="res://gdstuff/Button3.gd" type="Script" id=6]
 [ext_resource path="res://textures/misc/remove_oneshot.png" type="Texture" id=7]
 [ext_resource path="res://gdstuff/Remove.gd" type="Script" id=8]
 [ext_resource path="res://gdstuff/Machine.gd" type="Script" id=9]
-[ext_resource path="res://textures/machinery/converter/down.png" type="Texture" id=10]
+[ext_resource path="res://textures/machinery/converter/converter.png" type="Texture" id=10]
 [ext_resource path="res://other/ButtonGui.tres" type="StyleBox" id=11]
 [ext_resource path="res://other/ButtonGuiPressed.tres" type="StyleBox" id=12]
+[ext_resource path="res://textures/producer/producer.png" type="Texture" id=13]
+[ext_resource path="res://textures/misc/iconblank.png" type="Texture" id=14]
+[ext_resource path="res://textures/machinery/seller/seller.png" type="Texture" id=15]
 
 [sub_resource type="Theme" id=1]
 
 [sub_resource type="Theme" id=2]
-
-[sub_resource type="StreamTexture" id=3]
-flags = 4
-load_path = "res://.import/down.png-b861b6177c3da5d66ef9ead26f1690a8.stex"
 
 [sub_resource type="GDScript" id=4]
 resource_local_to_scene = true
@@ -36,22 +35,57 @@ var metadata = {
 
 func _ready():
 	var styleboxnew = get_stylebox(\"normal\")
-	styleboxnew.texture = get_tree().current_scene.load_texture(\"textures/gui/button.png\")
+	styleboxnew.texture = BaseFuncs.load_texture(\"textures/gui/button.png\")
 	styleboxnew.texture.set_flags(0)
 	add_stylebox_override(\"normal\" ,styleboxnew)
 	styleboxnew = get_stylebox(\"pressed\")
-	styleboxnew.texture = get_tree().current_scene.load_texture(\"textures/gui/button_pressed.png\")
+	styleboxnew.texture = BaseFuncs.load_texture(\"textures/gui/button_pressed.png\")
 	styleboxnew.texture.set_flags(0)
 	add_stylebox_override(\"pressed\" ,styleboxnew)
 	text = \"Producer\"
-	var temp = get_tree().current_scene.load_texture(\"textures/producer/normal/{direction}.png\".format({ \"direction\": metadata.direction }))
+	var temp = BaseFuncs.load_texture(\"textures/producer/producer.png\")
 	temp.set_size_override(Vector2(32, 32))
 	set_button_icon(temp)
-	icon.set_flags(0)
-		
+	get_node(\"TextureRect\").texture = temp
+	get_node(\"TextureRect\").texture.set_flags(0)
+	get_node(\"TextureRect\").rect_pivot_offset = Vector2(get_node(\"TextureRect\").texture.get_size().x/2, get_node(\"TextureRect\").texture.get_size().y/2)
+	get_node(\"TextureRect\").margin_bottom = styleboxnew.margin_bottom
+	get_node(\"TextureRect\").margin_top = styleboxnew.margin_top
+	get_node(\"TextureRect\").margin_left = styleboxnew.margin_left
+	get_node(\"TextureRect\").margin_right = styleboxnew.margin_right
+	textupdate()
+	
 func _pressed():
 	get_tree().current_scene.place_item(\"res://scene/test_conveyor.tscn\", metadata.duplicate())
 
+func textupdate():
+	var file = File.new()
+	var texturestuff = \"textures/producer/producer.png\"
+	if !file.file_exists(BaseFuncs.moddedload(\"textures/producer/texture_override.json\")):
+		texturestuff = \"textures/producer/producer.png\"
+		var texturest = BaseFuncs.load_texture(texturestuff)
+		texturest.set_size_override(Vector2(32, 32))
+		get_node(\"TextureRect\").rect_pivot_offset = Vector2(texturest.get_size().x/2, texturest.get_size().y/2)
+		match metadata.direction:
+			\"down\":
+				get_node(\"TextureRect\").rect_rotation = 0
+			\"up\":
+				get_node(\"TextureRect\").rect_rotation = 180
+			\"left\":
+				get_node(\"TextureRect\").rect_rotation = 90
+			\"right\":
+				get_node(\"TextureRect\").rect_rotation = 270
+		get_node(\"TextureRect\").texture = texturest
+		get_node(\"TextureRect\").texture.set_flags(0)
+	else:
+		file.open(BaseFuncs.moddedload(\"textures/producer/texture_override.json\"), File.READ)
+		var textureoverrides = parse_json(file.get_as_text())
+		texturestuff = BaseFuncs.loadoverrides(textureoverrides, get_node(\"TextureRect\"), metadata, texturestuff, \"icon\")
+		var texturest = BaseFuncs.load_texture(texturestuff.tex)
+		texturest.set_size_override(Vector2(32, 32))
+		texturest.set_flags(0)
+		get_node(\"TextureRect\").texture = texturest
+		get_node(\"TextureRect\").rect_size = Vector2(32,32)
 
 func gui_input(event):
 	if event is InputEventKey and event.pressed:
@@ -68,17 +102,21 @@ func gui_input(event):
 			metadata.direction = \"up\"
 		if Input.is_action_just_pressed(\"change_item_down\"):
 			metadata.direction = \"down\"
-		var temp = get_tree().current_scene.load_texture(\"textures/producer/normal/{direction}.png\".format({ \"direction\": metadata.direction }))
-		temp.set_size_override(Vector2(32, 32))
-		set_button_icon(temp)
+		match metadata.direction:
+			\"down\":
+				get_node(\"TextureRect\").rect_rotation = 0
+			\"up\":
+				get_node(\"TextureRect\").rect_rotation = 180
+			\"left\":
+				get_node(\"TextureRect\").rect_rotation = 90
+			\"right\":
+				get_node(\"TextureRect\").rect_rotation = 270
+		textupdate()
 		return
 
 "
 
 [node name="Control" type="Control"]
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="GUI" type="MarginContainer" parent="."]
 margin_right = 404.0
@@ -88,14 +126,14 @@ __meta__ = {
 }
 
 [node name="HBoxContainer" type="HBoxContainer" parent="GUI"]
-margin_right = 584.0
+margin_right = 596.0
 margin_bottom = 96.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Conveyor" type="Button" parent="GUI/HBoxContainer"]
-margin_right = 94.0
+margin_right = 96.0
 margin_bottom = 96.0
 theme = SubResource( 1 )
 custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
@@ -107,9 +145,17 @@ custom_styles/normal = ExtResource( 11 )
 icon = ExtResource( 3 )
 script = ExtResource( 1 )
 
+[node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/Conveyor"]
+margin_left = 16.0
+margin_top = 16.0
+margin_right = 40.0
+margin_bottom = 40.0
+texture = ExtResource( 3 )
+stretch_mode = 1
+
 [node name="Splitter" type="Button" parent="GUI/HBoxContainer"]
-margin_left = 98.0
-margin_right = 192.0
+margin_left = 100.0
+margin_right = 196.0
 margin_bottom = 96.0
 theme = SubResource( 1 )
 custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
@@ -124,9 +170,17 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/Splitter"]
+margin_left = 16.0
+margin_top = 16.0
+margin_right = 40.0
+margin_bottom = 40.0
+texture = ExtResource( 5 )
+stretch_mode = 1
+
 [node name="Producer" type="Button" parent="GUI/HBoxContainer"]
-margin_left = 196.0
-margin_right = 290.0
+margin_left = 200.0
+margin_right = 296.0
 margin_bottom = 96.0
 theme = SubResource( 2 )
 custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
@@ -135,12 +189,20 @@ custom_styles/hover = ExtResource( 11 )
 custom_styles/pressed = ExtResource( 12 )
 custom_styles/disabled = ExtResource( 11 )
 custom_styles/normal = ExtResource( 11 )
-icon = SubResource( 3 )
+icon = ExtResource( 14 )
 script = SubResource( 4 )
 
+[node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/Producer"]
+margin_left = 16.0
+margin_top = 16.0
+margin_right = 40.0
+margin_bottom = 40.0
+texture = ExtResource( 13 )
+stretch_mode = 1
+
 [node name="Machine" type="Button" parent="GUI/HBoxContainer"]
-margin_left = 294.0
-margin_right = 388.0
+margin_left = 300.0
+margin_right = 396.0
 margin_bottom = 96.0
 theme = SubResource( 2 )
 custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
@@ -149,12 +211,20 @@ custom_styles/hover = ExtResource( 11 )
 custom_styles/pressed = ExtResource( 12 )
 custom_styles/disabled = ExtResource( 11 )
 custom_styles/normal = ExtResource( 11 )
-icon = ExtResource( 10 )
+icon = ExtResource( 14 )
 script = ExtResource( 9 )
 
+[node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/Machine"]
+margin_left = 16.0
+margin_top = 16.0
+margin_right = 40.0
+margin_bottom = 40.0
+texture = ExtResource( 10 )
+stretch_mode = 1
+
 [node name="Item" type="Button" parent="GUI/HBoxContainer"]
-margin_left = 392.0
-margin_right = 486.0
+margin_left = 400.0
+margin_right = 496.0
 margin_bottom = 96.0
 custom_styles/hover = ExtResource( 11 )
 custom_styles/pressed = ExtResource( 12 )
@@ -167,8 +237,8 @@ __meta__ = {
 }
 
 [node name="Remove" type="Button" parent="GUI/HBoxContainer"]
-margin_left = 490.0
-margin_right = 584.0
+margin_left = 500.0
+margin_right = 596.0
 margin_bottom = 96.0
 theme = SubResource( 1 )
 custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
@@ -182,6 +252,14 @@ script = ExtResource( 8 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/Remove"]
+margin_left = 16.0
+margin_top = 16.0
+margin_right = 84.0
+margin_bottom = 80.0
+texture = ExtResource( 15 )
+stretch_mode = 1
 
 [connection signal="gui_input" from="GUI/HBoxContainer/Conveyor" to="GUI/HBoxContainer/Conveyor" method="gui_input"]
 [connection signal="gui_input" from="GUI/HBoxContainer/Splitter" to="GUI/HBoxContainer/Splitter" method="gui_input"]

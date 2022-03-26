@@ -39,7 +39,7 @@ func fix_placing(direction):
 			position = position
 
 func _ready():
-	$Sprite.texture = get_tree().current_scene.load_texture(get_meta(\"metadata\").spritepath)
+	$Sprite.texture = BaseFuncs.load_texture(get_meta(\"metadata\").spritepath)
 	$Sprite.scale = Vector2(32/$Sprite.texture.get_size().x, 32/$Sprite.texture.get_size().y)
 	$Sprite.texture.set_flags(0)
 

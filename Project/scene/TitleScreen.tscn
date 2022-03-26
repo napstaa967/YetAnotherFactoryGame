@@ -21,7 +21,7 @@
 script/source = "extends Label
 
 func _ready():
-	text = \"Ver. \" + str(ProjectSettings.get_setting(\"global/Version\"))
+	text = \"DVer. \" + str(ProjectSettings.get_setting(\"global/Version\")) + \" | Ver. \" + str(ProjectSettings.get_setting(\"global/ReleaseNumber\"))
 "
 
 [node name="TitleScreen" type="Node2D"]
@@ -79,7 +79,7 @@ __meta__ = {
 margin_top = 148.0
 margin_right = 288.0
 margin_bottom = 162.0
-text = "V 2022.03.14 | -0r.0p.0f"
+text = "V 2022.03.15 | 0r.0p.0f"
 script = SubResource( 1 )
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="CanvasLayer"]

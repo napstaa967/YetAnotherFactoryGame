@@ -3,7 +3,7 @@ extends TextureRect
 func _ready():
 	print("text")
 	$FadeoutTimer.set_wait_time(0.01)
-	texture = get_tree().current_scene.load_texture("textures/gui/electricty.png")
+	texture = BaseFuncs.load_texture("textures/gui/electricty.png")
 	update()
 
 func update():
