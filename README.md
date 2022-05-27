@@ -1,7 +1,5 @@
 # Yet Another Factory Game
 
-## **all versions that aren't considered a working base/demo will be negative versions**
-
 Dependencies:
 https://github.com/samsface/godot-discord-game-sdk for discord rich presence
 
@@ -16,7 +14,16 @@ this is a small factory game project that i started
 
 
 current ver is 2022.03.25 | 0.-1  
-indev ver is 2022.03.?? | 0.-2
+indev ver is 2022.06.?? | 0.1
+
+### What Happened?
+
+if you noticed, this hasn't been updated since march.
+that's because i took a break from developing since i released a daily update at times
+i am going to get back into development now
+i expect v0.1 to release in late june if i put effort
+
+plans are to add support for android someday
 
 ### Screenshots
 
