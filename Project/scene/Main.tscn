@@ -20,22 +20,6 @@ script = ExtResource( 2 )
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="GUI" parent="CanvasLayer" instance=ExtResource( 1 )]
-anchor_top = 1.0
-anchor_bottom = 1.0
-margin_left = 16.0
-margin_top = -88.0
-
-[node name="Lock" parent="CanvasLayer" instance=ExtResource( 6 )]
-anchor_left = 1.0
-anchor_right = 1.0
-margin_left = -208.0
-margin_top = 16.0
-
-[node name="Control" parent="CanvasLayer" instance=ExtResource( 12 )]
-margin_left = 16.0
-margin_top = 16.0
-
 [node name="NinePatchRect" type="NinePatchRect" parent="CanvasLayer"]
 margin_right = 1024.0
 margin_bottom = 600.0
@@ -45,9 +29,28 @@ patch_margin_top = 16
 patch_margin_right = 16
 patch_margin_bottom = 16
 script = ExtResource( 7 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+
+[node name="Lock" parent="CanvasLayer/NinePatchRect" instance=ExtResource( 6 )]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -408.0
+margin_top = 16.0
+margin_right = -16.0
+margin_bottom = 16.0
+
+[node name="GUI" parent="CanvasLayer/NinePatchRect" instance=ExtResource( 1 )]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 16.0
+margin_top = -112.0
+margin_right = 16.0
+margin_bottom = -24.0
+
+[node name="Control" parent="CanvasLayer/NinePatchRect" instance=ExtResource( 12 )]
+margin_left = 16.0
+margin_top = 16.0
+margin_right = 16.0
+margin_bottom = 16.0
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 scroll_ignore_camera_zoom = true

@@ -11,7 +11,7 @@ func _ready():
 	screen_size = get_viewport_rect().size
 
 
-func _on_test_conveyor_body_entered(_body):
+func _on_Conveyor_body_entered(_body):
 	emit_signal("conveyor_move")
 	
 func _process(_delta):

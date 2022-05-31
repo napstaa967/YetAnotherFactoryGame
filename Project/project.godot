@@ -14,72 +14,72 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/discord_game_sdk/example/lobby/chat_message.gd"
 }, {
-"base": "",
+"base": "Reference",
 "class": "DiscordActivity",
 "language": "NativeScript",
 "path": "res://addons/discord_game_sdk/discord_activity.gdns"
 }, {
-"base": "",
+"base": "Reference",
 "class": "DiscordActivityAssets",
 "language": "NativeScript",
 "path": "res://addons/discord_game_sdk/discord_activity_assets.gdns"
 }, {
-"base": "",
+"base": "Reference",
 "class": "DiscordActivityManager",
 "language": "NativeScript",
 "path": "res://addons/discord_game_sdk/discord_activity_manager.gdns"
 }, {
-"base": "",
+"base": "Reference",
 "class": "DiscordActivityParty",
 "language": "NativeScript",
 "path": "res://addons/discord_game_sdk/discord_activity_party.gdns"
 }, {
-"base": "",
+"base": "Reference",
 "class": "DiscordActivitySecrets",
 "language": "NativeScript",
 "path": "res://addons/discord_game_sdk/discord_activity_secrets.gdns"
 }, {
-"base": "",
+"base": "Reference",
 "class": "DiscordActivityTimestamps",
 "language": "NativeScript",
 "path": "res://addons/discord_game_sdk/discord_activity_timestamps.gdns"
 }, {
-"base": "",
+"base": "Reference",
 "class": "DiscordCore",
 "language": "NativeScript",
 "path": "res://addons/discord_game_sdk/discord_core.gdns"
 }, {
-"base": "",
+"base": "Reference",
 "class": "DiscordLobby",
 "language": "NativeScript",
 "path": "res://addons/discord_game_sdk/discord_lobby.gdns"
 }, {
-"base": "",
+"base": "Reference",
 "class": "DiscordLobbyManager",
 "language": "NativeScript",
 "path": "res://addons/discord_game_sdk/discord_lobby_manager.gdns"
 }, {
-"base": "",
+"base": "Reference",
 "class": "DiscordLobbyTransaction",
 "language": "NativeScript",
 "path": "res://addons/discord_game_sdk/discord_lobby_transaction.gdns"
 }, {
-"base": "",
+"base": "Reference",
 "class": "DiscordOverlayManager",
 "language": "NativeScript",
 "path": "res://addons/discord_game_sdk/discord_overlay_manager.gdns"
 }, {
-"base": "",
+"base": "Reference",
 "class": "DiscordPartySize",
 "language": "NativeScript",
 "path": "res://addons/discord_game_sdk/discord_party_size.gdns"
 }, {
-"base": "",
+"base": "Reference",
 "class": "DiscordResult",
 "language": "NativeScript",
 "path": "res://addons/discord_game_sdk/discord_result.gdns"
 }, {
-"base": "",
+"base": "Reference",
 "class": "DiscordUser",
 "language": "NativeScript",
 "path": "res://addons/discord_game_sdk/discord_user.gdns"
@@ -150,8 +150,11 @@ enabled=PoolStringArray( "res://addons/discord_game_sdk/plugin.cfg", "res://addo
 
 [global]
 
-Version="2022.03.25"
-ReleaseNumber="0.-1"
+Version="2022-05.31"
+ReleaseNumber="0.1_4"
+Branch="Dev"
+Changelogs=PoolStringArray( "[b]Version 0.1_4 (DevSrc):[/b]\\n\\nVersion Definitions:\\nU: Unreleased\\nD: Demo\\nDX: Development\\nE: Early\\nrelease versions will have no symbol, nightly versions will have the E symbol.\\n\\nBranches:\\nDev: Development Branch\\nNightly: Nightly Branch\\nMain/Release: Stable Branch\\n\\n[b]Changes[/b]\\n- Now using the list properly\\n- Status now shows the game\'s version\\n[b]Additions[/b]\\n- 3 new discord RPC icons", "[b]Version 0.1_3 (DevUnrel):[/b]\\n[b]Changes[/b]\\n- Title Screen has a dark background by default\\n- Movement is now handled by a base function using tweens, making speed the same for everyone\\n- Setting icons inside the game are now ordered in 1 row\\n- Conveyor\'s file is now Conveyor.tscn\\n- Using NinePatchRect and Panels instead of flat textures\\n- Versions are now formatted like the following:\\n-- Release Type, Release Number, Branch\\n[b]Removals[/b]\\n- Removed a lot of boilerplate from items\\n- Support for texture overrides is paused until further updates\\n[b]Additions[/b]\\n- Credits and Changelogs are now accesible on the title screen\\n" )
+"Release Type"="E"
 
 [input]
 

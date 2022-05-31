@@ -10,7 +10,7 @@ func _ready():
 	styleboxnew.texture.set_flags(0)
 	add_stylebox_override("pressed" ,styleboxnew)
 	var temp = BaseFuncs.load_texture("textures/gui/save_load.png")
-	temp.set_size_override(Vector2(64, 64))
+	temp.set_size_override(Vector2(32, 32))
 	set_button_icon(temp)
 	icon.set_flags(0)
 
@@ -19,5 +19,5 @@ func _pressed():
 	
 
 func file_selected(path):
-	get_tree().current_scene.load_game(path)
+	SimpleSave.load_scene(get_tree(), path)
 	return

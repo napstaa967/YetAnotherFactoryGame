@@ -1,0 +1,26 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0.0666667, 0.0666667, 0.0666667, 0.486275 )
+
+[node name="PlacementGui" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Panel" type="Panel" parent="."]
+margin_right = 256.0
+margin_bottom = 192.0
+custom_styles/panel = SubResource( 1 )
+
+[node name="Pos" type="Label" parent="Panel"]
+margin_right = 192.0
+margin_bottom = 32.0
+text = "Position | 0,0"
+valign = 1
+
+[node name="Label" type="Label" parent="Panel"]
+margin_top = 32.0
+margin_right = 192.0
+margin_bottom = 64.0
+text = "Placing | name"
+valign = 1

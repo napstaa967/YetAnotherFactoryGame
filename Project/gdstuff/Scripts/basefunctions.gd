@@ -1,5 +1,10 @@
 extends Node
 
+var cc = false
+
+func globalvar(name):
+	return ProjectSettings.get_setting("global/" + name)
+
 func load_external_tex(path):
 	var tex_file = File.new()
 	tex_file.open(path, File.READ)
@@ -10,6 +15,83 @@ func load_external_tex(path):
 	imgtex.create_from_image(img)
 	tex_file.close()
 	return imgtex
+
+func MovementHandler(target, metadata):
+	if target.get_node("MovingTween").is_active(): return
+	match metadata.direction:
+		"down":
+			target.get_node("MovingTween").interpolate_property(
+				target,
+				"position:y",
+				target.position.y,
+				target.position.y + 64,
+				1,
+				Tween.TRANS_LINEAR
+			)
+		"up":
+			target.get_node("MovingTween").interpolate_property(
+				target,
+				"position:y",
+				target.position.y,
+				target.position.y - 64,
+				1,
+				Tween.TRANS_LINEAR
+			)
+		"left":
+			target.get_node("MovingTween").interpolate_property(
+				target,
+				"position:x",
+				target.position.x,
+				target.position.x - 64,
+				1,
+				Tween.TRANS_LINEAR
+			)
+		"right":
+			target.get_node("MovingTween").interpolate_property(
+				target,
+				"position:x",
+				target.position.x,
+				target.position.x + 64,
+				1,
+				Tween.TRANS_LINEAR
+			)
+		"upright":
+			target.get_node("MovingTween").interpolate_property(
+				target,
+				"position",
+				target.position,
+				Vector2(target.position.x + 64, target.position.y + 64),
+				1,
+				Tween.TRANS_LINEAR
+			)
+		"upleft":
+			target.get_node("MovingTween").interpolate_property(
+				target,
+				"position",
+				target.position,
+				Vector2(target.position.x - 64, target.position.y + 64),
+				1,
+				Tween.TRANS_LINEAR
+			)
+		"downright":
+			target.get_node("MovingTween").interpolate_property(
+				target,
+				"position",
+				target.position,
+				Vector2(target.position.x + 64, target.position.y - 64),
+				1,
+				Tween.TRANS_LINEAR
+			)
+		"downleft":
+			target.get_node("MovingTween").interpolate_property(
+				target,
+				"position",
+				target.position,
+				Vector2(target.position.x - 64, target.position.y - 64),
+				1,
+				Tween.TRANS_LINEAR
+			)
+	target.get_node("MovingTween").start()
 
 func loadoverrides(textureoverrides, target, meta, oldtex, type):
 	if textureoverrides == null:
@@ -188,3 +270,12 @@ func moddedload(path):
 	else:
 		file.close()
 		return "res://" + path
+
+"""
+plan is to:
+-reimplement the texture handler, and add a texture setter.
+
+how i wanna do it:
+-load 'states' from the file, basically you pick the state you wanna use
+instead of you handling custom overrides.
+"""

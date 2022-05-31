@@ -171,6 +171,9 @@ func _process(_delta):
 							set_meta(\"metadata\", copying.duplicate(true))
 						area.queue_free()
 						set_meta(\"metadata\", get_meta(\"metadata\").duplicate(true))
+					elif metadatacopy.justplaced == true:
+						metadatacopy.direction = get_meta(\"metadata\").direction
+						BaseFuncs.MovementHandler(area, get_meta(\"metadata\"))
 					metadatacopy.direction = get_meta(\"metadata\").direction
 					return area.set_meta(\"metadata\", metadatacopy.duplicate(true))
 		if get_meta(\"metadata\").items.slot1.amount == 0:

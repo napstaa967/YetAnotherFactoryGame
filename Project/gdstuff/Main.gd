@@ -150,7 +150,7 @@ func on_due_pay():
 	metcopy.money -= due
 	due = 0 
 	set_meta("metadata", metcopy.duplicate())
-	get_tree().current_scene.get_node("CanvasLayer/Control/Electricity").update()
+	get_tree().current_scene.get_node("CanvasLayer/NinePatchRect/Control/Electricity").update()
 
 func itemtimertimeout():
 	get_tree().current_scene.get_node("ItemMoveTimer").stop()

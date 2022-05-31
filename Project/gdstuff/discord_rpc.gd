@@ -13,12 +13,12 @@ func start_rpc(statestuff, source) -> void:
 		return
 	var activity = Discord.Activity.new()
 	activity.set_type(Discord.ActivityType.Playing)
-	var stuff = "Money: " + statestuff
+	var stuff = statestuff
 	activity.set_state(stuff)
-	activity.set_details(source)
+	activity.set_details(BaseFuncs.globalvar("Release Type") + BaseFuncs.globalvar("ReleaseNumber") + BaseFuncs.globalvar("Branch"))
 	var assets = activity.get_assets()
-	assets.set_large_image("gameicon_v0-2")
-	assets.set_large_text("Playing V -0.2")
+	assets.set_large_image("icon-"+BaseFuncs.globalvar("Branch").to_lower())
+	assets.set_large_text("On " + BaseFuncs.globalvar("ReleaseNumber"))
 	var result = yield(Discord.activity_manager.update_activity(activity), "result").result
 	if result != Discord.Result.Ok:
 		if result == Discord.Result.InternalError:

@@ -1,0 +1,325 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://textures/producer/producer_arrow.png" type="Texture" id=1]
+[ext_resource path="res://textures/conveyor/normal/conveyor.png" type="Texture" id=2]
+[ext_resource path="res://textures/producer/producer_arrow_on.png" type="Texture" id=3]
+
+[sub_resource type="GDScript" id=7]
+resource_local_to_scene = true
+script/source = "extends Area2D
+
+export(Dictionary) var metadata = {
+	\"type\": \"conveyor\",
+	\"direction\": \"down\",
+	\"sell\": 100,
+	\"buy\": 200,
+	\"elec\": 3
+}
+
+func _ready():
+	$ElecTimer.set_wait_time(1)
+	$ElecTimer.start()
+	metadata = get_meta(\"metadata\")
+	set_meta(\"metadata\", metadata)
+	$ProduceTimer.one_shot = true
+	monitoring = true
+	var texturestuff
+	var textureoverrides = {}
+	var file = File.new()
+	match get_meta(\"metadata\").type:
+		\"splitter\":
+			if !file.file_exists(BaseFuncs.moddedload(\"textures/conveyor/splitter/texture_override.json\")):
+				texturestuff = \"textures/conveyor/splitter/splitter.png\"
+				match get_meta(\"metadata\").direction:
+					\"down\":
+						get_node(\"Sprite\").rotation_degrees = 0
+					\"up\":
+						get_node(\"Sprite\").rotation_degrees = 180
+					\"left\":
+						get_node(\"Sprite\").rotation_degrees = 90
+					\"right\":
+						get_node(\"Sprite\").rotation_degrees = 270
+			else:
+				file.open(BaseFuncs.moddedload(\"textures/conveyor/splitter/texture_override.json\"), File.READ)
+		\"trisplitter\":
+			if !file.file_exists(BaseFuncs.moddedload(\"textures/conveyor/trisplitter/texture_override.json\")):
+				texturestuff = \"textures/conveyor/trisplitter/trisplitter.png\"
+				match get_meta(\"metadata\").direction:
+					\"down\":
+						get_node(\"Sprite\").rotation_degrees = 0
+					\"up\":
+						get_node(\"Sprite\").rotation_degrees = 180
+					\"left\":
+						get_node(\"Sprite\").rotation_degrees = 90
+					\"right\":
+						get_node(\"Sprite\").rotation_degrees = 270
+			else:
+				file.open(BaseFuncs.moddedload(\"textures/conveyor/trisplitter/texture_override.json\"), File.READ)
+		\"conveyor\":
+			if !file.file_exists(BaseFuncs.moddedload(\"textures/conveyor/normal/texture_override.json\")):
+				texturestuff = \"textures/conveyor/normal/conveyor.png\"
+				match get_meta(\"metadata\").direction:
+					\"down\":
+						get_node(\"Sprite\").rotation_degrees = 0
+					\"up\":
+						get_node(\"Sprite\").rotation_degrees = 180
+					\"left\":
+						get_node(\"Sprite\").rotation_degrees = 90
+					\"right\":
+						get_node(\"Sprite\").rotation_degrees = 270
+			else:
+				file.open(BaseFuncs.moddedload(\"textures/conveyor/normal/texture_override.json\"), File.READ)
+		\"producer\":
+			if !file.file_exists(BaseFuncs.moddedload(\"textures/producer/texture_override.json\")):
+				texturestuff = \"textures/producer/producer.png\"
+				match get_meta(\"metadata\").direction:
+					\"down\":
+						get_node(\"Sprite\").rotation_degrees = 0
+					\"up\":
+						get_node(\"Sprite\").rotation_degrees = 180
+					\"left\":
+						get_node(\"Sprite\").rotation_degrees = 90
+					\"right\":
+						get_node(\"Sprite\").rotation_degrees = 270
+			else:
+				file.open(BaseFuncs.moddedload(\"textures/producer/texture_override.json\"), File.READ)
+	if file.is_open():
+		textureoverrides = parse_json(file.get_as_text())
+	texturestuff = BaseFuncs.loadoverrides(textureoverrides, get_node(\"Sprite\"), get_meta(\"metadata\"), texturestuff, \"normal\")
+	get_node(\"Sprite\").texture = BaseFuncs.load_texture(texturestuff.tex)
+	get_node(\"Sprite\").texture.set_size_override(Vector2(64,64))
+	get_node(\"Sprite\").texture.set_flags(0)
+	match get_meta(\"metadata\").type:
+		\"producer\":
+			texturestuff = BaseFuncs.loadoverrides(textureoverrides, get_node(\"TextureProgress\"), get_meta(\"metadata\"), texturestuff, \"arrow\")
+			if texturestuff.has(\"unhandled_overrides\") && texturestuff.unhandled_overrides.has(\"arrow\"):
+				var target = get_node(\"TextureProgress\")
+				for i in texturestuff.unhandled_overrides.arrow:
+					var override = texturestuff.unhandled_overrides.arrow[i]
+					if !override.has(\"enable\") || override.enable == true:
+						if i == \"all\" || (i == get_meta(\"metadata\").direction || ((i == \"leftright\" && (get_meta(\"metadata\").direction == \"left\" || get_meta(\"metadata\").direction == \"right\")) || (i == \"updown\" && (get_meta(\"metadata\").direction == \"up\" || get_meta(\"metadata\").direction == \"down\")))):
+							for ii in override:
+								match ii:
+									\"rotation\":
+										if target is TextureProgress:
+											target.rect_pivot_offset = Vector2(target.rect_size.x/2, target.rect_size.y/2)
+											target.rect_rotation = override.rotation
+									\"texture_progress_full\":
+										if File.new().file_exists(BaseFuncs.moddedload(override[ii])):
+											if typeof(texturestuff.tex) != TYPE_DICTIONARY:
+												texturestuff.tex = {}
+											texturestuff.tex.full = override.texture_progress_full
+									\"texture_progress_empty\":
+										if File.new().file_exists(BaseFuncs.moddedload(override[ii])):
+											if typeof(texturestuff.tex) != TYPE_DICTIONARY:
+												texturestuff.tex = {}
+											texturestuff.tex.empty = override.texture_progress_empty
+									\"use_default_rot\":
+										if override[ii]:
+											target.rect_pivot_offset = Vector2(target.rect_size.x/2, target.rect_size.y/2)
+											target.rect_rotation = get_node(\"Sprite\").rotation_degrees
+									\"auto_rotate\":
+										if override.auto_rotate:
+											if target is Sprite:
+												match get_meta(\"metadata\").direction:
+													\"down\":
+														target.rotation_degrees = 0
+													\"left\":
+														target.rotation_degrees = 90
+													\"up\":
+														target.rotation_degrees = 180
+													\"right\":
+														target.rotation_degrees = 270
+											else:
+												target.rect_pivot_offset = Vector2(target.rect_size.x/2, target.rect_size.y/2)
+												match get_meta(\"metadata\").direction:
+													\"down\":
+														target.rect_rotation = 0
+													\"left\":
+														target.rect_rotation = 90
+													\"up\":
+														target.rect_rotation = 180
+													\"right\":
+														target.rect_rotation = 270
+			if typeof(texturestuff.tex) == TYPE_DICTIONARY:
+				if texturestuff.tex.has(\"full\"):
+					get_node(\"TextureProgress\").texture_under = BaseFuncs.load_texture(texturestuff.tex.full)
+				if texturestuff.tex.has(\"empty\"):
+					get_node(\"TextureProgress\").texture_progress = BaseFuncs.load_texture(texturestuff.tex.empty)
+			elif typeof(texturestuff.tex) == TYPE_STRING:
+				get_node(\"TextureProgress\").texture_under = BaseFuncs.load_texture(texturestuff.tex)
+				get_node(\"TextureProgress\").texture_progress = BaseFuncs.load_texture(texturestuff.tex)
+			get_node(\"TextureProgress\").set_size(Vector2(64,64))
+			get_node(\"TextureProgress\").texture_under.set_flags(0)
+			get_node(\"TextureProgress\").texture_progress.set_flags(0)
+		\"splitter\":
+			get_node(\"TextureProgress\").queue_free()
+			if texturestuff.has(\"unhandled_overrides\"):
+				if texturestuff.unhandled_overrides.has(\"normal\"):
+					for i in texturestuff.unhandled_overrides.normal:
+						var override = texturestuff.unhandled_overrides.normal[i]
+						if !override.has(\"enable\") || override.enable == true:
+							if i == \"all\" || i == get_meta(\"metadata\").horientation || ((i == \"top\" && get_meta(\"metadata\").horientation == (\"down_up\" || \"up_left\" || \"up_right\") ) || (i == \"bottom\" && get_meta(\"metadata\").horientation == (\"down_up\" || \"down_left\" || \"down_right\") ) || (i == \"side_left\" && get_meta(\"metadata\").horientation == (\"left_right\" || \"up_left\" || \"down_left\") ) || (i == \"side_right\" && get_meta(\"metadata\").horientation == (\"left_right\" || \"down_right\" || \"up_right\"))):
+								for ii in override:
+									match ii:
+										\"rotation\":
+											if get_node(\"Sprite\") is Sprite:
+												get_node(\"Sprite\").rotation_degrees = override.rotation
+											else:
+												get_node(\"Sprite\").rect_pivot_offset = Vector2(get_node(\"Sprite\").rect_size.x/2, get_node(\"Sprite\").rect_size.y/2)
+												get_node(\"Sprite\").rect_rotation = override.rotation
+										\"path\":
+											if File.new().file_exists(BaseFuncs.moddedload(override.path)):
+												texturestuff.tex = override.path
+										\"flipx\":
+											get_node(\"Sprite\").flip_h = bool(override.flipx)
+										\"flipy\":
+											get_node(\"Sprite\").flip_v = bool(override.flipy)
+			get_node(\"Sprite\").texture = BaseFuncs.load_texture(texturestuff.tex)
+		_:
+			get_node(\"TextureProgress\").queue_free()
+	
+
+func _process(_delta):
+	if get_meta(\"metadata\").placing == true:
+		if get_meta(\"metadata\").type != \"producer\":
+			get_node(\"Sprite\").z_index = 99
+		return
+	if get_meta(\"metadata\").placing == false:
+		match get_meta(\"metadata\").type:
+			\"conveyor\", \"splitter\", \"trisplitter\", \"producer\":
+				var areas = get_overlapping_areas()
+				var itemareas = []
+				for area in areas:
+					if area.is_queued_for_deletion():
+						continue
+					if area.has_meta(\"metadata\") && area.get_meta(\"metadata\").placing == true:
+						continue
+					if area.has_meta(\"metadata\") && area.get_meta(\"metadata\").type != \"remove\":
+						if area.get_meta(\"metadata\").type == \"item\":
+							itemareas.append(area)
+						if area.get_meta(\"metadata\").type != \"item\":
+							if area.position == position:
+								return area.free()
+				for area in itemareas:
+					if area.is_queued_for_deletion():
+						continue
+					if area.has_meta(\"metadata\"):
+						var metadatacopy = area.get_meta(\"metadata\")
+						if (area.position == position || metadatacopy.direction == null) && area.get_child(2).get_overlapping_areas().has(self):
+							match get_meta(\"metadata\").type:
+								\"conveyor\":
+									metadatacopy.direction = get_meta(\"metadata\").direction
+									area.set_meta(\"metadata\", metadatacopy.duplicate(true))
+								\"splitter\":
+									metadata = get_meta(\"metadata\")
+									metadatacopy.direction = metadata.direction
+									area.set_meta(\"metadata\", metadatacopy.duplicate(true))
+									metadata = get_meta(\"metadata\")
+									var thing = metadata.horientation.split(\"_\")
+									if metadata.direction == thing[0]:
+										metadata.direction = thing[1]
+										set_meta(\"metadata\", metadata.duplicate(true))
+									elif metadata.direction == thing[1]:
+										metadata.direction = thing[0]
+										set_meta(\"metadata\", metadata.duplicate(true))
+								\"trisplitter\":
+									metadata = get_meta(\"metadata\")
+									metadatacopy.direction = metadata.direction
+									area.set_meta(\"metadata\", metadatacopy.duplicate(true))
+									metadata = get_meta(\"metadata\")
+									var thing = metadata.horientation.split(\"_\")
+									print(thing)
+									if metadata.direction == thing[0]:
+										metadata.direction = thing[1]
+										set_meta(\"metadata\", metadata.duplicate(true))
+									elif metadata.direction == thing[1]:
+										metadata.direction = thing[2]
+										set_meta(\"metadata\", metadata.duplicate(true))
+									elif metadata.direction == thing[2]:
+										metadata.direction = thing[0]
+										set_meta(\"metadata\", metadata.duplicate(true))
+								\"producer\":
+									metadatacopy.direction = get_meta(\"metadata\").direction
+									area.set_meta(\"metadata\", metadatacopy.duplicate(true))
+							BaseFuncs.MovementHandler(area, get_meta(\"metadata\"))
+				if get_meta(\"metadata\").type == \"producer\":
+					continue
+			\"producer\":
+				$ProduceTimer.set_wait_time(5)
+				if $ProduceTimer.is_stopped() == true:
+					get_node(\"TextureProgress\").value = 5
+					$ProduceTimer.start()
+					var itemmeta = {
+						\"type\": \"item\",
+						\"denom\": \"flush_sit\",
+						\"name\": \"pussyfart\",
+						\"desc\": \"pussy shit\",
+						\"spritepath\": \"textures/items/flushsit.png\",
+						\"direction\": null,
+						\"colliding\": null,
+						\"sell\": 100,
+						\"placing\": false,
+						\"justplaced\": false
+					}
+					var itempos = position
+					get_tree().current_scene.place_item_now(\"res://scene/item.tscn\", itemmeta.duplicate(true), itempos)
+					$ProduceTimer.start()
+				else:
+					get_node(\"TextureProgress\").value = stepify($ProduceTimer.time_left, 0.01)
+
+
+func timeout():
+	$ProduceTimer.stop()
+
+
+func electrical_dew():
+	if !get_meta(\"metadata\").placing:
+		get_tree().current_scene.due += get_meta(\"metadata\").elec
+	$ElecTimer.start()
+"
+
+[sub_resource type="GDScript" id=8]
+script/source = "extends TextureProgress
+"
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 32, 32 )
+
+[node name="test_conveyor" type="Area2D"]
+script = SubResource( 7 )
+metadata = null
+
+[node name="Sprite" type="Sprite" parent="."]
+position = Vector2( 32, 32 )
+texture = ExtResource( 2 )
+region_rect = Rect2( 0, 0, 64, 64 )
+
+[node name="TextureProgress" type="TextureProgress" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_right = 64.0
+margin_bottom = 64.0
+rect_pivot_offset = Vector2( 32, 32 )
+mouse_filter = 2
+input_pass_on_modal_close_click = false
+max_value = 5.0
+step = 0.01
+value = 5.0
+texture_under = ExtResource( 3 )
+texture_progress = ExtResource( 1 )
+fill_mode = 3
+script = SubResource( 8 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 32, 32 )
+shape = SubResource( 1 )
+
+[node name="ProduceTimer" type="Timer" parent="."]
+
+[node name="ElecTimer" type="Timer" parent="."]
+
+[connection signal="timeout" from="ProduceTimer" to="." method="timeout"]
+[connection signal="timeout" from="ElecTimer" to="." method="electrical_dew"]

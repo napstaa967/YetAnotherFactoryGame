@@ -27,7 +27,7 @@ func _ready():
 	textupdate()
 		
 func _pressed():
-	get_tree().current_scene.place_item("res://scene/test_conveyor.tscn", metadata.duplicate())
+	get_tree().current_scene.place_item("res://scene/Conveyor.tscn", metadata.duplicate())
 
 func textupdate():
 	var file = File.new()
@@ -36,6 +36,8 @@ func textupdate():
 		texturestuff = "textures/conveyor/normal/conveyor.png"
 		var texturest = BaseFuncs.load_texture(texturestuff)
 		texturest.set_size_override(Vector2(32, 32))
+		texturest.set_flags(0)
+		set_button_icon(texturest)
 		get_node("TextureRect").rect_pivot_offset = Vector2(texturest.get_size().x/2, texturest.get_size().y/2)
 		match get_meta("metadata").direction:
 			"down":
@@ -55,27 +57,25 @@ func textupdate():
 		var texturest = BaseFuncs.load_texture(texturestuff.tex)
 		texturest.set_size_override(Vector2(32, 32))
 		texturest.set_flags(0)
+		set_button_icon(texturest)
 		get_node("TextureRect").texture = texturest
 		get_node("TextureRect").rect_size = Vector2(32,32)
 
 func gui_input(event):
+	var just_pressed = event.is_pressed() and not event.is_echo()
 	if event is InputEventKey and event.pressed:
 		if Input.is_action_just_pressed("ui_cancel"):
 			get_tree().current_scene.place_item(null, null)
 			release_focus()
 			return
-	if event is InputEventKey and event.pressed and pressed:
-		if Input.is_action_just_pressed("change_item_left"):
-			metadata.direction = "left"
-		if Input.is_action_just_pressed("change_item_right"):
-			metadata.direction = "right"
-		if Input.is_action_just_pressed("change_item_up"):
-			metadata.direction = "up"
-		if Input.is_action_just_pressed("change_item_down"):
-			metadata.direction = "down"
+	if event is InputEventKey and event.pressed:
+		if Input.is_key_pressed(KEY_R) and just_pressed:
+			match metadata.direction:
+				"up": metadata.direction = "right"
+				"right": metadata.direction = "down"
+				"down": metadata.direction = "left"
+				"left": metadata.direction = "up"
 		var temp = BaseFuncs.load_texture("textures/conveyor/normal/{direction}.png".format({ "direction": metadata.direction }))
-		temp.set_size_override(Vector2(32, 32))
-		set_button_icon(temp)
 		textupdate()
+		get_tree().current_scene.place_item("res://scene/Conveyor.tscn", metadata.duplicate())
 		return
-

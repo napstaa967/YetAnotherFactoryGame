@@ -44,7 +44,7 @@ static func load_scene(tree:SceneTree, filename:String) -> int:
 				"item":
 					stff = load("res://scene/item.tscn").instance()
 				"conveyor", "splitter", "trisplitter", "producer":
-					stff = load("res://scene/test_conveyor.tscn").instance()
+					stff = load("res://scene/Conveyor.tscn").instance()
 				"converter":
 					stff = load("res://scene/Machine.tscn").instance()
 				"remove":

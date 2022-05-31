@@ -56,7 +56,7 @@ func _ready():
 	textupdate()
 	
 func _pressed():
-	get_tree().current_scene.place_item(\"res://scene/test_conveyor.tscn\", metadata.duplicate())
+	get_tree().current_scene.place_item(\"res://scene/Conveyor.tscn\", metadata.duplicate())
 
 func textupdate():
 	var file = File.new()

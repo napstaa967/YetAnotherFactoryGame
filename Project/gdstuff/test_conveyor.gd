@@ -32,7 +32,7 @@ func _ready():
 		get_child(0).texture = load("res://" + texturestuff)
 
 
-func _on_test_conveyor_body_entered(_body):
+func _on_Conveyor_body_entered(_body):
 	emit_signal("conveyor_move")
 
 func _process(_delta):
