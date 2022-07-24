@@ -7,14 +7,8 @@ https://github.com/samsface/godot-discord-game-sdk for discord rich presence
 i use a modified version of [this script](https://github.com/iatenine/SimpleSave) for saving/loading
 
 this is a small factory game project that i started
-  
-  
-  
-[Join the discord server if you want](https://discord.gg/RXgf9985FE)
 
-
-current ver is 2022.03.25 | 0.-1  
-indev ver is 2022.06.?? | 0.1
+indev ver is 2022.08.1 | 0.1
 
 ### What Happened?
 
