@@ -6,7 +6,7 @@ export var other := {}
 export var zoom := 1
 export var lang := "en_US"
 
-func save(data) -> void:
+func save(data):
 	for i in data.keys():
 		if i == "lang":
 			lang = data.lang
@@ -15,7 +15,7 @@ func save(data) -> void:
 		else:
 			other[i] = data[i]
 			
-	ResourceSaver.save("user://settings.res", self)
+	return ResourceSaver.save("user://settings.res", self)
 	
 func _load():
 	if ResourceLoader.exists("user://settings.res"):

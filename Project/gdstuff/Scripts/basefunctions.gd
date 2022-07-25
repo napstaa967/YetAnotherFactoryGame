@@ -85,6 +85,7 @@ func _setup_modding():
 					var manifest: Dictionary = json_load("user://mods/" + file_name + "/manifest.json")
 					manifest.icon = "user://mods/" + file_name + "/" + manifest.icon
 					_mod_manifests[manifest.namespace] = manifest
+					_mod_manifests[manifest.namespace].path = "user://mods/" + file_name
 					if manifest.has("init"):
 						if !manifest.init.begins_with("user://"):
 							initscr.append("user://mods/" + file_name + "/" + manifest.init.trim_prefix("./"))

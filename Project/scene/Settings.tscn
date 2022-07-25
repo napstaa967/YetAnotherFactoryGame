@@ -1,4 +1,4 @@
-[gd_scene load_steps=71 format=2]
+[gd_scene load_steps=72 format=2]
 
 [ext_resource path="res://textures/misc/iconic.png" type="Texture" id=1]
 [ext_resource path="res://textures/gui/down_arrow.png" type="Texture" id=2]
@@ -428,7 +428,7 @@ func _ready():
 	BaseFuncs.setup_font(self)
 
 func _process(_delta):
-	rect_position = Vector2(get_parent().rect_size.x - 36 - rect_size.x, get_node(\"../Icon\").rect_position.y)
+	rect_position = Vector2(get_parent().rect_size.x - 16 - rect_size.x, get_node(\"../Icon\").rect_position.y)
 "
 
 [sub_resource type="GDScript" id=52]
@@ -445,6 +445,19 @@ func _ready():
 func _process(_delta):
 	rect_position = Vector2(get_node(\"../Icon\").rect_size.x + 32, get_node(\"../Icon\").rect_position.y + get_node(\"../Title\").rect_size.y + 16)
 	rect_size.x = get_parent().rect_size.x - rect_position.x - get_node(\"../Identifier\").rect_size.x - 16
+"
+
+[sub_resource type="GDScript" id=77]
+script/source = "extends Button
+
+func _ready():
+	BaseFuncs.setup_button(self, \"\", \"\", \"\", Vector2(32, 32), \"\", 0,0,false, Vector2(232,24), false)
+
+func _process(_delta):
+	rect_position = Vector2(get_parent().rect_size.x - 16 - rect_size.x, get_node(\"../Icon\").rect_position.y + 64)
+
+func _pressed():
+	OS.shell_open(ProjectSettings.globalize_path(get_parent().manifest.path))
 "
 
 [sub_resource type="GDScript" id=24]
@@ -740,6 +753,7 @@ all_tabs_in_front = true
 script = SubResource( 13 )
 
 [node name="Main" type="Panel" parent="Title Bar/Window/TabContainer"]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = 39.0
@@ -826,10 +840,9 @@ allow_greater = true
 script = SubResource( 42 )
 
 [node name="Modding" type="Panel" parent="Title Bar/Window/TabContainer"]
-visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_top = 39.0
+margin_top = 40.0
 custom_styles/panel = SubResource( 16 )
 script = SubResource( 23 )
 
@@ -904,9 +917,9 @@ text = "Title"
 script = SubResource( 51 )
 
 [node name="Version" type="Label" parent="Title Bar/Window/TabContainer/Modding/VBoxContainer/ModListHolder/Template"]
-margin_left = 688.0
+margin_left = 616.0
 margin_top = 48.0
-margin_right = 792.0
+margin_right = 848.0
 margin_bottom = 72.0
 text = "v0.0.0"
 align = 1
@@ -914,9 +927,9 @@ valign = 1
 script = SubResource( 56 )
 
 [node name="Identifier" type="Label" parent="Title Bar/Window/TabContainer/Modding/VBoxContainer/ModListHolder/Template"]
-margin_left = 688.0
+margin_left = 616.0
 margin_top = 16.0
-margin_right = 792.0
+margin_right = 848.0
 margin_bottom = 40.0
 text = "identifier"
 align = 1
@@ -931,6 +944,16 @@ margin_bottom = 112.0
 text = "Description
 "
 script = SubResource( 52 )
+
+[node name="Open" type="Button" parent="Title Bar/Window/TabContainer/Modding/VBoxContainer/ModListHolder/Template"]
+margin_left = 616.0
+margin_top = 80.0
+margin_right = 848.0
+margin_bottom = 104.0
+custom_styles/disabled = ExtResource( 4 )
+text = "Open Mod's Folder"
+expand_icon = true
+script = SubResource( 77 )
 
 [node name="TexturePacks" type="Panel" parent="Title Bar/Window/TabContainer"]
 visible = false

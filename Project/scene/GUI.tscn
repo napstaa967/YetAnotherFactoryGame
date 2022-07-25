@@ -277,6 +277,8 @@ func ready():
 						newbutton.name = \"modded\"
 						newbutton.connect(\"gui_input\", newbutton, \"gui_input\")
 						self.add_child(newbutton)
+	if get_child_count() == 0:
+		get_node(\"../..\").queue_free()
 	queue_sort()
 "
 

@@ -52,7 +52,7 @@ script/source = "extends Label
 
 func _ready():
 	BaseFuncs.setup_font(self)
-	text = BaseFuncs.globalvar(\"Release Type\") + BaseFuncs.globalvar(\"ReleaseNumber\") + BaseFuncs.globalvar(\"Branch\")
+	text = BaseFuncs.globalvar(\"Branch\") + \" \" + BaseFuncs.globalvar(\"ReleaseNumber\")
 "
 
 [sub_resource type="GDScript" id=13]

@@ -190,12 +190,11 @@ singletons=[  ]
 
 [global]
 
-Version="2022-07.24"
-ReleaseNumber="0.1_7"
-Branch="Dev"
-Changelogs=PoolStringArray(  )
-"Release Type"="E"
-"Tex Version"=[ "0.1_6", "0.1_7", "0.1" ]
+Version="2022-07.25"
+ReleaseNumber="0.1.1"
+Branch="Release"
+"Release Type"=""
+"Tex Version"=[ "0.1_6", "0.1_7", "0.1", "0.1.1" ]
 
 [logging]
 
