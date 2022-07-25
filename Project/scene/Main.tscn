@@ -170,11 +170,14 @@ func _unhandled_input(event):
 		if event.pressed and event.scancode == KEY_ESCAPE:
 			if scene2:
 				scene2.owner = null
+				scene2.free()
 				scene2 = null
 			if placingscene:
 				placingscene.owner = null
+				placingscene.free()
 				placingscene = null
 			placedata = null
+			BaseFuncs.place_item(null, {}, false, \"\", true)
 
 func on_due_pay():
 	get_tree().current_scene.get_node(\"/root/Main/DueTimer\").start()

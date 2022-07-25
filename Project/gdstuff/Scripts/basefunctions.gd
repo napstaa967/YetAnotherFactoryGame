@@ -203,16 +203,10 @@ func _setup_resourcepacks():
 								tempthing = pretempthing
 							match json_load(ii).type:
 								"builtins:texture":
-									if !textureshit.has(tempthing[0]):
-										textureshit[tempthing[0]] = {}
-									if textureshit[tempthing[0]].has(tempthing[1]):
-										for iii in json_load(ii).states.keys():
-											textureshit[tempthing[0]][tempthing[1]].states[iii] = json_load(ii).states[iii]
-									else:
-										textureshit[tempthing[0]][tempthing[1]] = json_load(ii)
-									for iii in textureshit[tempthing[0]][tempthing[1]].states.keys():
-										if typeof(textureshit[tempthing[0]][tempthing[1]].states[iii]) == TYPE_STRING:
-											var laloc = textureshit[tempthing[0]][tempthing[1]].states[iii]
+									var prev = json_load(ii)
+									for iii in prev.states.keys():
+										if typeof(prev.states[iii]) == TYPE_STRING:
+											var laloc = prev.states[iii]
 											var _src = ii.split("/")[0]
 											if laloc.begins_with("./"):
 												var array = Array(ii.trim_prefix(_src + "//").split("/"))
@@ -221,8 +215,14 @@ func _setup_resourcepacks():
 											elif laloc.begins_with(_src + "//"):
 												laloc = laloc
 											else:
-												laloc = i.path + "/" + textureshit[tempthing[0]][tempthing[1]].states[iii]
-											textureshit[tempthing[0]][tempthing[1]].states[iii] = laloc
+												laloc = i.path + "/" + prev.states[iii]
+											prev.states[iii] = laloc
+									if !textureshit.has(tempthing[0]):
+										textureshit[tempthing[0]] = {}
+									if textureshit[tempthing[0]].has(tempthing[1]):
+										textureshit[tempthing[0]][tempthing[1]].states = dict_merge(textureshit[tempthing[0]][tempthing[1]].states, prev.states, true)
+									else:
+										textureshit[tempthing[0]][tempthing[1]] = prev
 								"builtins:reference", "builtins:resource":
 									if !refs.has(tempthing[0]):
 										refs[tempthing[0]] = {}
@@ -272,14 +272,14 @@ func cur_scene():
 	return get_tree().current_scene
 
 func dict_merge(merging: Dictionary, with: Dictionary, overwrite: bool = false):
-	var final = merging
+	var final = merging.duplicate(true)
 	if with == null:
 		return merging
 	if merging == null:
 		return with
 	
-	for i in with:
-		if !merging.has(i) or (merging.has(i) and overwrite):
+	for i in with.keys():
+		if !merging.keys().has(i) or (merging.keys().has(i) and overwrite):
 			final[i] = with[i]
 	return final.duplicate(true)
 
@@ -597,6 +597,8 @@ func search_for_modtypes(type, sourceroot: String = "mods"):
 
 func set_state(namespace: String, identifier: String, state: String, size = null, flags: int = 0, interp: int = Image.INTERPOLATE_NEAREST):
 	if textureshit[namespace][identifier].states.has(state):
+		if namespace == "categories":
+			print(textureshit[namespace][identifier].states)
 		return load_external_tex(textureshit[namespace][identifier].states[state], textureshit[namespace][identifier].relay, size, flags, interp)
 	else:
 		return load_external_tex(textureshit[namespace][identifier].relay, textureshit[namespace][identifier].relay, size, flags, interp)
