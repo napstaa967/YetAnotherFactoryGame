@@ -1,0 +1,9 @@
+{
+	"type": "builtins:texture",
+	"relay": "./missing.png",
+	"id": "builtins:light",
+	"states": {
+		"on": "./light_on.png",
+		"map": "./light_map.png"
+	}
+}

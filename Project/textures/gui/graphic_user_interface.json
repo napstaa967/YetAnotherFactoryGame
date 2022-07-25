@@ -1,0 +1,26 @@
+{
+	"type": "builtins:texture",
+	"relay": "textures/misc/missing.png",
+	"id": "builtins:graphic_user_interface",
+	"states": {
+		"save_new": "./save_create.png",
+		"save_old": "./save_load.png",
+		"settings": "./settings.png",
+		"electricity": "./electricity.png",
+		"cmove_off": "./camera_locked.png",
+		"cmove_on": "./camera_unlocked.png",
+		"button_on": "./button_pressed.png",
+		"button_off": "./button.png",
+		"button_disabled": "./button_disabled.png",
+		"money": "./currencystuff/currency.png",
+		"money_bg": "./currencystuff/currency_bg.png",
+		"arrow_off": "./inv/machine_arrow_off.png",
+		"arrow_on": "./inv/machine_arrow_on.png",
+		"output": "./inv/machine_inv.png",
+		"input": "./inv/machine_inv_slot.png",
+		"credits": "./credits.png",
+		"placement": "./placement_menu.png",
+		"arrow_down": "./down_arrow.png",
+		"arrow_up": "./up_arrow.png"
+	}
+}

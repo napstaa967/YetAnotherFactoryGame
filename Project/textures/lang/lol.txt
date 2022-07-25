@@ -1,0 +1,3 @@
+each flag is it's correspondent ratio
+
+for example the US flag ratio is 10:19 so it's size matches it's ratio

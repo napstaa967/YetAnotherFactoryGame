@@ -1,29 +1,63 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=24 format=2]
 
-[ext_resource path="res://other/ButtonGuiPressed.tres" type="StyleBox" id=1]
-[ext_resource path="res://other/ButtonGui.tres" type="StyleBox" id=2]
+[ext_resource path="res://other/Button.tres" type="StyleBox" id=2]
 [ext_resource path="res://textures/misc/background2.png" type="Texture" id=3]
-[ext_resource path="res://gdstuff/GUI/Credits.gd" type="Script" id=4]
-[ext_resource path="res://gdstuff/Camera2D.gd" type="Script" id=6]
-[ext_resource path="res://gdstuff/TitleScreen.gd" type="Script" id=8]
 [ext_resource path="res://other/fonts/OpenSans-Italic.ttf" type="DynamicFontData" id=9]
 [ext_resource path="res://other/fonts/OpenSans-Bold.ttf" type="DynamicFontData" id=10]
 [ext_resource path="res://other/fonts/OpenSans-BoldItalic.ttf" type="DynamicFontData" id=11]
 [ext_resource path="res://other/fonts/OpenSans-Regular.ttf" type="DynamicFontData" id=12]
 
+[sub_resource type="GDScript" id=10]
+script/source = "extends Node2D
+var camera
+
+func _ready():
+	match BaseFuncs.cc:
+		false:
+			DiscordRpc.start_rpc(\"Reading Credits\")
+		true:
+			DiscordRpc.start_rpc(\"Reading Changelogs\")
+"
+
 [sub_resource type="GDScript" id=9]
 script/source = "extends Sprite
 
 func _ready():
-	texture = BaseFuncs.load_texture(\"textures/misc/background2.png\")
-	texture.set_flags(Texture.FLAG_REPEAT)
-	scale = Vector2(64/texture.get_size().x, 64/texture.get_size().y)
+	texture = BaseFuncs.set_state(\"builtins\", \"miscellaneous\", \"background\", Vector2(64,64), Texture.FLAG_REPEAT)
 	region_rect.size = Vector2(get_viewport_rect().size.x + 128, get_viewport_rect().size.y + 128)
 	
 func _process(_delta):
 	region_rect.size = Vector2(get_viewport_rect().size.x + 128, get_viewport_rect().size.y + 128)
 	region_rect.position = get_tree().current_scene.camera.position
 	position = get_tree().current_scene.camera.position
+"
+
+[sub_resource type="GDScript" id=13]
+script/source = "extends Sprite
+
+func _ready():
+	texture = BaseFuncs.set_state(\"builtins\", \"miscellaneous\", \"background_alt\", Vector2(64,64), Texture.FLAG_REPEAT)
+	region_rect.size = Vector2(get_viewport_rect().size.x + 128, get_viewport_rect().size.y + 128)
+	
+func _process(_delta):
+	region_rect.size = Vector2(get_viewport_rect().size.x + 128, get_viewport_rect().size.y + 128)
+	region_rect.position = get_tree().current_scene.camera.position
+	position = get_tree().current_scene.camera.position
+"
+
+[sub_resource type="GDScript" id=11]
+script/source = "extends Button
+
+func _ready():
+	BaseFuncs.setup_button(self)
+	BaseFuncs.connect(\"translation_changed\", self, \"lang_updated\")
+	lang_updated(BaseFuncs.cur_lang)
+
+func lang_updated(_locale):
+	text = BaseFuncs.get_translation_key(\"builtins:credits_exit\")
+
+func _pressed():
+	get_tree().change_scene(\"res://scene/TitleScreen.tscn\")
 "
 
 [sub_resource type="StyleBoxFlat" id=2]
@@ -39,6 +73,21 @@ script/source = "extends Panel
 func _process(delta):
 	rect_size = Vector2(get_viewport_rect().size.x - 128, get_viewport_rect().size.y - 128)
 	rect_position = Vector2(64,64)
+	
+func _ready():
+	match BaseFuncs.cc:
+		false:
+			$Credits.visible = true
+			$TabContainer.visible = false
+			var a = StyleBoxFlat.new()
+			a.bg_color = Color8(0,0,0,127)
+			add_stylebox_override(\"Panel\", a)
+		true:
+			$Credits.visible = false
+			$TabContainer.visible = true
+			var a = StyleBoxFlat.new()
+			a.bg_color = Color8(0,0,0,0)
+			add_stylebox_override(\"Panel\", a)
 "
 
 [sub_resource type="DynamicFont" id=3]
@@ -64,11 +113,33 @@ func meta_clicked(meta):
 	OS.shell_open(str(meta))
 
 func _ready():
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"regular\", 24, BaseFuncs.font_type.REGULAR)
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"bold\", 24, BaseFuncs.font_type.BOLD)
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"italics\", 24, BaseFuncs.font_type.ITALICS)
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"bolditalics\", 24, BaseFuncs.font_type.BOLDITALICS)
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"mono\", 24, BaseFuncs.font_type.MONO)
 	match BaseFuncs.cc:
 		false:
-			bbcode_text = \"[b]Art:[/b] RenSert\\n[b]Coding:[/b] RenSert\\n[b]Testing:[/b] RenSert\\n\\n[b]Special Thanks[/b]\\n[url=https://andromeda-coders.ru/]Andromeda Coders[/url] for making their game [url=https://play.google.com/store/apps/details?id=com.andromeda.factory&hl=en&gl=US]Factory Simulator[/url], the inspiration for this game.\"
+			bbcode_text = \"\"\"[b]Art:[/b] RenSert
+[b]Coding:[/b] RenSert
+[b]Testing:[/b] RenSert
+
+[b]Special Thanks[/b]
+- [url=https://andromeda-coders.ru/]Andromeda Coders[/url] for making their game [url=https://play.google.com/store/apps/details?id=com.andromeda.factory&hl=en&gl=US]Factory Simulator[/url], the inspiration for this game.
+- Roblox [url=https://www.roblox.com/groups/10634825/Gaming-Glove-Studios#!/about]Gaming Glove Studio[/url]'s [url=https://www.roblox.com/games/6769764667/SPRING-2X-Factory-Simulator]Factory Simulator[/url] for also inspiring me into making this\"\"\"
 		true:
 			bbcode_text = \"[b]Changelogs[/b]\\n\\n\"
+			for i in BaseFuncs.globalvar(\"Changelogs\"):
+				bbcode_text += i.replace(\"\\\\n\", \"\\n\") + \"\\n\\n\"
+	BaseFuncs.connect(\"translation_changed\", self, \"lang_updated\")
+	lang_updated(BaseFuncs.cur_lang)
+
+func lang_updated(_locale):
+	match BaseFuncs.cc:
+		false:
+			bbcode_text = BaseFuncs.get_translation_key(\"builtins:credits_text\")
+		true:
+			bbcode_text = BaseFuncs.get_translation_key(\"builtins:changelogs_text\") + \"\\n\\n\"
 			for i in BaseFuncs.globalvar(\"Changelogs\"):
 				bbcode_text += i.replace(\"\\\\n\", \"\\n\") + \"\\n\\n\"
 			
@@ -76,21 +147,98 @@ func _process(delta):
 	rect_size = get_parent().rect_size
 "
 
+[sub_resource type="StyleBoxFlat" id=14]
+content_margin_left = 16.0
+content_margin_right = 16.0
+content_margin_top = 8.0
+content_margin_bottom = 8.0
+bg_color = Color( 0, 0, 0, 0.498039 )
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+
+[sub_resource type="StyleBoxFlat" id=15]
+content_margin_left = 16.0
+content_margin_right = 16.0
+content_margin_top = 8.0
+content_margin_bottom = 8.0
+bg_color = Color( 0, 0, 0, 0.74902 )
+
+[sub_resource type="StyleBoxFlat" id=16]
+bg_color = Color( 0, 0, 0, 0.498039 )
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="GDScript" id=17]
+script/source = "extends TabContainer
+
+func _process(_delta):
+	rect_size = get_parent().rect_size
+	rect_position = Vector2.ZERO
+
+func _ready():
+	BaseFuncs.setup_font(self)
+	for i in BaseFuncs.changelogs.keys():
+		var new = get_node(\"../Template\").duplicate()
+		add_child(new)
+		new.data = BaseFuncs.changelogs[i]
+		new.ready()
+"
+
+[sub_resource type="GDScript" id=18]
+resource_local_to_scene = true
+script/source = "extends RichTextLabel
+
+var data: Dictionary
+
+func meta_clicked(meta):
+	OS.shell_open(str(meta))
+
+func ready():
+	BaseFuncs.connect(\"translation_changed\", self, \"lang_updated\")
+	lang_updated(BaseFuncs.cur_lang)
+
+func _ready():
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"regular\", 24, BaseFuncs.font_type.REGULAR)
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"bold\", 24, BaseFuncs.font_type.BOLD)
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"italics\", 24, BaseFuncs.font_type.ITALICS)
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"bolditalics\", 24, BaseFuncs.font_type.BOLDITALICS)
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"mono\", 24, BaseFuncs.font_type.MONO)
+
+func lang_updated(_locale):
+	bbcode_text = \"\"
+	for i in data.content:
+		bbcode_text += BaseFuncs.get_translation_key(i) + \"\\n\\n\"
+	get_parent().set_tab_title(get_index(), BaseFuncs.get_translation_key(data.name_translation_key))
+"
+
+[sub_resource type="GDScript" id=12]
+script/source = "extends Camera2D
+
+func _ready():
+	make_current()
+	get_tree().current_scene.camera = self
+"
+
 [node name="Node2D" type="Node2D"]
-script = ExtResource( 8 )
+script = SubResource( 10 )
 
-[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
-scroll_ignore_camera_zoom = true
+[node name="CanvasModulate" type="CanvasModulate" parent="."]
 
-[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
-
-[node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer"]
+[node name="Background" type="Sprite" parent="."]
 texture = ExtResource( 3 )
 centered = false
 region_enabled = true
 region_rect = Rect2( 0, 0, 64, 64 )
 region_filter_clip = true
 script = SubResource( 9 )
+
+[node name="Background2" type="Sprite" parent="."]
+texture = ExtResource( 3 )
+centered = false
+region_enabled = true
+region_rect = Rect2( 0, 0, 64, 64 )
+region_filter_clip = true
+script = SubResource( 13 )
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -101,11 +249,11 @@ margin_left = -64.0
 margin_bottom = 64.0
 rect_min_size = Vector2( 64, 64 )
 custom_styles/hover = ExtResource( 2 )
-custom_styles/pressed = ExtResource( 1 )
+custom_styles/pressed = ExtResource( 2 )
 custom_styles/normal = ExtResource( 2 )
 text = "Exit"
 expand_icon = true
-script = ExtResource( 4 )
+script = SubResource( 11 )
 
 [node name="Panel" type="Panel" parent="CanvasLayer"]
 anchor_left = 0.5
@@ -119,9 +267,10 @@ margin_bottom = 236.0
 custom_styles/panel = SubResource( 2 )
 script = SubResource( 8 )
 
-[node name="RichTextLabel" type="RichTextLabel" parent="CanvasLayer/Panel"]
-margin_right = 896.0
-margin_bottom = 472.0
+[node name="Credits" type="RichTextLabel" parent="CanvasLayer/Panel"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
 rect_min_size = Vector2( 896, 472 )
 custom_fonts/bold_italics_font = SubResource( 3 )
 custom_fonts/italics_font = SubResource( 4 )
@@ -133,19 +282,66 @@ bbcode_text = "[b]Art:[/b] RenSert
 [b]Testing:[/b] RenSert
 
 [b]Special Thanks[/b]
-[url=https://andromeda-coders.ru/]Andromeda Coders[/url] for making their game [url=https://play.google.com/store/apps/details?id=com.andromeda.factory&hl=en&gl=US]Factory Simulator[/url], the inspiration for this game."
+- [url=https://andromeda-coders.ru/]Andromeda Coders[/url] for making their game [url=https://play.google.com/store/apps/details?id=com.andromeda.factory&hl=en&gl=US]Factory Simulator[/url], the inspiration for this game.
+- Roblox [url=https://www.roblox.com/groups/10634825/Gaming-Glove-Studios#!/about]Gaming Glove Studio[/url]'s [url=https://www.roblox.com/games/6769764667/SPRING-2X-Factory-Simulator]Factory Simulator[/url] for also inspiring me into making this"
 text = "Art: RenSert
 Coding: RenSert
 Testing: RenSert
 
 Special Thanks
-Andromeda Coders for making their game Factory Simulator, the inspiration for this game."
+- Andromeda Coders for making their game Factory Simulator, the inspiration for this game.
+- Roblox Gaming Glove Studio's Factory Simulator for also inspiring me into making this"
 script = SubResource( 7 )
+
+[node name="TabContainer" type="TabContainer" parent="CanvasLayer/Panel"]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -448.0
+margin_top = -236.0
+margin_right = 448.0
+margin_bottom = 236.0
+custom_styles/tab_fg = SubResource( 14 )
+custom_styles/tab_bg = SubResource( 15 )
+custom_styles/panel = SubResource( 16 )
+tab_align = 0
+script = SubResource( 17 )
+
+[node name="Template" type="RichTextLabel" parent="CanvasLayer/Panel"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 30.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_fonts/bold_italics_font = SubResource( 3 )
+custom_fonts/italics_font = SubResource( 4 )
+custom_fonts/bold_font = SubResource( 5 )
+custom_fonts/normal_font = SubResource( 6 )
+bbcode_enabled = true
+bbcode_text = "[b]Art:[/b] RenSert
+[b]Coding:[/b] RenSert
+[b]Testing:[/b] RenSert
+
+[b]Special Thanks[/b]
+- [url=https://andromeda-coders.ru/]Andromeda Coders[/url] for making their game [url=https://play.google.com/store/apps/details?id=com.andromeda.factory&hl=en&gl=US]Factory Simulator[/url], the inspiration for this game.
+- Roblox [url=https://www.roblox.com/groups/10634825/Gaming-Glove-Studios#!/about]Gaming Glove Studio[/url]'s [url=https://www.roblox.com/games/6769764667/SPRING-2X-Factory-Simulator]Factory Simulator[/url] for also inspiring me into making this"
+text = "Art: RenSert
+Coding: RenSert
+Testing: RenSert
+
+Special Thanks
+- Andromeda Coders for making their game Factory Simulator, the inspiration for this game.
+- Roblox Gaming Glove Studio's Factory Simulator for also inspiring me into making this"
+script = SubResource( 18 )
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2( -1024, 0 )
 anchor_mode = 0
 current = true
-script = ExtResource( 6 )
+script = SubResource( 12 )
 
-[connection signal="meta_clicked" from="CanvasLayer/Panel/RichTextLabel" to="CanvasLayer/Panel/RichTextLabel" method="meta_clicked"]
+[connection signal="meta_clicked" from="CanvasLayer/Panel/Credits" to="CanvasLayer/Panel/Credits" method="meta_clicked"]
+[connection signal="meta_clicked" from="CanvasLayer/Panel/Template" to="CanvasLayer/Panel/Template" method="meta_clicked"]

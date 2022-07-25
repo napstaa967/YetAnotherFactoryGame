@@ -1,0 +1,12 @@
+{
+	"type": "builtins:reference",
+	"id": "builtins:fonts",
+	"states": {
+		"default": "./fonts/OpenSans-Regular.ttf",
+		"regular": "./fonts/OpenSans-Regular.ttf",
+		"bold": "./fonts/OpenSans-Bold.ttf",
+		"italics": "./fonts/OpenSans-Italic.ttf",
+		"bolditalics": "./fonts/OpenSans-BoldItalic.ttf",
+		"mono": "./fonts/SpaceMono-Regular.ttf"
+	}
+}

@@ -1,0 +1,13 @@
+{
+	"type": "builtins:texture",
+	"relay": "./missing.png",
+	"id": "builtins:miscellaneous",
+	"states": {
+		"background": "./background.png",
+		"background_alt": "./background2.png",
+		"icon-Dev": "./icon-Dev.png",
+		"icon-Nightly": "./icon-Nightly.png",
+		"icon-Release": "./icon-Release.png",
+		"missing": "./im stuff.jpg"
+	}
+}

@@ -1,0 +1,63 @@
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://scripts/translation_template.gd" type="Script" id=1]
+
+[resource]
+script = ExtResource( 1 )
+type = "builtins:translation"
+lang_id = "en_US"
+keys = {
+	"name": "English (US)",
+	"icon": "textures/lang/en_US.png",
+	"builtins:ts_load_game_button": "Load Save",
+	"builtins:ts_load_game_dialog_title": "Load Save",
+	"builtins:ts_save_game_button": "Create Save",
+	"builtins:ts_save_game_dialog_title": "Create Save",
+	"builtins:ts_settings": "Settings",
+	"builtins:ts_credits": "Credits",
+	"builtins:ts_changelogs": "Changelogs",
+	"builtins:ts_made_by": "Made by [url=https://twitter.com/RenderRenderRen]Ettu[/url]",
+	"builtins:ts_mod_singular": "{n} Mod Loaded",
+	"builtins:ts_mod_plural": "{n} Mods Loaded",
+	"builtins:ts_namespace_singular": "{n} Namespace",
+	"builtins:ts_namespace_plural": "{n} Namespaces",
+	"builtins:ts_resources_singular": "{n} Resource",
+	"builtins:ts_resources_plural": "{n} Resources",
+	"builtins:credits_exit": "Exit",
+	"builtins:credits_text": "[b]Art:[/b] RenSert
+[b]Coding:[/b] RenSert
+[b]Testing:[/b] RenSert
+
+[b]Special Thanks[/b]
+- [url=https://andromeda-coders.ru/]Andromeda Coders[/url] for making their game [url=https://play.google.com/store/apps/details?id=com.andromeda.factory&hl=en&gl=US]Factory Simulator[/url], the inspiration for this game.
+- Roblox [url=https://www.roblox.com/groups/10634825/Gaming-Glove-Studios#!/about]Gaming Glove Studio[/url]'s [url=https://www.roblox.com/games/6769764667/SPRING-2X-Factory-Simulator]Factory Simulator[/url] for also inspiring me into making this",
+	"builtins:changelogs_text": "Changelogs",
+	"builtins:placement_menu_title": "Tile Selector",
+	"builtins:placement_menu_place": "Place",
+	"builtins:placement_menu_ingameid": "[b]In-Game ID[/b]: {id}",
+	"builtins:placement_menu_namespace": "[b]Namespace[/b]: {ns}",
+	"builtins:placement_menu_cost": "[b]Cost[/b]: {cost}",
+	"builtins:placement_menu_sell": "[b]Sell[/b]: {sell}",
+	"builtins:placement_menu_elec_cost": "[b]Electrical Cost[/b]: [b]{cost}[/b] every second",
+	"builtins:placement_menu_elec_cost_plural": "[b]Electrical Cost[/b]: [b]{cost}[/b] every [b]{time}[/b] seconds",
+	"builtins:placement_menu_tsize": "[b]Tile Size[/b]: {x} by {y}",
+	"builtins:placement_menu_desc": "[b]Description[/b]: {desc}",
+	"builtins:placement_menu_no_tile": "[center]No Tile Selected.[/center]",
+	"builtins:placement_gui_pos": "Position",
+	"builtins:placement_gui_type": "Type",
+	"builtins:placement_gui_type_movable": "Movable",
+	"builtins:placement_gui_type_overlapping": "Top-Most",
+	"builtins:placement_gui_type_transparent": "Floor",
+	"builtins:placement_gui_type_solid": "Solid",
+	"builtins:settings_title": "Settings",
+	"builtins:settings_main_tab": "Main",
+	"builtins:settings_modding_tab": "Modding",
+	"builtins:settings_modding_tab_open_folder": "Open Mods Folder",
+	"builtins:settings_resources_tab": "Resource Packs",
+	"builtins:settings_resources_tab_open_folder": "Open ResourcePack Folder",
+	"builtins:settings_resources_tab_open_res_folder": "Open Pack's Folder",
+	"builtins:settings_main_tab_language_text": "Language",
+	"builtins:settings_main_tab_zoom_text": "Zoom",
+	"builtins:settings_modding_tab_modlist_text": "Mods Loaded",
+	"builtins:settings_resources_tab_resourcelist_text": "ResourcePacks Loaded"
+}

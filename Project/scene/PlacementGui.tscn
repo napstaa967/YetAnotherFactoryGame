@@ -1,7 +1,89 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://other/fonts/OpenSans-Regular.ttf" type="DynamicFontData" id=1]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.0666667, 0.0666667, 0.0666667, 0.486275 )
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+corner_detail = 20
+
+[sub_resource type="GDScript" id=5]
+script/source = "extends Panel
+
+
+func _process(_delta):
+	if get_tree().current_scene.placingscene:
+		visible = true
+	else:
+		visible = false
+"
+
+[sub_resource type="DynamicFont" id=2]
+font_data = ExtResource( 1 )
+
+[sub_resource type="GDScript" id=6]
+script/source = "extends Label
+
+func _ready():
+	print(\"begin\")
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"bold\")
+	print(\"done\")
+	BaseFuncs.connect(\"translation_changed\", self, \"lang_updated\")
+	lang_updated(BaseFuncs.cur_lang)
+
+func lang_updated(_locale):
+	text = BaseFuncs.get_translation_key(\"builtins:placement_gui_pos\")
+"
+
+[sub_resource type="GDScript" id=3]
+resource_local_to_scene = true
+script/source = "extends Label
+
+func _ready():
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"regular\")
+
+func _process(_delta):
+	if BaseFuncs.cur_scene().placingscene:
+		text =  str((BaseFuncs.cur_scene().placingscene.position/64).ceil())
+"
+
+[sub_resource type="GDScript" id=7]
+script/source = "extends Label
+
+
+func _ready():
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"bold\")
+	BaseFuncs.connect(\"translation_changed\", self, \"lang_updated\")
+	lang_updated(BaseFuncs.cur_lang)
+
+func lang_updated(_locale):
+	text = BaseFuncs.get_translation_key(\"builtins:placement_gui_type\")
+"
+
+[sub_resource type="GDScript" id=4]
+resource_local_to_scene = true
+script/source = "extends Label
+
+func _ready():
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"regular\")
+
+func _process(_delta):
+	if get_tree().current_scene.placingscene:
+		var _text: String
+		match get_tree().current_scene.placingscene.type:
+			Tile.TILE_MOVABLE:
+				_text = BaseFuncs.get_translation_key(\"builtins:placement_gui_type_movable\")
+			Tile.TILE_OVERLAPPING:
+				_text = BaseFuncs.get_translation_key(\"builtins:placement_gui_type_overlapping\")
+			Tile.TILE_TRANSPARENT:
+				_text = BaseFuncs.get_translation_key(\"builtins:placement_gui_type_transparent\")
+			Tile.TILE_SOLID:
+				_text = BaseFuncs.get_translation_key(\"builtins:placement_gui_type_solid\")
+		text = _text
+"
 
 [node name="PlacementGui" type="Control"]
 anchor_right = 1.0
@@ -11,16 +93,44 @@ anchor_bottom = 1.0
 margin_right = 256.0
 margin_bottom = 192.0
 custom_styles/panel = SubResource( 1 )
+script = SubResource( 5 )
 
 [node name="Pos" type="Label" parent="Panel"]
-margin_right = 192.0
-margin_bottom = 32.0
-text = "Position | 0,0"
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 128.0
+margin_bottom = 40.0
+custom_fonts/font = SubResource( 2 )
+text = "Position"
 valign = 1
+script = SubResource( 6 )
+
+[node name="Pos2" type="Label" parent="Panel/Pos"]
+margin_left = 120.0
+margin_right = 240.0
+margin_bottom = 32.0
+custom_fonts/font = SubResource( 2 )
+text = "Position"
+align = 2
+valign = 1
+script = SubResource( 3 )
 
 [node name="Label" type="Label" parent="Panel"]
-margin_top = 32.0
-margin_right = 192.0
-margin_bottom = 64.0
-text = "Placing | name"
+margin_left = 8.0
+margin_top = 40.0
+margin_right = 128.0
+margin_bottom = 72.0
+custom_fonts/font = SubResource( 2 )
+text = "Type"
 valign = 1
+script = SubResource( 7 )
+
+[node name="Label2" type="Label" parent="Panel/Label"]
+margin_left = 120.0
+margin_right = 240.0
+margin_bottom = 32.0
+custom_fonts/font = SubResource( 2 )
+text = "Placing"
+align = 2
+valign = 1
+script = SubResource( 4 )

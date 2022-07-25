@@ -1,0 +1,121 @@
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://scripts/translation_template.gd" type="Script" id=1]
+
+[resource]
+script = ExtResource( 1 )
+type = "builtins:translation"
+lang_id = "es_MX"
+keys = {
+	"changelogs:builtins:main_changelogs": "Principal",
+	"builtins:changelogs_0.1": "[b]Version 0.1 (Release 2022-07.24):[/b]
+
+[b]Changes[/b]
+- Finished TextureStates function
+- New title screen icons
+- Discord Presence now shows if you're on titlescreen
+- Conveyor, Producer, Splitter and Trisplitter now use TextureStates
+- Conveyor is now modded in, as well as it's button
+- Placement buttons have been moved into an inventory window
+- Window border uses Panel instead of NinePatchRect
+- Conveyor now runs on a script independent from the Producer, Splitter and Trisplitter
+- Camera instances no longer share the same script
+- Conveyor's button uses a new function to load sprite
+- Buttons are now 64x64 instead of 32x32
+- Main GUI Rework
+- Font overrides are automatically added to all nodes which support so
+- Scan path is now the root path and not /textures
+- './' now references the current folder instead of root, start with no prefix to reference root
+- Fixed the placement and mod loading functions a bit
+- User folder is now on 'Ettu-Rensert/YetAnotherFactoryGame' instead of 'Godot/app-userdata/Yet Another Factory Game'
+- Missing folders and files are created by default
+- Using BigInts for handling numbers biggen than 2^1023
+- Fixed resource pack hierarchy loading
+- Placement info now shows the correct position
+- Camera movement is now done with arrow keys
+
+[b]Additions[/b]
+- TexturePack versions
+- TexturePack loader v2
+- Setup_Button function
+- Index.json
+- The game now shows the current position and type of the item that is being placed
+- 'mods' folder
+- Modding Capabilities (will be explained further in version 0.1 release)
+- New functions on basefuncs
+- Resources can be modded in now
+- New fonts
+- All Scenes use a canvas modulate
+- Item Categories
+- Language Settings
+- You can now change the zoom on settings
+- You can now change resourcepack hierarchy
+
+[b]Removals[/b]
+- TexturePacksv1 support
+- Unused Scene files",
+	"builtins:changelogs_0.-1": "[b]Version 0.-1 (Unstable 2022-03.25):[/b]
+	
+Changes:
+-added support for texture overrides (experimental)
+-changed textures for remover
+-the path of sellers has been changed to textures/machinery
+-the producer's textures are now in textures/producer instead of textures/producer/normal
+-the conveyor, producer and converter now use one single sprite instead of 4 separate ones",
+	"builtins:changelogs_0.0": "[b]Version 0.0 (Unstable 2022-03.14):[/b]
+	
+Changes
+-Discord RPC fixed
+-Title Screen
+-Texture Packs can now be selected
+-Fixed shared inventory machines
+-Save and Load buttons on start
+-Machines now have visible inventories (right click), limit being 2 items @ 99
+-Use ninepatchrect instead of texturerect for outline
+-YAFG logo added to title screen
+-New button textures
+-Added smooth placing animation",
+	"builtins:changelogs_-0.1": "[b]Version -0.1(Unstable 2022-03.09):[/b]
+	
+changes:
+-texture pack support has been added
+-settings now works
+-global settings file added
+-new tiles
+-added the concept of electrical bills",
+	"builtins:changelogs_-0.2": "[b]Version -0.2(Unstable 2022-03.07):[/b]
+	
+changes:
+-added money
+-discord rpc support
+-readded seller
+-fixed items sliding to next conveyors
+-hitbox is now 2 pixels smaller
+-saving/loading partially updates conveyors",
+	"builtins:changelogs_-0.3": "[b]Version -0.3(Unstable 2022-03.06):[/b]
+	
+changes:
+-added a placeholder-for-now settings icon
+-added a save and load function
+-you can no longer go to negative coordinates
+-three-way splitters have been added
+-different two-way splitters have been added",
+	"builtins:changelogs_-0.3.9": "[b]Version -0.3.9(Unstable 2022-03.04):[/b]
+	
+changes:
+-background
+-camera can move
+-outline around the camera so you can see where to place your mouse to move
+-camera lock
+-new textures
+-items properly fall in holes",
+	"builtins:changelogs_-0.4": "[b]Version -0.4(Unstable 2022-03.03):[/b]
+	
+changes:
+-fixed split conveyors not moving properly (.duplicate())
+-remover tool texture updated
+-added persistent remover tool (press space to switch it)
+-executable is now YAFG.exe by default
+-added icon
+-fixed game crashing because of nonexistant texture in remover"
+}

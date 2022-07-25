@@ -1,0 +1,62 @@
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://scripts/translation_template.gd" type="Script" id=1]
+
+[resource]
+script = ExtResource( 1 )
+type = "builtins:translation"
+lang_id = "es_MX"
+keys = {
+	"name": "Español (MX)",
+	"builtins:ts_load_game_button": "Cargar Juego",
+	"builtins:ts_load_game_dialog_title": "Cargar Juego",
+	"builtins:ts_save_game_button": "Crear Juego",
+	"builtins:ts_save_game_dialog_title": "Crear Juego",
+	"builtins:ts_settings": "Configuración",
+	"builtins:ts_credits": "Creditos",
+	"builtins:ts_changelogs": "Cambios",
+	"builtins:ts_made_by": "Hecho por [url=https://twitter.com/RenderRenderRen]Ettu[/url]",
+	"builtins:ts_mod_singular": "{n} Mod Cargado",
+	"builtins:ts_mod_plural": "{n} Mods Cargados",
+	"builtins:ts_namespace_singular": "{n} Nombre",
+	"builtins:ts_namespace_plural": "{n} Nombres",
+	"builtins:ts_resources_singular": "{n} Recurso",
+	"builtins:ts_resources_plural": "{n} Recursos",
+	"builtins:credits_exit": "Salir",
+	"builtins:credits_text": "[b]Arte:[/b] Rensert
+[b]Codigo:[/b] Rensert
+[b]Pruebas:[/b] Rensert
+
+[b]Agradecimientos Especiales[/b]
+- [url=https://andromeda-coders.ru/]Andromeda Coders[/url] por su juego [url=https://play.google.com/store/apps/details?id=com.andromeda.factory&hl=en&gl=US]Factory Simulator[/url], la inspiracion de este juego.
+- Roblox [url=https://www.roblox.com/groups/10634825/Gaming-Glove-Studios#!/about]Gaming Glove Studio[/url]'s [url=https://www.roblox.com/games/6769764667/SPRING-2X-Factory-Simulator]Factory Simulator[/url] por also inspirarme a hacer esto",
+	"builtins:changelogs_text": "Cambios",
+	"builtins:placement_menu_title": "Seleccionar Objeto",
+	"builtins:placement_menu_place": "Poner",
+	"builtins:placement_menu_ingameid": "[b]IID[/b]: {id}",
+	"builtins:placement_menu_namespace": "[b]Mod[/b]: {ns}",
+	"builtins:placement_menu_cost": "[b]Costo[/b]: {cost}",
+	"builtins:placement_menu_sell": "[b]Vende[/b]: {sell}",
+	"builtins:placement_menu_elec_cost": "[b]Costo Electrico[/b]: [b]{cost}[/b] cada segundo",
+	"builtins:placement_menu_elec_cost_plural": "[b]Costo Electrico[/b]: [b]{cost}[/b] cada [b]{time}[/b] segundos",
+	"builtins:placement_menu_tsize": "[b]Tamaño[/b]: {x} by {y}",
+	"builtins:placement_menu_desc": "[b]Descripción[/b]: {desc}",
+	"builtins:placement_menu_no_tile": "[center]No Hay Objeto Seleccionado.[/center]",
+	"builtins:placement_gui_pos": "Posicion",
+	"builtins:placement_gui_type": "Tipo",
+	"builtins:placement_gui_type_movable": "Movil",
+	"builtins:placement_gui_type_overlapping": "Techo",
+	"builtins:placement_gui_type_transparent": "Piso",
+	"builtins:placement_gui_type_solid": "Solido",
+	"builtins:settings_title": "Configuracion",
+	"builtins:settings_main_tab": "Principal",
+	"builtins:settings_modding_tab": "Modding",
+	"builtins:settings_modding_tab_open_folder": "Abrir Carpeta de Mods",
+	"builtins:settings_resources_tab": "Paquetes de Recursos",
+	"builtins:settings_resources_tab_open_folder": "Abrir Carpeta de Recursos",
+	"builtins:settings_resources_tab_open_res_folder": "Abrir Carpeta del Paquete",
+	"builtins:settings_main_tab_language_text": "Lenguaje",
+	"builtins:settings_main_tab_zoom_text": "Zoom",
+	"builtins:settings_modding_tab_modlist_text": "Mods Cargados",
+	"builtins:settings_resources_tab_resourcelist_text": "Paquetes de Recursos Cargados"
+}

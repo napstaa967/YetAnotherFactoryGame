@@ -1,0 +1,7 @@
+{
+	"type": "builtins:reference",
+	"id": "builtins:styleboxes",
+	"states": {
+		"button": "./Button.tres"
+	}
+}

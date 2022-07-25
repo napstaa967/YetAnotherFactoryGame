@@ -1,13 +1,68 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=18 format=2]
 
-[ext_resource path="res://gdstuff/lock.gd" type="Script" id=1]
+[ext_resource path="res://textures/gui/placement_menu.png" type="Texture" id=1]
 [ext_resource path="res://textures/gui/camera_unlocked.png" type="Texture" id=2]
-[ext_resource path="res://gdstuff/settings.gd" type="Script" id=3]
 [ext_resource path="res://textures/gui/settings.png" type="Texture" id=4]
-[ext_resource path="res://other/ButtonGui.tres" type="StyleBox" id=5]
-[ext_resource path="res://other/ButtonGuiPressed.tres" type="StyleBox" id=6]
+[ext_resource path="res://other/Button.tres" type="StyleBox" id=5]
+
+[sub_resource type="StyleBoxFlat" id=12]
+bg_color = Color( 0, 0, 0, 0.501961 )
+
+[sub_resource type="GDScript" id=13]
+script/source = "extends Panel
+
+func _process(_delta):
+	rect_size.x = get_viewport_rect().size.x - 32
+"
+
+[sub_resource type="GDScript" id=14]
+script/source = "extends Button
+
+func _ready():
+	BaseFuncs.setup_button(self, \"builtins\", \"graphic_user_interface\", \"placement\")
+
+func _pressed():
+	get_tree().current_scene.get_node(\"CanvasLayer/Panel/GUI\").visible = !get_tree().current_scene.get_node(\"CanvasLayer/Panel/GUI\").visible
+"
+
+[sub_resource type="GDScript" id=11]
+script/source = "extends Button
+
+func _ready():
+	var tex = \"cmove_off\"
+	if !BaseFuncs.camlock:
+		tex = \"cmove_on\"
+	else:
+		tex = \"cmove_off\"
+	BaseFuncs.setup_button(self, \"builtins\", \"graphic_user_interface\", tex, Vector2(32,32), \"\", 0, 0, false, Vector2(96,96))
+	if rect_size.x != rect_size.y:
+		var greatest = BaseFuncs.vector2_greatest(rect_size)
+		rect_min_size.x = greatest
+		rect_min_size.y = greatest
+		rect_size.x = greatest
+		rect_size.y = greatest
+	
+func _pressed():
+	BaseFuncs.camlock = !BaseFuncs.camlock
+	var tex = \"cmove_off\"
+	if !BaseFuncs.camlock:
+		tex = \"cmove_on\"
+	else:
+		tex = \"cmove_off\"
+	BaseFuncs.setup_button(self, \"builtins\", \"graphic_user_interface\", tex, Vector2(32,32), \"\", 0, 0, false, Vector2(96,96))
+"
 
 [sub_resource type="Theme" id=1]
+
+[sub_resource type="GDScript" id=10]
+script/source = "extends Button
+
+func _ready():
+	BaseFuncs.setup_button(self, \"builtins\", \"graphic_user_interface\", \"settings\")
+
+func _pressed():
+	get_tree().current_scene.get_node(\"CanvasLayer\").add_child(load(\"res://scene/Settings.tscn\").instance())
+"
 
 [sub_resource type="Theme" id=5]
 
@@ -15,26 +70,17 @@
 flags = 4
 load_path = "res://.import/save_load.png-3c1f552c6dd837435184ed30aae29a6c.stex"
 
-[sub_resource type="GDScript" id=7]
-resource_local_to_scene = true
+[sub_resource type="GDScript" id=9]
 script/source = "extends Button
 
 func _ready():
-	var styleboxnew = get_stylebox(\"normal\")
-	styleboxnew.texture = BaseFuncs.load_texture(\"textures/gui/button.png\")
-	styleboxnew.texture.set_flags(0)
-	add_stylebox_override(\"normal\" ,styleboxnew)
-	var temp = BaseFuncs.load_texture(\"textures/gui/save_{name}.png\".format({\"name\": self.name}))
-	temp.set_size_override(Vector2(64, 64))
-	set_button_icon(temp)
-	icon.set_flags(0)
-		
+	BaseFuncs.setup_button(self, \"builtins\", \"graphic_user_interface\", \"save_old\")
+
 func _pressed():
-	get_child(0).popup()
+	get_node(\"FileDialog\").popup()
 	
 func file_selected(path):
-	get_tree().current_scene.load_game(path)
-	return
+	BaseFuncs.load_game(path)
 "
 
 [sub_resource type="Theme" id=2]
@@ -43,89 +89,114 @@ func file_selected(path):
 flags = 4
 load_path = "res://.import/save_create.png-ae144c43bf6900b7c216667f3b3cd58c.stex"
 
-[sub_resource type="GDScript" id=4]
-resource_local_to_scene = true
+[sub_resource type="GDScript" id=8]
 script/source = "extends Button
 
 func _ready():
-	var styleboxnew = get_stylebox(\"normal\")
-	styleboxnew.texture = BaseFuncs.load_texture(\"textures/gui/button.png\")
-	styleboxnew.texture.set_flags(0)
-	add_stylebox_override(\"normal\" ,styleboxnew)
-	var temp = BaseFuncs.load_texture(\"textures/gui/save_{name}.png\".format({\"name\": self.name}))
-	temp.set_size_override(Vector2(64, 64))
-	set_button_icon(temp)
-	icon.set_flags(0)
-		
-func _pressed():
-	get_child(0).popup()
+	BaseFuncs.setup_button(self, \"builtins\", \"graphic_user_interface\", \"save_new\")
 
+func _pressed():
+	for i in BaseFuncs.savescr:
+		var _script = load(i).new()
+		if _script.has_method(\"runonce\"):
+			_script.runonce()
+	get_node(\"FileDialog\").popup()
+	
 func file_selected(path):
-	get_tree().current_scene.save_game(path)
+	BaseFuncs.save_game(path)
 	return
 "
 
-[node name="Control" type="Control"]
+[sub_resource type="GDScript" id=15]
+script/source = "extends Label
 
-[node name="GUI" type="MarginContainer" parent="."]
-margin_right = 396.0
-margin_bottom = 96.0
+func _process(_delta):
+	text = \"FPS: \" + str(Engine.get_frames_per_second())
+"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="GUI"]
-margin_right = 396.0
-margin_bottom = 96.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="Panel" type="Panel"]
+margin_right = 40.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 0, 64 )
+custom_styles/panel = SubResource( 12 )
+script = SubResource( 13 )
 
-[node name="Lock" type="Button" parent="GUI/HBoxContainer"]
-margin_right = 96.0
-margin_bottom = 96.0
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -134.0
+margin_top = -32.0
+margin_right = 134.0
+margin_bottom = 32.0
+rect_min_size = Vector2( 0, 64 )
+
+[node name="Place" type="Button" parent="HBoxContainer"]
+margin_right = 64.0
+margin_bottom = 64.0
+rect_min_size = Vector2( 64, 64 )
 rect_pivot_offset = Vector2( -72, -120 )
 custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
 custom_colors/font_color_focus = Color( 0, 0, 0, 1 )
 custom_styles/hover = ExtResource( 5 )
-custom_styles/pressed = ExtResource( 6 )
+custom_styles/disabled = ExtResource( 5 )
+custom_styles/normal = ExtResource( 5 )
+icon = ExtResource( 1 )
+expand_icon = true
+script = SubResource( 14 )
+
+[node name="Lock" type="Button" parent="HBoxContainer"]
+margin_left = 68.0
+margin_right = 132.0
+margin_bottom = 64.0
+rect_min_size = Vector2( 64, 64 )
+rect_pivot_offset = Vector2( -72, -120 )
+custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
+custom_colors/font_color_focus = Color( 0, 0, 0, 1 )
+custom_styles/hover = ExtResource( 5 )
 custom_styles/disabled = ExtResource( 5 )
 custom_styles/normal = ExtResource( 5 )
 icon = ExtResource( 2 )
-script = ExtResource( 1 )
+expand_icon = true
+script = SubResource( 11 )
 
-[node name="Settings" type="Button" parent="GUI/HBoxContainer"]
-margin_left = 100.0
-margin_right = 196.0
-margin_bottom = 96.0
+[node name="Settings" type="Button" parent="HBoxContainer"]
+margin_left = 136.0
+margin_right = 200.0
+margin_bottom = 64.0
+rect_min_size = Vector2( 64, 64 )
 rect_pivot_offset = Vector2( -72, -120 )
 theme = SubResource( 1 )
 custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
 custom_colors/font_color_focus = Color( 0, 0, 0, 1 )
 custom_styles/hover = ExtResource( 5 )
-custom_styles/pressed = ExtResource( 6 )
 custom_styles/disabled = ExtResource( 5 )
 custom_styles/normal = ExtResource( 5 )
 icon = ExtResource( 4 )
-script = ExtResource( 3 )
+expand_icon = true
+script = SubResource( 10 )
 
-[node name="load" type="Button" parent="GUI/HBoxContainer"]
-margin_left = 200.0
-margin_right = 296.0
-margin_bottom = 96.0
+[node name="load" type="Button" parent="HBoxContainer"]
+margin_left = 204.0
+margin_right = 268.0
+margin_bottom = 64.0
+rect_min_size = Vector2( 64, 64 )
 rect_pivot_offset = Vector2( -72, -120 )
 theme = SubResource( 5 )
 custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
 custom_colors/font_color_focus = Color( 0, 0, 0, 1 )
 custom_styles/hover = ExtResource( 5 )
-custom_styles/pressed = ExtResource( 6 )
 custom_styles/disabled = ExtResource( 5 )
 custom_styles/normal = ExtResource( 5 )
 icon = SubResource( 6 )
-script = SubResource( 7 )
+expand_icon = true
+script = SubResource( 9 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="FileDialog" type="FileDialog" parent="GUI/HBoxContainer/load"]
-visible = true
+[node name="FileDialog" type="FileDialog" parent="HBoxContainer/load"]
 anchor_left = 4.66667
 anchor_top = 1.875
 anchor_right = 4.66667
@@ -137,34 +208,34 @@ window_title = "Open a File"
 resizable = true
 mode = 0
 access = 1
-filters = PoolStringArray( "*.tscn ; Godot Text Scene" )
+filters = PoolStringArray( "*.tres ; Resource" )
 current_dir = "user://saves"
-current_file = "NewGame.tscn"
-current_path = "user://saves/NewGame.tscn"
+current_file = "saves"
+current_path = "user://saves/saves"
 __meta__ = {
 "_edit_use_anchors_": true
 }
 
-[node name="create" type="Button" parent="GUI/HBoxContainer"]
-margin_left = 300.0
-margin_right = 396.0
-margin_bottom = 96.0
+[node name="create" type="Button" parent="HBoxContainer"]
+margin_left = 272.0
+margin_right = 336.0
+margin_bottom = 64.0
+rect_min_size = Vector2( 64, 64 )
 rect_pivot_offset = Vector2( -72, -120 )
 theme = SubResource( 2 )
 custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
 custom_colors/font_color_focus = Color( 0, 0, 0, 1 )
 custom_styles/hover = ExtResource( 5 )
-custom_styles/pressed = ExtResource( 6 )
 custom_styles/disabled = ExtResource( 5 )
 custom_styles/normal = ExtResource( 5 )
 icon = SubResource( 3 )
-script = SubResource( 4 )
+expand_icon = true
+script = SubResource( 8 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="FileDialog" type="FileDialog" parent="GUI/HBoxContainer/create"]
-visible = true
+[node name="FileDialog" type="FileDialog" parent="HBoxContainer/create"]
 margin_left = 316.0
 margin_top = 116.0
 margin_right = 1076.0
@@ -172,11 +243,18 @@ margin_bottom = 514.0
 window_title = "Create Save"
 resizable = true
 access = 1
-filters = PoolStringArray( "*.tscn ; Godot Text Scene" )
+filters = PoolStringArray( "*.tres ; Resource" )
 show_hidden_files = true
 current_dir = "user://saves"
-current_file = "NewGame.tscn"
-current_path = "user://saves/NewGame.tscn"
+current_file = "saves"
+current_path = "user://saves/saves"
 
-[connection signal="file_selected" from="GUI/HBoxContainer/load/FileDialog" to="GUI/HBoxContainer/load" method="file_selected"]
-[connection signal="file_selected" from="GUI/HBoxContainer/create/FileDialog" to="GUI/HBoxContainer/create" method="file_selected"]
+[node name="Label" type="Label" parent="HBoxContainer"]
+margin_left = 340.0
+margin_right = 340.0
+margin_bottom = 64.0
+size_flags_vertical = 5
+script = SubResource( 15 )
+
+[connection signal="file_selected" from="HBoxContainer/load/FileDialog" to="HBoxContainer/load" method="file_selected"]
+[connection signal="file_selected" from="HBoxContainer/create/FileDialog" to="HBoxContainer/create" method="file_selected"]

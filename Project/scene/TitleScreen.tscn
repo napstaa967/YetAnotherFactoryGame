@@ -1,35 +1,26 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=30 format=2]
 
-[ext_resource path="res://textures/misc/gamelogo.png" type="Texture" id=1]
-[ext_resource path="res://gdstuff/TitleScreen.gd" type="Script" id=2]
-[ext_resource path="res://gdstuff/TitleLogo.gd" type="Script" id=3]
-[ext_resource path="res://gdstuff/LoadGame.gd" type="Script" id=4]
-[ext_resource path="res://gdstuff/NewGame.gd" type="Script" id=5]
-[ext_resource path="res://gdstuff/LoadSettingsMenu.gd" type="Script" id=6]
+[ext_resource path="res://textures/misc/icon-Release.png" type="Texture" id=1]
+[ext_resource path="res://other/fonts/OpenSans-Regular.ttf" type="DynamicFontData" id=2]
+[ext_resource path="res://TitleScreen.tres" type="StyleBox" id=3]
 [ext_resource path="res://textures/misc/background.png" type="Texture" id=8]
-[ext_resource path="res://gdstuff/Camera2D.gd" type="Script" id=9]
-[ext_resource path="res://gdstuff/titlemenusidebar.gd" type="Script" id=10]
 [ext_resource path="res://textures/gui/settings.png" type="Texture" id=12]
 [ext_resource path="res://textures/gui/save_load.png" type="Texture" id=13]
 [ext_resource path="res://textures/gui/save_create.png" type="Texture" id=14]
-[ext_resource path="res://other/ButtonGuiPressed.tres" type="StyleBox" id=15]
-[ext_resource path="res://other/ButtonGui.tres" type="StyleBox" id=16]
+[ext_resource path="res://other/Button.tres" type="StyleBox" id=16]
 [ext_resource path="res://textures/gui/credits.png" type="Texture" id=17]
-[ext_resource path="res://gdstuff/GUI/CreditsButton.gd" type="Script" id=18]
 
-[sub_resource type="GDScript" id=3]
-script/source = "extends Sprite
+[sub_resource type="GDScript" id=4]
+script/source = "extends Node2D
+var camera
 
 func _ready():
-	texture = BaseFuncs.load_texture(\"textures/misc/background2.png\")
-	texture.set_flags(Texture.FLAG_REPEAT)
-	scale = Vector2(64/texture.get_size().x, 64/texture.get_size().y)
-	region_rect.size = Vector2(get_viewport_rect().size.x + 128, get_viewport_rect().size.y + 128)
-	
-func _process(_delta):
-	region_rect.size = Vector2(get_viewport_rect().size.x + 128, get_viewport_rect().size.y + 128)
-	region_rect.position = get_tree().current_scene.camera.position
-	position = get_tree().current_scene.camera.position
+	print(OS.get_user_data_dir())
+	for i in BaseFuncs.initscr:
+		var _script = load(i).new()
+		if _script.has_method(\"runonce\"):
+			_script.runonce()
+	DiscordRpc.start_rpc(\"On Title Screen\")
 "
 
 [sub_resource type="StyleBoxFlat" id=2]
@@ -39,28 +30,254 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
+[sub_resource type="GDScript" id=10]
+script/source = "extends Panel
+	
+func _process(_delta):
+	set_size(Vector2(384, get_viewport_rect().size.y))
+"
+
+[sub_resource type="GDScript" id=11]
+script/source = "extends TextureRect
+
+func _ready():
+	texture = BaseFuncs.set_state(\"builtins\", \"miscellaneous\", \"icon-\" + BaseFuncs.globalvar(\"Branch\"), Vector2(288, 144), 0)
+"
+
+[sub_resource type="DynamicFont" id=5]
+font_data = ExtResource( 2 )
+
 [sub_resource type="GDScript" id=1]
 script/source = "extends Label
 
 func _ready():
+	BaseFuncs.setup_font(self)
 	text = BaseFuncs.globalvar(\"Release Type\") + BaseFuncs.globalvar(\"ReleaseNumber\") + BaseFuncs.globalvar(\"Branch\")
 "
 
+[sub_resource type="GDScript" id=13]
+script/source = "extends Button
+
+func _ready():
+	BaseFuncs.setup_button(self, \"builtins\", \"graphic_user_interface\", \"save_old\")
+	BaseFuncs.connect(\"translation_changed\", self, \"lang_updated\")
+	lang_updated(BaseFuncs.cur_lang)
+	
+func _pressed():
+	get_node(\"FileDialog\").popup()
+	
+func file_selected(path):
+	BaseFuncs.load_game(path)
+
+func lang_updated(_locale):
+	text = BaseFuncs.get_translation_key(\"builtins:ts_load_game_button\")
+"
+
+[sub_resource type="Theme" id=6]
+
+[sub_resource type="GDScript" id=20]
+script/source = "extends FileDialog
+
+func _ready():
+	BaseFuncs.connect(\"translation_changed\", self, \"lang_updated\")
+	lang_updated(BaseFuncs.cur_lang)
+	
+func lang_updated(_locale):
+	window_title = BaseFuncs.get_translation_key(\"builtins:ts_load_game_dialog_title\")
+"
+
+[sub_resource type="GDScript" id=14]
+script/source = "extends Button
+
+func _ready():
+	BaseFuncs.setup_button(self, \"builtins\", \"graphic_user_interface\", \"save_new\")
+	BaseFuncs.connect(\"translation_changed\", self, \"lang_updated\")
+	lang_updated(BaseFuncs.cur_lang)
+	
+func _pressed():
+	for i in BaseFuncs.savescr:
+		var _script = load(i).new()
+		if _script.has_method(\"runonce\"):
+			_script.runonce()
+	return get_tree().change_scene(\"res://scene/Main.tscn\")
+	
+func lang_updated(_locale):
+	text = BaseFuncs.get_translation_key(\"builtins:ts_save_game_button\")
+"
+
+[sub_resource type="GDScript" id=21]
+script/source = "extends FileDialog
+
+func _ready():
+	BaseFuncs.connect(\"translation_changed\", self, \"lang_updated\")
+	lang_updated(BaseFuncs.cur_lang)
+
+func lang_updated(_locale):
+	window_title = BaseFuncs.get_translation_key(\"builtins:ts_save_game_dialog_title\")
+"
+
+[sub_resource type="GDScript" id=12]
+script/source = "extends Button
+
+func _ready():
+	BaseFuncs.setup_button(self, \"builtins\", \"graphic_user_interface\", \"settings\")
+	BaseFuncs.connect(\"translation_changed\", self, \"lang_updated\")
+	lang_updated(BaseFuncs.cur_lang)
+	
+func _pressed():
+	get_tree().current_scene.get_node(\"CanvasLayer\").add_child(load(\"res://scene/Settings.tscn\").instance())
+
+func lang_updated(_locale):
+	text = BaseFuncs.get_translation_key(\"builtins:ts_settings\")
+"
+
+[sub_resource type="GDScript" id=15]
+script/source = "extends Button
+
+func _ready():
+	BaseFuncs.setup_button(self, \"builtins\", \"graphic_user_interface\", \"credits\")
+	BaseFuncs.connect(\"translation_changed\", self, \"lang_updated\")
+	lang_updated(BaseFuncs.cur_lang)
+	
+func lang_updated(_locale):
+	text = BaseFuncs.get_translation_key(\"builtins:ts_credits\")
+	
+func _pressed():
+	BaseFuncs.cc = false
+	return get_tree().change_scene(\"res://scene/Credits.tscn\")
+"
+
+[sub_resource type="GDScript" id=16]
+script/source = "extends Button
+
+func _ready():
+	BaseFuncs.setup_button(self, \"builtins\", \"graphic_user_interface\", \"credits\")
+	BaseFuncs.connect(\"translation_changed\", self, \"lang_updated\")
+	lang_updated(BaseFuncs.cur_lang)
+	
+func lang_updated(_locale):
+	text = BaseFuncs.get_translation_key(\"builtins:ts_changelogs\")
+	
+func _pressed():
+	BaseFuncs.cc = true
+	return get_tree().change_scene(\"res://scene/Credits.tscn\")
+"
+
+[sub_resource type="GDScript" id=9]
+script/source = "extends RichTextLabel
+
+func _ready():
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"default\", 14)
+	BaseFuncs.connect(\"translation_changed\", self, \"lang_updated\")
+	lang_updated(BaseFuncs.cur_lang)
+	
+func lang_updated(_locale):
+	bbcode_text = BaseFuncs.get_translation_key(\"builtins:ts_made_by\")
+	
+func meta_clicked(meta):
+	print(meta)
+	return OS.shell_open(str(meta))
+	
+func _process(_delta):
+	rect_size.x = get_parent().rect_size.x - 32
+	rect_position.x = 16
+"
+
+[sub_resource type="GDScript" id=19]
+script/source = "extends RichTextLabel
+
+func _ready():
+	BaseFuncs.setup_font(self)
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"bold\", 16, BaseFuncs.font_type.BOLD)
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"italics\", 16, BaseFuncs.font_type.ITALICS)
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"bolditalics\", 16, BaseFuncs.font_type.BOLDITALICS)
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"mono\", 16, BaseFuncs.font_type.MONO)
+	var msg: String
+	var ostime = OS.get_time()
+	if ostime.hour >= 17 and ostime.hour <= 20:
+		msg = \"Evening\"
+	else:
+		msg = \"Hello\"
+	var has_env = OS.has_environment(\"USERNAME\")
+	print(has_env)
+	if has_env:
+		var env = OS.get_environment(\"USERNAME\")
+		print(env)
+		msg += \", \" + env
+	else:
+		msg = \"seems as though there's no username on your account\"
+	bbcode_text = msg
+	
+func meta_clicked(meta):
+	return OS.shell_open(str(meta))
+	
+func _process(_delta):
+	rect_size = get_font(\"normal_font\").get_string_size(text)
+	get_parent().rect_size = rect_size + Vector2(32,24)
+	rect_position = get_parent().rect_position + Vector2(16,12)
+"
+
+[sub_resource type="GDScript" id=8]
+script/source = "extends Label
+
+
+func _ready():
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"default\", 16)
+	
+func _process(_delta):
+	var a: int = 0
+	for i in BaseFuncs.mod_objs.keys():
+		a += 1
+	var _str = [\"\", \"\", \"\"]
+	if BaseFuncs.modcount == 1: _str[0] = BaseFuncs.get_translation_key(\"builtins:ts_mod_singular\")
+	else: _str[0] = BaseFuncs.get_translation_key(\"builtins:ts_mod_plural\")
+	if a == 1: _str[1] = BaseFuncs.get_translation_key(\"builtins:ts_namespace_singular\")
+	else: _str[1] = BaseFuncs.get_translation_key(\"builtins:ts_namespace_plural\")
+	if BaseFuncs.rescount == 1: _str[2] = BaseFuncs.get_translation_key(\"builtins:ts_resources_singular\")
+	else: _str[2] = BaseFuncs.get_translation_key(\"builtins:ts_resources_plural\")
+	text = _str[0].format({\"n\": BaseFuncs.modcount}) + \"\\n\" + _str[1].format({\"n\": a}) + \"\\n\" + _str[2].format({\"n\": BaseFuncs.rescount})
+	get_parent().rect_size = rect_size + Vector2(32,32)
+	get_parent().rect_position.x = 0
+	get_parent().rect_position.y = get_viewport_rect().size.y - get_parent().rect_size.y
+"
+
+[sub_resource type="GDScript" id=17]
+script/source = "extends Camera2D
+
+func _ready():
+	zoom = Vector2(BaseFuncs.load_settings().zoom, BaseFuncs.load_settings().zoom)
+	make_current()
+	get_tree().current_scene.camera = self
+"
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends Sprite
+
+func _ready():
+	texture = BaseFuncs.set_state(\"builtins\", \"miscellaneous\", \"background\", Vector2(64,64), Texture.FLAG_REPEAT)
+	region_rect.size = Vector2(get_viewport_rect().size.x + 128, get_viewport_rect().size.y + 128)
+	
+func _process(_delta):
+	region_rect.size = Vector2(get_viewport_rect().size.x * get_node(\"../Camera2D\").zoom.x + 128, get_viewport_rect().size.y * get_node(\"../Camera2D\").zoom.y + 128)
+	region_rect.position = get_tree().current_scene.camera.position
+	position = get_tree().current_scene.camera.position
+"
+
+[sub_resource type="GDScript" id=18]
+script/source = "extends Sprite
+
+func _ready():
+	texture = BaseFuncs.set_state(\"builtins\", \"miscellaneous\", \"background_alt\", Vector2(64,64), Texture.FLAG_REPEAT)
+	region_rect.size = Vector2(get_viewport_rect().size.x + 128, get_viewport_rect().size.y + 128)
+	
+func _process(_delta):
+	region_rect.size = Vector2(get_viewport_rect().size.x * get_node(\"../Camera2D\").zoom.x + 128, get_viewport_rect().size.y * get_node(\"../Camera2D\").zoom.y + 128)
+	region_rect.position = get_tree().current_scene.camera.position
+	position = get_tree().current_scene.camera.position
+"
+
 [node name="TitleScreen" type="Node2D"]
-script = ExtResource( 2 )
-
-[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
-scroll_ignore_camera_zoom = true
-
-[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
-
-[node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer"]
-texture = ExtResource( 8 )
-centered = false
-region_enabled = true
-region_rect = Rect2( 0, 0, 64, 64 )
-region_filter_clip = true
-script = SubResource( 3 )
+script = SubResource( 4 )
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -69,8 +286,10 @@ anchor_left = 1.0
 anchor_right = 1.0
 margin_left = -384.0
 margin_bottom = 600.0
+rect_pivot_offset = Vector2( 0, 42 )
+mouse_filter = 1
 custom_styles/panel = SubResource( 2 )
-script = ExtResource( 10 )
+script = SubResource( 10 )
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Panel"]
 anchor_left = 0.5
@@ -86,12 +305,13 @@ margin_bottom = 144.0
 rect_min_size = Vector2( 288, 144 )
 texture = ExtResource( 1 )
 stretch_mode = 1
-script = ExtResource( 3 )
+script = SubResource( 11 )
 
 [node name="Label" type="Label" parent="CanvasLayer/Panel/VBoxContainer"]
 margin_top = 148.0
 margin_right = 288.0
-margin_bottom = 162.0
+margin_bottom = 171.0
+custom_fonts/font = SubResource( 5 )
 text = "0"
 script = SubResource( 1 )
 
@@ -108,43 +328,51 @@ margin_right = 144.0
 margin_right = 288.0
 margin_bottom = 56.0
 rect_min_size = Vector2( 288, 56 )
+focus_mode = 0
+custom_fonts/font = SubResource( 5 )
 custom_styles/hover = ExtResource( 16 )
-custom_styles/pressed = ExtResource( 15 )
+custom_styles/pressed = ExtResource( 3 )
 custom_styles/normal = ExtResource( 16 )
+enabled_focus_mode = 0
 text = "Load Game"
 icon = ExtResource( 13 )
 expand_icon = true
-script = ExtResource( 4 )
+script = SubResource( 13 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="FileDialog" type="FileDialog" parent="CanvasLayer/Panel/VBoxContainer2/Load Game"]
-margin_right = 595.0
-margin_bottom = 352.0
+margin_left = -128.0
+margin_top = -248.0
+margin_right = 467.0
+margin_bottom = 104.0
+theme = SubResource( 6 )
 window_title = "Open a File"
 resizable = true
 mode = 0
 access = 1
-filters = PoolStringArray( "*.tscn ; Godot Text Scene" )
-current_dir = "user://"
-current_path = "user://"
-__meta__ = {
-"_edit_use_anchors_": false
-}
+filters = PoolStringArray( "*.tres ; Resource" )
+current_dir = "user://saves"
+current_file = "saves"
+current_path = "user://saves/saves"
+script = SubResource( 20 )
 
 [node name="New Game" type="Button" parent="CanvasLayer/Panel/VBoxContainer2"]
 margin_top = 60.0
 margin_right = 288.0
 margin_bottom = 116.0
 rect_min_size = Vector2( 288, 56 )
+focus_mode = 0
+custom_fonts/font = SubResource( 5 )
 custom_styles/hover = ExtResource( 16 )
-custom_styles/pressed = ExtResource( 15 )
+custom_styles/pressed = ExtResource( 3 )
 custom_styles/normal = ExtResource( 16 )
+enabled_focus_mode = 0
 text = "New Game"
 icon = ExtResource( 14 )
 expand_icon = true
-script = ExtResource( 5 )
+script = SubResource( 14 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -155,9 +383,11 @@ margin_bottom = 228.0
 window_title = "Create New Save"
 resizable = true
 access = 1
-filters = PoolStringArray( "*.tscn ; Godot Text Scene" )
-current_dir = "user://"
-current_path = "user://"
+filters = PoolStringArray( "*.tres ; Resource" )
+current_dir = "user://saves"
+current_file = "saves"
+current_path = "user://saves/saves"
+script = SubResource( 21 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -167,13 +397,16 @@ margin_top = 120.0
 margin_right = 288.0
 margin_bottom = 176.0
 rect_min_size = Vector2( 288, 56 )
+focus_mode = 0
+custom_fonts/font = SubResource( 5 )
 custom_styles/hover = ExtResource( 16 )
-custom_styles/pressed = ExtResource( 15 )
+custom_styles/pressed = ExtResource( 3 )
 custom_styles/normal = ExtResource( 16 )
+enabled_focus_mode = 0
 text = "Settings"
 icon = ExtResource( 12 )
 expand_icon = true
-script = ExtResource( 6 )
+script = SubResource( 12 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -183,13 +416,16 @@ margin_top = 180.0
 margin_right = 288.0
 margin_bottom = 236.0
 rect_min_size = Vector2( 288, 56 )
+focus_mode = 0
+custom_fonts/font = SubResource( 5 )
 custom_styles/hover = ExtResource( 16 )
-custom_styles/pressed = ExtResource( 15 )
+custom_styles/pressed = ExtResource( 3 )
 custom_styles/normal = ExtResource( 16 )
+enabled_focus_mode = 0
 text = "Credits"
 icon = ExtResource( 17 )
 expand_icon = true
-script = ExtResource( 18 )
+script = SubResource( 15 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -199,22 +435,114 @@ margin_top = 240.0
 margin_right = 288.0
 margin_bottom = 296.0
 rect_min_size = Vector2( 288, 56 )
+focus_mode = 0
+custom_fonts/font = SubResource( 5 )
 custom_styles/hover = ExtResource( 16 )
-custom_styles/pressed = ExtResource( 15 )
+custom_styles/pressed = ExtResource( 3 )
 custom_styles/normal = ExtResource( 16 )
+enabled_focus_mode = 0
 text = "Changelog"
 icon = ExtResource( 17 )
 expand_icon = true
-script = ExtResource( 18 )
+script = SubResource( 16 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="RichTextLabel" type="RichTextLabel" parent="CanvasLayer/Panel"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -368.0
+margin_top = -32.0
+margin_right = -16.0
+margin_bottom = -16.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+bbcode_enabled = true
+bbcode_text = "Made by [url=https://twitter.com/RenderRenderRen]Ettu[/url]"
+text = "Made by Ettu"
+scroll_active = false
+script = SubResource( 9 )
+
+[node name="Message" type="Panel" parent="CanvasLayer"]
+visible = false
+margin_right = 384.0
+margin_bottom = 32.0
+rect_pivot_offset = Vector2( 0, 42 )
+mouse_filter = 1
+custom_styles/panel = SubResource( 2 )
+
+[node name="RichTextLabel" type="RichTextLabel" parent="CanvasLayer/Message"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -44.0
+margin_top = -8.0
+margin_right = 44.0
+margin_bottom = 8.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+bbcode_enabled = true
+bbcode_text = "Made by [url=https://twitter.com/RenderRenderRen]Ettu[/url]"
+text = "Made by Ettu"
+scroll_active = false
+script = SubResource( 19 )
+
+[node name="ModAmount" type="Panel" parent="CanvasLayer"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_top = -96.0
+margin_right = 264.0
+rect_pivot_offset = Vector2( 0, 42 )
+mouse_filter = 1
+custom_styles/panel = SubResource( 2 )
+
+[node name="Label" type="Label" parent="CanvasLayer/ModAmount"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -116.0
+margin_top = -32.0
+margin_right = 116.0
+margin_bottom = 32.0
+text = "0 Mods Loaded
+0 Namespaces
+0 Resources"
+align = 1
+valign = 1
+script = SubResource( 8 )
+
+[node name="CanvasModulate" type="CanvasModulate" parent="."]
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2( -1024, 0 )
 anchor_mode = 0
 current = true
-script = ExtResource( 9 )
+script = SubResource( 17 )
+
+[node name="Background" type="Sprite" parent="."]
+z_index = -9
+texture = ExtResource( 8 )
+centered = false
+region_enabled = true
+region_rect = Rect2( 0, 0, 64, 64 )
+region_filter_clip = true
+script = SubResource( 3 )
+
+[node name="Background2" type="Sprite" parent="."]
+z_index = -10
+texture = ExtResource( 8 )
+centered = false
+region_enabled = true
+region_rect = Rect2( 0, 0, 64, 64 )
+region_filter_clip = true
+script = SubResource( 18 )
 
 [connection signal="file_selected" from="CanvasLayer/Panel/VBoxContainer2/Load Game/FileDialog" to="CanvasLayer/Panel/VBoxContainer2/Load Game" method="file_selected"]
 [connection signal="file_selected" from="CanvasLayer/Panel/VBoxContainer2/New Game/FileDialog" to="CanvasLayer/Panel/VBoxContainer2/New Game" method="file_selected"]
+[connection signal="meta_clicked" from="CanvasLayer/Panel/RichTextLabel" to="CanvasLayer/Panel/RichTextLabel" method="meta_clicked"]
+[connection signal="meta_clicked" from="CanvasLayer/Message/RichTextLabel" to="CanvasLayer/Message/RichTextLabel" method="meta_clicked"]

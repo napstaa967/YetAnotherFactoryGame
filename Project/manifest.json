@@ -1,0 +1,8 @@
+{
+	"version_min": "0.1_7",
+	"version": "0.0",
+	"name": "Builtins",
+	"description": "The [b]true[/b] builtin textures",
+	"namespace": "builtins",
+	"icon": "./icon.png"
+}

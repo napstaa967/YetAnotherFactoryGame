@@ -1,0 +1,18 @@
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://scripts/translation_template.gd" type="Script" id=1]
+
+[resource]
+script = ExtResource( 1 )
+type = "builtins:translation"
+lang_id = "default_DEFAULT"
+keys = {
+	"changelogs:builtins:main_changelogs": "main_changelogs",
+	"builtins:changelogs_0.1": "changelogs_ver_0_point_1",
+	"builtins:changelogs_0.-1": "changelogs_ver_0_point_negative_1",
+	"builtins:changelogs_-0.1": "changelogs_ver_negative_0_point_1",
+	"builtins:changelogs_-0.2": "changelogs_ver_negative_0_point_2",
+	"builtins:changelogs_-0.3": "changelogs_ver_negative_0_point_3",
+	"builtins:changelogs_-0.3.9": "changelogs_ver_negative_0_point_3_point_9",
+	"builtins:changelogs_-0.4": "changelogs_ver_negative_0_point_4"
+}

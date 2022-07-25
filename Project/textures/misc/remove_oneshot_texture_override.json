@@ -1,9 +1,0 @@
-{
-	"default_texture": "textures/misc/remove_oneshot.png",
-	"default_texture_direction": "none",
-	"icon_overrides": {
-		"all": {
-			"use_default_icon": true
-		}
-	}
-}

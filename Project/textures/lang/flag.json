@@ -1,0 +1,9 @@
+{
+	"type": "builtins:texture",
+	"relay": "textures/lang/default_DEFAULT.png",
+	"id": "builtins:flag",
+	"states": {
+		"en_US": "./en_US.png",
+		"es_MX": "./es_MX.png"
+	}
+}

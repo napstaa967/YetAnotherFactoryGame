@@ -1,111 +1,1099 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=71 format=2]
 
-[ext_resource path="res://gdstuff/GUI/settingsexit.gd" type="Script" id=1]
-[ext_resource path="res://gdstuff/GUI/Settingsloadtexturepack.gd" type="Script" id=2]
-[ext_resource path="res://gdstuff/GUI/settingstextureapply.gd" type="Script" id=3]
-[ext_resource path="res://gdstuff/GUI/texturefieldupdate.gd" type="Script" id=4]
-[ext_resource path="res://gdstuff/GUI/settingsreset.gd" type="Script" id=5]
-[ext_resource path="res://other/ButtonGuiPressed.tres" type="StyleBox" id=6]
-[ext_resource path="res://other/ButtonGui.tres" type="StyleBox" id=7]
+[ext_resource path="res://textures/misc/iconic.png" type="Texture" id=1]
+[ext_resource path="res://textures/gui/down_arrow.png" type="Texture" id=2]
+[ext_resource path="res://textures/gui/up_arrow.png" type="Texture" id=3]
+[ext_resource path="res://other/Button.tres" type="StyleBox" id=4]
+[ext_resource path="res://other/fonts/OpenSans-Regular.ttf" type="DynamicFontData" id=6]
+
+[sub_resource type="GDScript" id=21]
+script/source = "extends Control
+
+func _ready():
+	BaseFuncs.emit_signal(\"settings_entered\")
+"
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0.196078, 0.196078, 0.196078, 1 )
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends Panel
+
+var drag_position = null
+
+func gui_input(event):
+	if event is InputEventMouseButton:
+		if event.pressed:
+			drag_position = get_global_mouse_position() - rect_global_position
+		else:
+			drag_position = null
+	if event is InputEventMouseMotion and drag_position:
+		rect_global_position = get_global_mouse_position() - drag_position
+		
+func _process(_delta):
+	rect_size.x = get_viewport_rect().size.x - 128
+"
+
+[sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 0.188235, 0.188235, 0.188235, 1 )
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="GDScript" id=74]
+script/source = "extends Panel
+
+func _process(_delta):
+	rect_size.x = get_parent().rect_size.x
+	rect_size.y = get_viewport_rect().size.y - 128 - get_parent().rect_size.y
+"
+
+[sub_resource type="DynamicFont" id=5]
+font_data = ExtResource( 6 )
+
+[sub_resource type="StyleBoxFlat" id=6]
+content_margin_left = 16.0
+content_margin_right = 16.0
+content_margin_top = 8.0
+content_margin_bottom = 8.0
+bg_color = Color( 0.282353, 0.282353, 0.282353, 1 )
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+
+[sub_resource type="StyleBoxFlat" id=7]
+content_margin_left = 16.0
+content_margin_right = 16.0
+content_margin_top = 8.0
+content_margin_bottom = 8.0
+bg_color = Color( 0.117647, 0.117647, 0.117647, 1 )
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+
+[sub_resource type="StyleBoxFlat" id=8]
+bg_color = Color( 0.12549, 0.12549, 0.12549, 1 )
+
+[sub_resource type="GDScript" id=13]
+script/source = "extends TabContainer
+
+
+func _ready():
+	BaseFuncs.setup_font(self)
+
+func _process(_delta):
+	rect_size = get_parent().rect_size
+"
+
+[sub_resource type="StyleBoxFlat" id=16]
+bg_color = Color( 0.188235, 0.188235, 0.188235, 1 )
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="GDScript" id=22]
+script/source = "extends Panel
+
+func _ready():
+	BaseFuncs.connect(\"translation_changed\", self, \"lang_updated\")
+	lang_updated(BaseFuncs.cur_lang)
+	
+func _process(_delta):
+	rect_size = get_parent().rect_size
+
+func lang_updated(_locale):
+	name = BaseFuncs.get_translation_key(\"builtins:settings_main_tab\")
+"
+
+[sub_resource type="GDScript" id=25]
+script/source = "extends VBoxContainer
+
+func _process(_delta):
+	rect_size = get_parent().rect_size - Vector2(32,32)
+	rect_position = Vector2(16,16)
+"
+
+[sub_resource type="GDScript" id=28]
+script/source = "extends Control
+
+func _process(_delta):
+	rect_size.x = get_parent().rect_size.x
+"
+
+[sub_resource type="GDScript" id=26]
+script/source = "extends Label
+
+func _ready():
+	BaseFuncs.setup_font(self)
+	BaseFuncs.connect(\"translation_changed\", self, \"lang_updated\")
+	lang_updated(BaseFuncs.cur_lang)
+	
+func lang_updated(_locale):
+	text = BaseFuncs.get_translation_key(\"builtins:settings_main_tab_language_text\")
+	rect_size.x = 128
+"
+
+[sub_resource type="StyleBoxFlat" id=37]
+bg_color = Color( 0, 0, 0, 0.498039 )
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id=35]
+bg_color = Color( 0, 0, 0, 0.498039 )
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="Theme" id=36]
+PopupMenu/styles/hover = SubResource( 37 )
+PopupMenu/styles/panel = SubResource( 35 )
+
+[sub_resource type="StyleBoxFlat" id=31]
+bg_color = Color( 0, 0, 0, 0.74902 )
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id=32]
+bg_color = Color( 0, 0, 0, 0.74902 )
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id=33]
+bg_color = Color( 0, 0, 0, 0.498039 )
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id=29]
+
+[sub_resource type="StyleBoxFlat" id=30]
+bg_color = Color( 0, 0, 0, 0.498039 )
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="GDScript" id=34]
+script/source = "extends OptionButton
+
+func _ready():
+	BaseFuncs.connect(\"translation_changed\", self, \"language_updated\")
+	language_updated(BaseFuncs.cur_lang)
+	
+func language_updated(_locale):
+	clear()
+	for i in BaseFuncs.lang_keys.keys():
+		print(i)
+		print(BaseFuncs.lang_keys[i].name)
+		add_icon_item(BaseFuncs.set_state(\"builtins\", \"flag\", i), BaseFuncs.lang_keys[i].name)
+		set_item_metadata(get_item_count() - 1, i)
+		if i == BaseFuncs.cur_lang:
+			select(get_item_count() - 1)
+
+func _process(_delta):
+	rect_position.y = 16
+	rect_position.x = get_parent().get_node(\"Label\").rect_size.x + 40
+	rect_size.x = get_parent().rect_size.x - 256
+	
+func _item_selected(index):
+	print(\"lang is \" + get_item_metadata(index))
+	BaseFuncs.cur_lang = get_item_metadata(index)
+	BaseFuncs.emit_signal(\"translation_changed\", get_item_metadata(index))
+	select(index)
+	var set = {
+		\"other\": BaseFuncs.load_settings().other,
+		\"lang\": get_item_metadata(index),
+		\"zoom\": BaseFuncs.load_settings().zoom
+	}
+	BaseFuncs.save_settings(set)
+"
+
+[sub_resource type="GDScript" id=38]
+script/source = "extends Label
+
+func _ready():
+	BaseFuncs.setup_font(self)
+	BaseFuncs.connect(\"translation_changed\", self, \"lang_updated\")
+	lang_updated(BaseFuncs.cur_lang)
+	
+func lang_updated(_locale):
+	text = BaseFuncs.get_translation_key(\"builtins:settings_main_tab_zoom_text\")
+	rect_size.x = 128
+"
+
+[sub_resource type="StyleBoxLine" id=40]
+color = Color( 0, 0, 0, 0.498039 )
+thickness = 10
+
+[sub_resource type="StyleBoxFlat" id=46]
+bg_color = Color( 1, 1, 1, 0.247059 )
+
+[sub_resource type="StyleBoxLine" id=41]
+color = Color( 1, 1, 1, 0.498039 )
+thickness = 10
+
+[sub_resource type="GDScript" id=39]
+script/source = "extends HSlider
+
+func _ready():
+	value = BaseFuncs.load_settings().zoom
+
+func _process(_delta):
+	rect_position.y = 16
+	rect_size.x = get_parent().rect_size.x - 370
+	rect_position.x = get_parent().get_node(\"Label\").rect_size.x + 40
+	
+func _value_changed(value):
+	get_node(\"../SpinBox\").value = value
+	var set = {
+		\"other\": BaseFuncs.load_settings().other,
+		\"lang\": BaseFuncs.load_settings().lang,
+		\"zoom\": value
+	}
+	BaseFuncs.save_settings(set)
+	BaseFuncs.change_zoom(value)
+"
+
+[sub_resource type="StyleBoxFlat" id=43]
+bg_color = Color( 0, 0, 0, 0.372549 )
+
+[sub_resource type="StyleBoxFlat" id=44]
+bg_color = Color( 0, 0, 0, 0.498039 )
+
+[sub_resource type="Theme" id=45]
+LineEdit/styles/focus = SubResource( 43 )
+LineEdit/styles/normal = SubResource( 44 )
+SpinBox/icons/updown = null
+
+[sub_resource type="GDScript" id=42]
+script/source = "extends SpinBox
+
+func _ready():
+	value = BaseFuncs.load_settings().zoom
+
+func _process(_delta):
+	rect_position.y = 16
+	rect_position.x = get_parent().get_node(\"HSlider\").rect_position.x + get_parent().get_node(\"HSlider\").rect_size.x + 40
+
+func _value_changed(value):
+	get_node(\"../HSlider\").value = value
+	var set = {
+		\"other\": BaseFuncs.load_settings().other,
+		\"lang\": BaseFuncs.load_settings().lang,
+		\"zoom\": value
+	}
+	BaseFuncs.save_settings(set)
+	BaseFuncs.change_zoom(value)
+"
+
+[sub_resource type="GDScript" id=23]
+script/source = "extends Panel
+
+func _ready():
+	BaseFuncs.connect(\"translation_changed\", self, \"lang_updated\")
+	lang_updated(BaseFuncs.cur_lang)
+	
+func _process(_delta):
+	rect_size = get_parent().rect_size
+	
+func lang_updated(_locale):
+	name = BaseFuncs.get_translation_key(\"builtins:settings_modding_tab\")
+"
+
+[sub_resource type="GDScript" id=18]
+script/source = "extends VBoxContainer
+
+
+func _process(_delta):
+	rect_position = Vector2(16,16)
+	rect_size = get_parent().rect_size - Vector2(32,32)
+"
+
+[sub_resource type="GDScript" id=61]
+script/source = "extends Button
+
+
+func _ready():
+	BaseFuncs.setup_button(self, \"\", \"\", \"\", Vector2(32, 32), \"\", 0, 0, false, Vector2(64,64), false)
+	BaseFuncs.connect(\"translation_changed\", self, \"lang_updated\")
+	lang_updated(BaseFuncs.cur_lang)
+
+func lang_updated(_locale):
+	text = BaseFuncs.get_translation_key(\"builtins:settings_modding_tab_open_folder\")
+	
+func _pressed():
+	var dir = Directory.new()
+	dir.open(\"user://mods\")
+	return OS.shell_open(ProjectSettings.globalize_path(dir.get_current_dir()))
+"
+
+[sub_resource type="GDScript" id=63]
+script/source = "extends Label
+
+func _ready():
+	BaseFuncs.setup_font(self)
+	BaseFuncs.connect(\"translation_changed\", self, \"lang_changed\")
+	lang_changed(BaseFuncs.cur_lang)
+
+func lang_changed(_locale):
+	text = BaseFuncs.get_translation_key(\"builtins:settings_modding_tab_modlist_text\")
+
+func _process(_delta):
+	rect_position.y = 32
+	rect_size.x = get_parent().rect_size.x
+"
+
+[sub_resource type="GDScript" id=64]
+script/source = "extends ScrollContainer
+
+func _process(_delta):
+	rect_position.y = get_node(\"../Label\").rect_size.y + 32
+	rect_size = Vector2(get_parent().rect_size.x - 32, get_parent().rect_size.y - get_node(\"../Label\").rect_size.y - 32)
+"
+
+[sub_resource type="GDScript" id=75]
+script/source = "extends VBoxContainer
+
+func _ready():
+	var thedata = BaseFuncs._mod_manifests.values()
+	thedata.invert()
+	for i in thedata:
+		var template = get_node(\"../../Template\").duplicate()
+		template.manifest = i
+		template.visible = true
+		add_child(template)
+		template.ready()
+"
+
+[sub_resource type="GDScript" id=65]
+resource_local_to_scene = true
+script/source = "extends Control
+
+var manifest
+
+func _process(_delta):
+	rect_size = Vector2(get_parent().rect_size.x, 128)
+
+func ready():
+	get_node(\"Icon\").texture = BaseFuncs.load_external_tex(manifest.icon)
+	get_node(\"Title\").text = manifest.name
+	get_node(\"Version\").text = manifest.version
+	get_node(\"Identifier\").text = manifest.namespace
+	get_node(\"Description\").bbcode_text = manifest.description
+"
+
+[sub_resource type="GDScript" id=50]
+resource_local_to_scene = true
+script/source = "extends TextureRect
+
+func _process(_delta):
+	var pos = (get_parent().rect_size - rect_size) / 2
+	rect_position = Vector2(pos.y, pos.y)
+"
+
+[sub_resource type="GDScript" id=51]
+resource_local_to_scene = true
+script/source = "extends Label
+
+func _ready():
+	BaseFuncs.setup_font(self)
+
+func _process(_delta):
+	rect_position = Vector2(get_node(\"../Icon\").rect_size.x + 32, get_node(\"../Icon\").rect_position.y)
+	rect_size.x = get_parent().rect_size.x - rect_position.x - get_node(\"../Identifier\").rect_size.x - 16
+"
+
+[sub_resource type="GDScript" id=56]
+resource_local_to_scene = true
+script/source = "extends Label
+
+func _ready():
+	BaseFuncs.setup_font(self)
+
+func _process(_delta):
+	rect_position = Vector2(get_parent().rect_size.x - 16 - rect_size.x, get_node(\"../Icon\").rect_position.y + 32)
+"
+
+[sub_resource type="GDScript" id=55]
+resource_local_to_scene = true
+script/source = "extends Label
+
+func _ready():
+	BaseFuncs.setup_font(self)
+
+func _process(_delta):
+	rect_position = Vector2(get_parent().rect_size.x - 36 - rect_size.x, get_node(\"../Icon\").rect_position.y)
+"
+
+[sub_resource type="GDScript" id=52]
+resource_local_to_scene = true
+script/source = "extends RichTextLabel
+
+func _ready():
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"default\", 16, BaseFuncs.font_type.REGULAR)
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"bold\", 16, BaseFuncs.font_type.BOLD)
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"italics\", 16, BaseFuncs.font_type.ITALICS)
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"bolditalics\", 16, BaseFuncs.font_type.BOLDITALICS)
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"mono\", 16, BaseFuncs.font_type.MONO)
+
+func _process(_delta):
+	rect_position = Vector2(get_node(\"../Icon\").rect_size.x + 32, get_node(\"../Icon\").rect_position.y + get_node(\"../Title\").rect_size.y + 16)
+	rect_size.x = get_parent().rect_size.x - rect_position.x - get_node(\"../Identifier\").rect_size.x - 16
+"
+
+[sub_resource type="GDScript" id=24]
+script/source = "extends Panel
+
+func _ready():
+	BaseFuncs.connect(\"translation_changed\", self, \"lang_updated\")
+	lang_updated(BaseFuncs.cur_lang)
+	
+func _process(_delta):
+	rect_size = get_parent().rect_size
+
+func lang_updated(_locale):
+	name = BaseFuncs.get_translation_key(\"builtins:settings_resources_tab\")
+"
+
+[sub_resource type="GDScript" id=60]
+script/source = "extends VBoxContainer
+
+
+func _process(_delta):
+	rect_position = Vector2(16,16)
+	rect_size = get_parent().rect_size - Vector2(32,32)
+"
+
+[sub_resource type="GDScript" id=17]
+script/source = "extends Button
+
+
+func _ready():
+	BaseFuncs.setup_button(self, \"\", \"\", \"\", Vector2(32, 32), \"\", 0, 0, false, Vector2(64,64), false)
+	BaseFuncs.connect(\"translation_changed\", self, \"lang_updated\")
+	lang_updated(BaseFuncs.cur_lang)
+
+func lang_updated(_locale):
+	text = BaseFuncs.get_translation_key(\"builtins:settings_resources_tab_open_folder\")
+	
+func _pressed():
+	var dir = Directory.new()
+	dir.open(\"user://texturepacks\")
+	return OS.shell_open(ProjectSettings.globalize_path(dir.get_current_dir()))
+"
+
+[sub_resource type="GDScript" id=47]
+script/source = "extends Label
+
+func _ready():
+	BaseFuncs.setup_font(self)
+	BaseFuncs.connect(\"translation_changed\", self, \"lang_changed\")
+	lang_changed(BaseFuncs.cur_lang)
+
+func lang_changed(_locale):
+	text = BaseFuncs.get_translation_key(\"builtins:settings_resources_tab_resourcelist_text\")
+
+func _process(_delta):
+	rect_position.y = 32
+	rect_size.x = get_parent().rect_size.x
+"
+
+[sub_resource type="GDScript" id=58]
+script/source = "extends ScrollContainer
+
+func _process(_delta):
+	rect_position.y = get_node(\"../Label\").rect_size.y + 32
+	rect_size = Vector2(get_parent().rect_size.x - 32, get_parent().rect_size.y - get_node(\"../Label\").rect_size.y - 32)
+"
+
+[sub_resource type="GDScript" id=59]
+script/source = "extends VBoxContainer
+
+func _ready():
+	var thedata = BaseFuncs._resource_manifests.values()
+	thedata.invert()
+	for i in thedata:
+		var template = get_node(\"../../Template\").duplicate()
+		template.manifest = i
+		template.visible = true
+		add_child(template)
+		template.ready()
+"
+
+[sub_resource type="GDScript" id=66]
+resource_local_to_scene = true
+script/source = "extends Control
+
+var manifest
+
+func _process(_delta):
+	rect_size = Vector2(get_parent().rect_size.x, 128)
+
+func ready():
+	get_node(\"Icon\").texture = BaseFuncs.load_external_tex(manifest.icon)
+	get_node(\"Title\").text = manifest.name
+	get_node(\"Version\").text = manifest.version
+	get_node(\"Identifier\").text = manifest.namespace
+	get_node(\"Description\").bbcode_text = manifest.description
+"
+
+[sub_resource type="GDScript" id=67]
+resource_local_to_scene = true
+script/source = "extends TextureRect
+
+func _process(_delta):
+	var pos = (get_parent().rect_size - rect_size) / 2
+	rect_position = Vector2(pos.y, pos.y)
+"
+
+[sub_resource type="GDScript" id=68]
+resource_local_to_scene = true
+script/source = "extends Label
+
+func _ready():
+	BaseFuncs.setup_font(self)
+
+func _process(_delta):
+	rect_position = Vector2(get_node(\"../Icon\").rect_size.x + 32, get_node(\"../Icon\").rect_position.y)
+	rect_size.x = get_parent().rect_size.x - rect_position.x - get_node(\"../Identifier\").rect_size.x - 32 - get_node(\"../MoveDown\").rect_size.x
+"
+
+[sub_resource type="GDScript" id=69]
+resource_local_to_scene = true
+script/source = "extends Label
+
+func _ready():
+	BaseFuncs.setup_font(self)
+
+func _process(_delta):
+	rect_position = Vector2(get_parent().rect_size.x - 32 - get_node(\"../MoveDown\").rect_size.x - rect_size.x, get_node(\"../Icon\").rect_position.y + 32)
+"
+
+[sub_resource type="GDScript" id=70]
+resource_local_to_scene = true
+script/source = "extends Label
+
+func _ready():
+	BaseFuncs.setup_font(self)
+
+func _process(_delta):
+	rect_position = Vector2(get_parent().rect_size.x - 32 - get_node(\"../MoveDown\").rect_size.x - rect_size.x, get_node(\"../Icon\").rect_position.y)
+"
+
+[sub_resource type="GDScript" id=71]
+resource_local_to_scene = true
+script/source = "extends RichTextLabel
+
+func _ready():
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"default\", 16, BaseFuncs.font_type.REGULAR)
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"bold\", 16, BaseFuncs.font_type.BOLD)
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"italics\", 16, BaseFuncs.font_type.ITALICS)
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"bolditalics\", 16, BaseFuncs.font_type.BOLDITALICS)
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"mono\", 16, BaseFuncs.font_type.MONO)
+
+func _process(_delta):
+	rect_position = Vector2(get_node(\"../Icon\").rect_size.x + 32, get_node(\"../Icon\").rect_position.y + get_node(\"../Title\").rect_size.y + 16)
+	rect_size.x = get_parent().rect_size.x - rect_position.x - get_node(\"../Identifier\").rect_size.x - 32 - get_node(\"../MoveDown\").rect_size.x
+"
+
+[sub_resource type="GDScript" id=72]
+resource_local_to_scene = true
+script/source = "extends Button
+
+
+func _ready():
+	BaseFuncs.setup_button(self, \"builtins\", \"graphic_user_interface\", \"arrow_down\", rect_size, \"\", 0,0,false, Vector2(56,56), true)
+	
+func _process(_delta):
+	if get_parent().get_index() == get_node(\"../..\").get_child_count() - 1:
+		disabled = true
+	else:
+		disabled = false
+	rect_position.x = get_parent().rect_size.x - 16 - rect_size.x
+		
+func _pressed():
+	get_node(\"../..\").move_child(get_parent(), get_parent().get_index() + 1)
+	var list := []
+	for i in get_node(\"../..\").get_children():
+		var pre := {}
+		pre = i.manifest.data
+		list.append(pre)
+	list.invert()
+	BaseFuncs.json_save(\"user://texturepacks/index.json\", {\"stuff\": list})
+"
+
+[sub_resource type="GDScript" id=76]
+resource_local_to_scene = true
+script/source = "extends Button
+
+func _ready():
+	BaseFuncs.setup_button(self, \"\", \"\", \"\", Vector2(32, 32), \"\", 0,0,false, Vector2(152,24), false)
+
+func _process(_delta):
+	rect_position = Vector2(get_parent().rect_size.x - 32 - get_node(\"../MoveDown\").rect_size.x - rect_size.x, get_node(\"../Icon\").rect_position.y + 64)
+
+func _pressed():
+	OS.shell_open(ProjectSettings.globalize_path(get_parent().manifest.data.path))
+"
+
+[sub_resource type="GDScript" id=73]
+resource_local_to_scene = true
+script/source = "extends Button
+
+func _ready():
+	BaseFuncs.setup_button(self, \"builtins\", \"graphic_user_interface\", \"arrow_up\", rect_size, \"\", 0,0,false, Vector2(56,56), true)
+	
+func _process(_delta):
+	if get_parent().get_index() == 0:
+		disabled = true
+	else:
+		disabled = false
+	rect_position.x = get_parent().rect_size.x - 16 - rect_size.x
+		
+func _pressed():
+	get_node(\"../..\").move_child(get_parent(), get_parent().get_index() - 1)
+	var list := []
+	for i in get_node(\"../..\").get_children():
+		var pre := {}
+		pre = i.manifest.data
+		list.append(pre)
+	list.invert()
+	BaseFuncs.json_save(\"user://texturepacks/index.json\", {\"stuff\": list})
+"
+
+[sub_resource type="StyleBoxFlat" id=10]
+bg_color = Color( 0.501961, 0.188235, 0.188235, 1 )
+corner_radius_top_right = 8
+
+[sub_resource type="GDScript" id=11]
+script/source = "extends Panel
+
+func _gui_input(event):
+	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT:
+		self.owner.queue_free()
+		
+func _process(_delta):
+	rect_position.x = get_parent().rect_size.x - rect_size.x
+"
+
+[sub_resource type="DynamicFont" id=12]
+size = 20
+font_data = ExtResource( 6 )
+
+[sub_resource type="GDScript" id=15]
+script/source = "extends Label
+
+
+func _ready():
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"bold\")
+"
+
+[sub_resource type="GDScript" id=14]
+script/source = "extends Label
+
+func _ready():
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"bold\")
+	BaseFuncs.connect(\"translation_changed\", self, \"lang_updated\")
+	lang_updated(BaseFuncs.cur_lang)
+
+func lang_updated(_locale):
+	text = BaseFuncs.get_translation_key(\"builtins:settings_title\")
+"
 
 [node name="GUI" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+script = SubResource( 21 )
 
-[node name="Panel" type="Panel" parent="."]
-margin_top = 136.0
-margin_right = 685.0
-margin_bottom = 221.0
-rect_scale = Vector2( 0.875883, -1.58824 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="Title Bar" type="Panel" parent="."]
+margin_left = 64.0
+margin_top = 64.0
+margin_right = 960.0
+margin_bottom = 96.0
+custom_styles/panel = SubResource( 1 )
+script = SubResource( 2 )
 
-[node name="Texture" type="FileDialog" parent="."]
-visible = true
-margin_left = -392.0
-margin_top = -104.0
-margin_right = -77.0
-margin_bottom = 251.0
-window_title = "Open a Directory"
-mode = 2
-access = 1
-current_dir = "user://"
-current_path = "user://"
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="Window" type="Panel" parent="Title Bar"]
+margin_top = 32.0
+margin_right = 896.0
+margin_bottom = 472.0
+custom_styles/panel = SubResource( 3 )
+script = SubResource( 74 )
 
-[node name="Label" type="Label" parent="."]
-margin_left = 24.0
-margin_top = 24.0
-margin_right = 105.0
-margin_bottom = 48.0
-text = "Texture Pack"
+[node name="TabContainer" type="TabContainer" parent="Title Bar/Window"]
+margin_right = 896.0
+margin_bottom = 440.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_fonts/font = SubResource( 5 )
+custom_styles/tab_fg = SubResource( 6 )
+custom_styles/tab_bg = SubResource( 7 )
+custom_styles/panel = SubResource( 8 )
+tab_align = 0
+all_tabs_in_front = true
+script = SubResource( 13 )
+
+[node name="Main" type="Panel" parent="Title Bar/Window/TabContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 39.0
+custom_styles/panel = SubResource( 16 )
+script = SubResource( 22 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Title Bar/Window/TabContainer/Main"]
+margin_left = 16.0
+margin_top = 17.0
+margin_right = 880.0
+margin_bottom = 385.0
+custom_constants/separation = 0
+script = SubResource( 25 )
+
+[node name="Lang" type="Control" parent="Title Bar/Window/TabContainer/Main/VBoxContainer"]
+margin_right = 864.0
+margin_bottom = 96.0
+rect_min_size = Vector2( 864, 96 )
+script = SubResource( 28 )
+
+[node name="Label" type="Label" parent="Title Bar/Window/TabContainer/Main/VBoxContainer/Lang"]
+margin_top = 16.0
+margin_right = 216.0
+margin_bottom = 80.0
+text = "Language"
 align = 1
 valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
+script = SubResource( 26 )
 
-[node name="TextEdit" type="TextEdit" parent="Label"]
-margin_left = 104.0
-margin_right = 384.0
-margin_bottom = 24.0
-script = ExtResource( 4 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="OptionButton" type="OptionButton" parent="Title Bar/Window/TabContainer/Main/VBoxContainer/Lang"]
+margin_left = 256.0
+margin_top = 16.0
+margin_right = 528.0
+margin_bottom = 80.0
+theme = SubResource( 36 )
+custom_styles/hover = SubResource( 31 )
+custom_styles/pressed = SubResource( 32 )
+custom_styles/focus = SubResource( 33 )
+custom_styles/disabled = SubResource( 29 )
+custom_styles/normal = SubResource( 30 )
+script = SubResource( 34 )
 
-[node name="Load" type="Button" parent="."]
-margin_left = 432.0
-margin_top = 12.0
-margin_right = 492.0
-margin_bottom = 58.0
-rect_pivot_offset = Vector2( 32, 16 )
-custom_styles/pressed = ExtResource( 6 )
-custom_styles/disabled = ExtResource( 7 )
-custom_styles/normal = ExtResource( 7 )
-text = "Load"
-script = ExtResource( 2 )
+[node name="Zoom" type="Control" parent="Title Bar/Window/TabContainer/Main/VBoxContainer"]
+margin_top = 96.0
+margin_right = 864.0
+margin_bottom = 192.0
+rect_min_size = Vector2( 864, 96 )
+script = SubResource( 28 )
 
-[node name="Reset" type="Button" parent="."]
-margin_left = 512.0
-margin_top = 12.0
-margin_right = 578.0
-margin_bottom = 58.0
-rect_pivot_offset = Vector2( 32, 16 )
-custom_styles/pressed = ExtResource( 6 )
-custom_styles/disabled = ExtResource( 7 )
-custom_styles/normal = ExtResource( 7 )
-text = "Reset"
-script = ExtResource( 5 )
+[node name="Label" type="Label" parent="Title Bar/Window/TabContainer/Main/VBoxContainer/Zoom"]
+margin_top = 16.0
+margin_right = 216.0
+margin_bottom = 80.0
+text = "Language"
+align = 1
+valign = 1
+script = SubResource( 38 )
 
-[node name="Apply" type="Button" parent="."]
-margin_left = 24.0
+[node name="HSlider" type="HSlider" parent="Title Bar/Window/TabContainer/Main/VBoxContainer/Zoom"]
+margin_left = 248.0
+margin_top = 16.0
+margin_right = 648.0
+margin_bottom = 80.0
+custom_styles/slider = SubResource( 40 )
+custom_styles/grabber_area_highlight = SubResource( 46 )
+custom_styles/grabber_area = SubResource( 41 )
+min_value = 0.1
+max_value = 10.0
+step = 0.1
+value = 1.0
+allow_greater = true
+script = SubResource( 39 )
+
+[node name="SpinBox" type="SpinBox" parent="Title Bar/Window/TabContainer/Main/VBoxContainer/Zoom"]
+margin_left = 712.0
+margin_top = 16.0
+margin_right = 786.0
+margin_bottom = 80.0
+theme = SubResource( 45 )
+min_value = 0.1
+step = 0.1
+value = 1.0
+allow_greater = true
+script = SubResource( 42 )
+
+[node name="Modding" type="Panel" parent="Title Bar/Window/TabContainer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 39.0
+custom_styles/panel = SubResource( 16 )
+script = SubResource( 23 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Title Bar/Window/TabContainer/Modding"]
+margin_left = 16.0
+margin_top = 16.0
+margin_right = 880.0
+margin_bottom = 384.0
+script = SubResource( 18 )
+
+[node name="OpenMods" type="Button" parent="Title Bar/Window/TabContainer/Modding/VBoxContainer"]
+margin_right = 864.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+text = "Open Mods Folder"
+script = SubResource( 61 )
+
+[node name="ModListHolder" type="Control" parent="Title Bar/Window/TabContainer/Modding/VBoxContainer"]
+margin_top = 24.0
+margin_right = 864.0
+margin_bottom = 368.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Title Bar/Window/TabContainer/Modding/VBoxContainer/ModListHolder"]
+margin_top = 16.0
+margin_right = 864.0
+margin_bottom = 47.0
+text = "ModList"
+align = 1
+valign = 1
+script = SubResource( 63 )
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Title Bar/Window/TabContainer/Modding/VBoxContainer/ModListHolder"]
+margin_top = 65.0
+margin_right = 864.0
+margin_bottom = 344.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = SubResource( 64 )
+
+[node name="ModList" type="VBoxContainer" parent="Title Bar/Window/TabContainer/Modding/VBoxContainer/ModListHolder/ScrollContainer"]
+margin_right = 864.0
+margin_bottom = 279.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = SubResource( 75 )
+
+[node name="Template" type="Control" parent="Title Bar/Window/TabContainer/Modding/VBoxContainer/ModListHolder"]
+visible = false
+margin_right = 864.0
+margin_bottom = 128.0
+rect_min_size = Vector2( 0, 128 )
+script = SubResource( 65 )
+
+[node name="Icon" type="TextureRect" parent="Title Bar/Window/TabContainer/Modding/VBoxContainer/ModListHolder/Template"]
+margin_left = 14.0
+margin_top = 14.0
+margin_right = 114.0
+margin_bottom = 114.0
+texture = ExtResource( 1 )
+expand = true
+stretch_mode = 5
+script = SubResource( 50 )
+
+[node name="Title" type="Label" parent="Title Bar/Window/TabContainer/Modding/VBoxContainer/ModListHolder/Template"]
+margin_left = 132.0
+margin_top = 14.0
+margin_right = 308.0
+margin_bottom = 32.0
+text = "Title"
+script = SubResource( 51 )
+
+[node name="Version" type="Label" parent="Title Bar/Window/TabContainer/Modding/VBoxContainer/ModListHolder/Template"]
+margin_left = 688.0
+margin_top = 48.0
+margin_right = 792.0
+margin_bottom = 72.0
+text = "v0.0.0"
+align = 1
+valign = 1
+script = SubResource( 56 )
+
+[node name="Identifier" type="Label" parent="Title Bar/Window/TabContainer/Modding/VBoxContainer/ModListHolder/Template"]
+margin_left = 688.0
+margin_top = 16.0
+margin_right = 792.0
+margin_bottom = 40.0
+text = "identifier"
+align = 1
+valign = 1
+script = SubResource( 55 )
+
+[node name="Description" type="RichTextLabel" parent="Title Bar/Window/TabContainer/Modding/VBoxContainer/ModListHolder/Template"]
+margin_left = 132.0
+margin_top = 48.0
+margin_right = 328.0
+margin_bottom = 112.0
+text = "Description
+"
+script = SubResource( 52 )
+
+[node name="TexturePacks" type="Panel" parent="Title Bar/Window/TabContainer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 39.0
+custom_styles/panel = SubResource( 16 )
+script = SubResource( 24 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Title Bar/Window/TabContainer/TexturePacks"]
+margin_left = 16.0
+margin_top = 17.0
+margin_right = 880.0
+margin_bottom = 385.0
+script = SubResource( 60 )
+
+[node name="OpenRes" type="Button" parent="Title Bar/Window/TabContainer/TexturePacks/VBoxContainer"]
+margin_right = 864.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+text = "Open Mods Folder"
+script = SubResource( 17 )
+
+[node name="ModListHolder" type="Control" parent="Title Bar/Window/TabContainer/TexturePacks/VBoxContainer"]
+margin_top = 24.0
+margin_right = 864.0
+margin_bottom = 368.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Title Bar/Window/TabContainer/TexturePacks/VBoxContainer/ModListHolder"]
+margin_top = 16.0
+margin_right = 864.0
+margin_bottom = 47.0
+text = "ModList"
+align = 1
+valign = 1
+script = SubResource( 47 )
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Title Bar/Window/TabContainer/TexturePacks/VBoxContainer/ModListHolder"]
+margin_top = 63.0
+margin_right = 864.0
+margin_bottom = 344.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = SubResource( 58 )
+
+[node name="ResList" type="VBoxContainer" parent="Title Bar/Window/TabContainer/TexturePacks/VBoxContainer/ModListHolder/ScrollContainer"]
+margin_right = 864.0
+margin_bottom = 281.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = SubResource( 59 )
+
+[node name="Template" type="Control" parent="Title Bar/Window/TabContainer/TexturePacks/VBoxContainer/ModListHolder"]
+visible = false
+margin_top = 63.0
+margin_right = 864.0
+margin_bottom = 191.0
+rect_min_size = Vector2( 0, 128 )
+script = SubResource( 66 )
+
+[node name="Icon" type="TextureRect" parent="Title Bar/Window/TabContainer/TexturePacks/VBoxContainer/ModListHolder/Template"]
+margin_left = 14.0
+margin_top = 14.0
+margin_right = 114.0
+margin_bottom = 114.0
+texture = ExtResource( 1 )
+expand = true
+stretch_mode = 5
+script = SubResource( 67 )
+
+[node name="Title" type="Label" parent="Title Bar/Window/TabContainer/TexturePacks/VBoxContainer/ModListHolder/Template"]
+margin_left = 132.0
+margin_top = 14.0
+margin_right = 308.0
+margin_bottom = 32.0
+text = "Title"
+script = SubResource( 68 )
+
+[node name="Version" type="Label" parent="Title Bar/Window/TabContainer/TexturePacks/VBoxContainer/ModListHolder/Template"]
+margin_left = 624.0
+margin_top = 48.0
+margin_right = 776.0
+margin_bottom = 72.0
+text = "v0.0.0"
+align = 1
+valign = 1
+script = SubResource( 69 )
+
+[node name="Identifier" type="Label" parent="Title Bar/Window/TabContainer/TexturePacks/VBoxContainer/ModListHolder/Template"]
+margin_left = 624.0
+margin_top = 16.0
+margin_right = 776.0
+margin_bottom = 40.0
+text = "identifier"
+align = 1
+valign = 1
+script = SubResource( 70 )
+
+[node name="Description" type="RichTextLabel" parent="Title Bar/Window/TabContainer/TexturePacks/VBoxContainer/ModListHolder/Template"]
+margin_left = 132.0
+margin_top = 48.0
+margin_right = 328.0
+margin_bottom = 112.0
+bbcode_enabled = true
+script = SubResource( 71 )
+
+[node name="MoveDown" type="Button" parent="Title Bar/Window/TabContainer/TexturePacks/VBoxContainer/ModListHolder/Template"]
+margin_left = 792.0
 margin_top = 64.0
-margin_right = 72.0
-margin_bottom = 88.0
-rect_pivot_offset = Vector2( 56, 112 )
-custom_styles/pressed = ExtResource( 6 )
-custom_styles/disabled = ExtResource( 7 )
-custom_styles/normal = ExtResource( 7 )
-text = "Apply"
-script = ExtResource( 3 )
+margin_right = 848.0
+margin_bottom = 120.0
+custom_styles/disabled = ExtResource( 4 )
+icon = ExtResource( 2 )
+expand_icon = true
+script = SubResource( 72 )
 
-[node name="Exit" type="Button" parent="."]
-margin_left = 112.0
-margin_top = 64.0
-margin_right = 165.0
-margin_bottom = 110.0
-rect_pivot_offset = Vector2( 56, 112 )
-custom_styles/pressed = ExtResource( 6 )
-custom_styles/disabled = ExtResource( 7 )
-custom_styles/normal = ExtResource( 7 )
-text = "Exit"
-script = ExtResource( 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="Open" type="Button" parent="Title Bar/Window/TabContainer/TexturePacks/VBoxContainer/ModListHolder/Template"]
+margin_left = 624.0
+margin_top = 80.0
+margin_right = 776.0
+margin_bottom = 104.0
+custom_styles/disabled = ExtResource( 4 )
+text = "Open Pack's Folder"
+expand_icon = true
+script = SubResource( 76 )
 
-[connection signal="dir_selected" from="Texture" to="Load" method="dir_selected"]
+[node name="MoveUp" type="Button" parent="Title Bar/Window/TabContainer/TexturePacks/VBoxContainer/ModListHolder/Template"]
+margin_left = 792.0
+margin_top = 8.0
+margin_right = 848.0
+margin_bottom = 64.0
+icon = ExtResource( 3 )
+expand_icon = true
+script = SubResource( 73 )
+
+[node name="Close" type="Panel" parent="Title Bar"]
+margin_left = 832.0
+margin_right = 896.0
+margin_bottom = 32.0
+custom_styles/panel = SubResource( 10 )
+script = SubResource( 11 )
+
+[node name="Label" type="Label" parent="Title Bar/Close"]
+margin_right = 64.0
+margin_bottom = 32.0
+custom_fonts/font = SubResource( 12 )
+text = "X"
+align = 1
+valign = 1
+script = SubResource( 15 )
+
+[node name="Label2" type="Label" parent="Title Bar"]
+margin_right = 832.0
+margin_bottom = 32.0
+custom_fonts/font = SubResource( 12 )
+text = "Settings"
+align = 1
+valign = 1
+script = SubResource( 14 )
+
+[connection signal="gui_input" from="Title Bar" to="Title Bar" method="gui_input"]
+[connection signal="item_selected" from="Title Bar/Window/TabContainer/Main/VBoxContainer/Lang/OptionButton" to="Title Bar/Window/TabContainer/Main/VBoxContainer/Lang/OptionButton" method="_item_selected"]
+[connection signal="value_changed" from="Title Bar/Window/TabContainer/Main/VBoxContainer/Zoom/HSlider" to="Title Bar/Window/TabContainer/Main/VBoxContainer/Zoom/HSlider" method="_value_changed"]
+[connection signal="value_changed" from="Title Bar/Window/TabContainer/Main/VBoxContainer/Zoom/SpinBox" to="Title Bar/Window/TabContainer/Main/VBoxContainer/Zoom/SpinBox" method="_value_changed"]

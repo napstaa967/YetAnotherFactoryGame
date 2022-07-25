@@ -1,269 +1,640 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=35 format=2]
 
-[ext_resource path="res://gdstuff/Button.gd" type="Script" id=1]
-[ext_resource path="res://textures/items/flushsit.png" type="Texture" id=2]
-[ext_resource path="res://textures/conveyor/normal/conveyor.png" type="Texture" id=3]
-[ext_resource path="res://gdstuff/Button2.gd" type="Script" id=4]
-[ext_resource path="res://textures/conveyor/splitter/down_up.png" type="Texture" id=5]
-[ext_resource path="res://gdstuff/Button3.gd" type="Script" id=6]
-[ext_resource path="res://textures/misc/remove_oneshot.png" type="Texture" id=7]
-[ext_resource path="res://gdstuff/Remove.gd" type="Script" id=8]
-[ext_resource path="res://gdstuff/Machine.gd" type="Script" id=9]
-[ext_resource path="res://textures/machinery/converter/converter.png" type="Texture" id=10]
-[ext_resource path="res://other/ButtonGui.tres" type="StyleBox" id=11]
-[ext_resource path="res://other/ButtonGuiPressed.tres" type="StyleBox" id=12]
-[ext_resource path="res://textures/producer/producer.png" type="Texture" id=13]
-[ext_resource path="res://textures/misc/iconblank.png" type="Texture" id=14]
-[ext_resource path="res://textures/machinery/seller/seller.png" type="Texture" id=15]
+[ext_resource path="res://textures/gui/texture_placeholder.png" type="Texture" id=1]
+[ext_resource path="res://GUI.tres" type="StyleBox" id=2]
+[ext_resource path="res://other/fonts/OpenSans-Regular.ttf" type="DynamicFontData" id=16]
 
-[sub_resource type="Theme" id=1]
+[sub_resource type="StyleBoxFlat" id=6]
+bg_color = Color( 0.196078, 0.196078, 0.196078, 1 )
+corner_radius_top_left = 8
+corner_radius_top_right = 8
 
-[sub_resource type="Theme" id=2]
+[sub_resource type="GDScript" id=15]
+script/source = "extends Panel
 
-[sub_resource type="GDScript" id=4]
-resource_local_to_scene = true
-script/source = "extends Button
-
-var metadata = {
-	\"type\": \"producer\",
-	\"direction\": \"down\",
-	\"sell\": 300,
-	\"buy\": 600,
-	\"elec\": 10,
-	\"placing\": false
-}
-
-func _ready():
-	var styleboxnew = get_stylebox(\"normal\")
-	styleboxnew.texture = BaseFuncs.load_texture(\"textures/gui/button.png\")
-	styleboxnew.texture.set_flags(0)
-	add_stylebox_override(\"normal\" ,styleboxnew)
-	styleboxnew = get_stylebox(\"pressed\")
-	styleboxnew.texture = BaseFuncs.load_texture(\"textures/gui/button_pressed.png\")
-	styleboxnew.texture.set_flags(0)
-	add_stylebox_override(\"pressed\" ,styleboxnew)
-	text = \"Producer\"
-	var temp = BaseFuncs.load_texture(\"textures/producer/producer.png\")
-	temp.set_size_override(Vector2(32, 32))
-	set_button_icon(temp)
-	get_node(\"TextureRect\").texture = temp
-	get_node(\"TextureRect\").texture.set_flags(0)
-	get_node(\"TextureRect\").rect_pivot_offset = Vector2(get_node(\"TextureRect\").texture.get_size().x/2, get_node(\"TextureRect\").texture.get_size().y/2)
-	get_node(\"TextureRect\").margin_bottom = styleboxnew.margin_bottom
-	get_node(\"TextureRect\").margin_top = styleboxnew.margin_top
-	get_node(\"TextureRect\").margin_left = styleboxnew.margin_left
-	get_node(\"TextureRect\").margin_right = styleboxnew.margin_right
-	textupdate()
-	
-func _pressed():
-	get_tree().current_scene.place_item(\"res://scene/Conveyor.tscn\", metadata.duplicate())
-
-func textupdate():
-	var file = File.new()
-	var texturestuff = \"textures/producer/producer.png\"
-	if !file.file_exists(BaseFuncs.moddedload(\"textures/producer/texture_override.json\")):
-		texturestuff = \"textures/producer/producer.png\"
-		var texturest = BaseFuncs.load_texture(texturestuff)
-		texturest.set_size_override(Vector2(32, 32))
-		get_node(\"TextureRect\").rect_pivot_offset = Vector2(texturest.get_size().x/2, texturest.get_size().y/2)
-		match metadata.direction:
-			\"down\":
-				get_node(\"TextureRect\").rect_rotation = 0
-			\"up\":
-				get_node(\"TextureRect\").rect_rotation = 180
-			\"left\":
-				get_node(\"TextureRect\").rect_rotation = 90
-			\"right\":
-				get_node(\"TextureRect\").rect_rotation = 270
-		get_node(\"TextureRect\").texture = texturest
-		get_node(\"TextureRect\").texture.set_flags(0)
-	else:
-		file.open(BaseFuncs.moddedload(\"textures/producer/texture_override.json\"), File.READ)
-		var textureoverrides = parse_json(file.get_as_text())
-		texturestuff = BaseFuncs.loadoverrides(textureoverrides, get_node(\"TextureRect\"), metadata, texturestuff, \"icon\")
-		var texturest = BaseFuncs.load_texture(texturestuff.tex)
-		texturest.set_size_override(Vector2(32, 32))
-		texturest.set_flags(0)
-		get_node(\"TextureRect\").texture = texturest
-		get_node(\"TextureRect\").rect_size = Vector2(32,32)
+var drag_position = null
 
 func gui_input(event):
-	if event is InputEventKey and event.pressed:
-		if Input.is_action_just_pressed(\"ui_cancel\"):
-			get_tree().current_scene.place_item(null, null)
-			release_focus()
-			return
-	if event is InputEventKey and event.pressed and pressed:
-		if Input.is_action_just_pressed(\"change_item_left\"):
-			metadata.direction = \"left\"
-		if Input.is_action_just_pressed(\"change_item_right\"):
-			metadata.direction = \"right\"
-		if Input.is_action_just_pressed(\"change_item_up\"):
-			metadata.direction = \"up\"
-		if Input.is_action_just_pressed(\"change_item_down\"):
-			metadata.direction = \"down\"
-		match metadata.direction:
-			\"down\":
-				get_node(\"TextureRect\").rect_rotation = 0
-			\"up\":
-				get_node(\"TextureRect\").rect_rotation = 180
-			\"left\":
-				get_node(\"TextureRect\").rect_rotation = 90
-			\"right\":
-				get_node(\"TextureRect\").rect_rotation = 270
-		textupdate()
-		return
+	if event is InputEventMouseButton:
+		if event.pressed:
+			drag_position = get_global_mouse_position() - rect_global_position
+		else:
+			drag_position = null
+	if event is InputEventMouseMotion and drag_position:
+		rect_global_position = get_global_mouse_position() - drag_position
 
+func _process(_delta):
+	rect_size.x = get_viewport_rect().size.x - 128
+	rect_position.x = clamp(rect_position.x, 0, get_viewport_rect().size.x - 64)
+	rect_position.y = clamp(rect_position.y, 0, get_viewport_rect().size.y - rect_size.y)
+"
+
+[sub_resource type="StyleBoxFlat" id=5]
+bg_color = Color( 0.188235, 0.188235, 0.188235, 1 )
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="GDScript" id=19]
+script/source = "extends Panel
+
+func _process(_delta):
+	rect_size = get_viewport_rect().size - Vector2(128, 320)
+"
+
+[sub_resource type="GDScript" id=13]
+script/source = "extends HSplitContainer
+
+func _process(_delta):
+	split_offset = int(round(get_parent().rect_size.x / 14 * 9))
+	rect_size = get_parent().rect_size
+"
+
+[sub_resource type="DynamicFont" id=9]
+font_data = ExtResource( 16 )
+
+[sub_resource type="StyleBoxFlat" id=10]
+content_margin_left = 16.0
+content_margin_right = 16.0
+content_margin_top = 8.0
+content_margin_bottom = 8.0
+bg_color = Color( 0.282353, 0.282353, 0.282353, 1 )
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+
+[sub_resource type="StyleBoxFlat" id=11]
+content_margin_left = 16.0
+content_margin_right = 16.0
+content_margin_top = 8.0
+content_margin_bottom = 8.0
+bg_color = Color( 0.117647, 0.117647, 0.117647, 1 )
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+
+[sub_resource type="StyleBoxFlat" id=12]
+bg_color = Color( 0.12549, 0.12549, 0.12549, 1 )
+
+[sub_resource type="GDScript" id=31]
+script/source = "extends TabContainer
+
+func _ready():
+	for i in BaseFuncs.categories.keys():
+		if i == \"builtins:all\":
+			continue
+		var _cat = get_node(\"../Control\").duplicate()
+		_cat.get_node(\"Content\").tag = BaseFuncs.categories[i].id
+		add_child(_cat)
+		_cat.get_node(\"Content\").ready()
+"
+
+[sub_resource type="GDScript" id=35]
+script/source = "extends ScrollContainer
+
+var tag = \"builtins:all\"
+
+func _ready():
+	BaseFuncs.connect(\"translation_changed\", self, \"transchanged\")
+	transchanged(BaseFuncs.cur_lang)
+	get_node(\"../..\").set_tab_icon(get_parent().get_index(), BaseFuncs.set_state(\"categories\", \"icons\", tag, Vector2(32,32)))
+	get_node(\"../..\").set_tab_title(get_parent().get_index(), \"\")
+	get_node(\"Container\").ready()
+	
+func transchanged(_lang):
+	get_node(\"../Panel/Label\").text = BaseFuncs.get_translation_key(BaseFuncs.categories[tag].name_translation_key)
+
+func _process(_delta):
+	rect_size = get_parent().rect_size - Vector2(0,38)
+	rect_position.y = 38
+"
+
+[sub_resource type="GDScript" id=36]
+script/source = "extends HFlowContainer
+
+func ready():
+	for i in BaseFuncs.mod_objs.values():
+		for ii in i.values():
+			if ii.has(\"script\"):
+				if ii.has(\"tags\"):
+					if !ii.tags.has(\"builtins:hidden\"):
+						var newbutton = Button.new()
+						newbutton.set_script(load(ii.script))
+						newbutton.name = \"modded\"
+						newbutton.connect(\"gui_input\", newbutton, \"gui_input\")
+						self.add_child(newbutton)
+				else:
+					var newbutton = Button.new()
+					newbutton.set_script(load(ii.script))
+					newbutton.name = \"modded\"
+					newbutton.connect(\"gui_input\", newbutton, \"gui_input\")
+					self.add_child(newbutton)
+	queue_sort()
+"
+
+[sub_resource type="StyleBoxFlat" id=39]
+bg_color = Color( 0.196078, 0.196078, 0.196078, 1 )
+
+[sub_resource type="GDScript" id=37]
+script/source = "extends Panel
+
+func _process(_d):
+	rect_size = Vector2(get_parent().rect_size.x, 38)
+"
+
+[sub_resource type="GDScript" id=38]
+script/source = "extends Label
+
+func _ready():
+	BaseFuncs.setup_font(self)
+
+func _process(_delta):
+	rect_size = get_parent().rect_size
+"
+
+[sub_resource type="GDScript" id=22]
+script/source = "extends TextureRect
+
+func _process(_delta):
+	rect_position.y = 96
+	if BaseFuncs._placement_icon == \"\":
+		texture = null
+		get_node(\"Panel\").visible = true
+	else:
+		texture = BaseFuncs.load_external_tex(BaseFuncs._placement_icon)
+		get_node(\"Panel\").visible = false
+"
+
+[sub_resource type="StyleBoxFlat" id=23]
+bg_color = Color( 0, 0, 0, 0 )
+
+[sub_resource type="StyleBoxFlat" id=24]
+bg_color = Color( 0.752941, 0.752941, 0.752941, 1 )
+
+[sub_resource type="GDScript" id=21]
+script/source = "extends RichTextLabel
+
+func _process(_delta):
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"regular\", 16, BaseFuncs.font_type.REGULAR)
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"bold\", 16, BaseFuncs.font_type.BOLD)
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"bolditalics\", 16, BaseFuncs.font_type.BOLDITALICS)
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"italics\", 16, BaseFuncs.font_type.ITALICS)
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"mono\", 16, BaseFuncs.font_type.MONO)
+	rect_size.x = get_parent().rect_size.x - 52
+	rect_position = Vector2((get_parent().rect_size.x - rect_size.x) / 2,224)
+	rect_size.y = get_parent().rect_size.y - get_parent().get_node(\"Preview\").rect_size.y - get_parent().get_node(\"Preview\").rect_position.y * 2 - (get_parent().rect_size.y - get_parent().get_node(\"Place\").rect_position.y - get_parent().get_node(\"Place\").rect_size.y)
+	rect_position.y = get_parent().get_node(\"Preview\").rect_size.y + get_parent().get_node(\"Preview\").rect_position.y + 32
+	
+	if BaseFuncs.get(\"_placement_item\"):
+		var i : Tile = BaseFuncs._placement_item
+		var _text = \"[center][b]\" + String(i._name) + \"[/b][/center]\\n\"
+		_text += BaseFuncs.get_translation_key(\"builtins:placement_menu_ingameid\").format({\"id\": i.identifier}) + \"\\n\"
+		_text += BaseFuncs.get_translation_key(\"builtins:placement_menu_namespace\").format({\"ns\": i.namespace}) + \"\\n\"
+		_text += BaseFuncs.get_translation_key(\"builtins:placement_menu_cost\").format({\"cost\": i.buy_cost}) + \"\\n\"
+		_text += BaseFuncs.get_translation_key(\"builtins:placement_menu_sell\").format({\"sell\": i.sell_cost}) + \"\\n\"
+		if i.electrical_cost != 0 and i.electrical_timer != 0:
+			if i.electrical_timer == 1:
+				_text += BaseFuncs.get_translation_key(\"builtins:placement_menu_elec_cost\").format({\"cost\": i.electrical_cost}) + \"\\n\"
+			else:
+				_text += BaseFuncs.get_translation_key(\"builtins:placement_menu_elec_cost_plural\").format({\"cost\": i.electrical_cost, \"time\": i.electrical_timer}) + \"\\n\"
+		_text += BaseFuncs.get_translation_key(\"builtins:placement_menu_tsize\").format({\"x\": i.tile_size.x, \"y\": i.tile_size.y}) + \"\\n\"
+		_text += BaseFuncs.get_translation_key(\"builtins:placement_menu_desc\").format({\"desc\": i.description}) + \"\\n\"
+		bbcode_text = _text
+	else:
+		bbcode_text = BaseFuncs.get_translation_key(\"builtins:placement_menu_no_tile\")
+		
+"
+
+[sub_resource type="StyleBoxFlat" id=25]
+bg_color = Color( 0, 0.615686, 0.364706, 1 )
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="GDScript" id=16]
+script/source = "extends Panel
+
+func _process(_delta):
+	if BaseFuncs._placement_item:
+		visible = true
+		rect_position.y = get_parent().rect_size.y - rect_size.y - 26
+	else:
+		visible = false
+
+func _gui_input(event):
+	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT:
+		BaseFuncs._place_item()
+		self.owner.visible = false
+"
+
+[sub_resource type="DynamicFont" id=8]
+size = 20
+font_data = ExtResource( 16 )
+
+[sub_resource type="GDScript" id=27]
+script/source = "extends Label
+
+func _ready():
+	BaseFuncs.setup_font(self)
+	BaseFuncs.connect(\"translation_changed\", self, \"lang_updated\")
+	lang_updated(BaseFuncs.cur_lang)
+
+func lang_updated(_locale):
+	text = BaseFuncs.get_translation_key(\"builtins:placement_menu_place\")
+"
+
+[sub_resource type="GDScript" id=28]
+resource_local_to_scene = true
+script/source = "extends ScrollContainer
+
+var tag = \"builtins:all\"
+
+func ready():
+	BaseFuncs.connect(\"translation_changed\", self, \"transchanged\")
+	transchanged(BaseFuncs.cur_lang)
+	get_node(\"../..\").set_tab_icon(get_parent().get_index(), BaseFuncs.set_state(\"categories\", \"icons\", tag, Vector2(32,32)))
+	get_node(\"../..\").set_tab_title(get_parent().get_index(), \"\")
+	get_node(\"Container\").ready()
+	
+func transchanged(_lang):
+	get_node(\"../Panel/Label\").text = BaseFuncs.get_translation_key(BaseFuncs.categories[tag].name_translation_key)
+
+func _process(_delta):
+	rect_size = get_parent().rect_size - Vector2(0,38)
+	rect_position.y = 38
+"
+
+[sub_resource type="GDScript" id=14]
+resource_local_to_scene = true
+script/source = "extends HFlowContainer
+
+func ready():
+	for i in BaseFuncs.mod_objs.values():
+		for ii in i.values():
+			if ii.has(\"script\"):
+				if ii.has(\"tags\"):
+					if ii.tags.has(get_parent().tag):
+						var newbutton = Button.new()
+						newbutton.set_script(load(ii.script))
+						newbutton.name = \"modded\"
+						newbutton.connect(\"gui_input\", newbutton, \"gui_input\")
+						self.add_child(newbutton)
+	queue_sort()
+"
+
+[sub_resource type="GDScript" id=34]
+resource_local_to_scene = true
+script/source = "extends Panel
+
+func _process(_d):
+	rect_size = Vector2(get_parent().rect_size.x, 38)
+"
+
+[sub_resource type="GDScript" id=33]
+resource_local_to_scene = true
+script/source = "extends Label
+
+func _ready():
+	BaseFuncs.setup_font(self)
+
+func _process(_d):
+	rect_size = get_parent().rect_size
+"
+
+[sub_resource type="StyleBoxFlat" id=7]
+bg_color = Color( 0.501961, 0.188235, 0.188235, 1 )
+corner_radius_top_right = 8
+
+[sub_resource type="GDScript" id=26]
+script/source = "extends Panel
+
+func _gui_input(event):
+	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT:
+		self.owner.visible = false
+"
+
+[sub_resource type="GDScript" id=17]
+script/source = "extends Label
+
+
+func _ready():
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"bold\")
+"
+
+[sub_resource type="GDScript" id=18]
+script/source = "extends Label
+
+
+func _ready():
+	BaseFuncs.setup_font(self, \"builtins\", \"fonts\", \"bold\")
+	BaseFuncs.connect(\"translation_changed\", self, \"lang_updated\")
+	lang_updated(BaseFuncs.cur_lang)
+
+func lang_updated(_locale):
+	text = BaseFuncs.get_translation_key(\"builtins:placement_menu_title\")
+
+func _process(_delta):
+	rect_size.x = get_parent().rect_size.x - get_node(\"../Close/Label\").rect_size.x
 "
 
 [node name="Control" type="Control"]
 
-[node name="GUI" type="MarginContainer" parent="."]
-margin_right = 404.0
-margin_bottom = 64.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="HBoxContainer" type="HBoxContainer" parent="GUI"]
-margin_right = 596.0
+[node name="Title Bar" type="Panel" parent="."]
+margin_left = 64.0
+margin_top = 64.0
+margin_right = 960.0
 margin_bottom = 96.0
+custom_styles/panel = SubResource( 6 )
+script = SubResource( 15 )
+
+[node name="Window" type="Panel" parent="Title Bar"]
+margin_top = 32.0
+margin_right = 896.0
+margin_bottom = 472.0
+custom_styles/panel = SubResource( 5 )
+script = SubResource( 19 )
 __meta__ = {
-"_edit_use_anchors_": false
+"_editor_description_": "																																																																																																																			"
 }
 
-[node name="Conveyor" type="Button" parent="GUI/HBoxContainer"]
+[node name="HSplitContainer" type="HSplitContainer" parent="Title Bar/Window"]
+margin_right = 896.0
+margin_bottom = 440.0
+split_offset = 640
+dragger_visibility = 1
+script = SubResource( 13 )
+
+[node name="TabContainer" type="TabContainer" parent="Title Bar/Window/HSplitContainer"]
+margin_right = 640.0
+margin_bottom = 440.0
+custom_fonts/font = SubResource( 9 )
+custom_styles/tab_fg = SubResource( 10 )
+custom_styles/tab_bg = SubResource( 11 )
+custom_styles/panel = SubResource( 12 )
+tab_align = 0
+all_tabs_in_front = true
+drag_to_rearrange_enabled = true
+script = SubResource( 31 )
+
+[node name="All" type="Control" parent="Title Bar/Window/HSplitContainer/TabContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 39.0
+
+[node name="Content" type="ScrollContainer" parent="Title Bar/Window/HSplitContainer/TabContainer/All"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 38.0
+margin_bottom = -1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = SubResource( 35 )
+
+[node name="Container" type="Container" parent="Title Bar/Window/HSplitContainer/TabContainer/All/Content"]
+margin_right = 640.0
+size_flags_horizontal = 3
+script = SubResource( 36 )
+
+[node name="Panel" type="Panel" parent="Title Bar/Window/HSplitContainer/TabContainer/All"]
+margin_right = 640.0
+margin_bottom = 38.0
+size_flags_horizontal = 3
+custom_styles/panel = SubResource( 39 )
+script = SubResource( 37 )
+
+[node name="Label" type="Label" parent="Title Bar/Window/HSplitContainer/TabContainer/All/Panel"]
+margin_right = 640.0
+margin_bottom = 38.0
+size_flags_horizontal = 3
+size_flags_vertical = 7
+text = "Test"
+align = 1
+valign = 1
+script = SubResource( 38 )
+
+[node name="Window2" type="Panel" parent="Title Bar/Window/HSplitContainer"]
+margin_left = 652.0
+margin_right = 896.0
+margin_bottom = 440.0
+custom_styles/panel = SubResource( 5 )
+
+[node name="Preview" type="TextureRect" parent="Title Bar/Window/HSplitContainer/Window2"]
+anchor_left = 0.5
+anchor_top = 0.291
+anchor_right = 0.5
+anchor_bottom = 0.291
+margin_left = -48.0
+margin_top = -48.04
+margin_right = 48.0
+margin_bottom = 47.96
+texture = ExtResource( 1 )
+expand = true
+stretch_mode = 5
+script = SubResource( 22 )
+
+[node name="Panel" type="Panel" parent="Title Bar/Window/HSplitContainer/Window2/Preview"]
+show_behind_parent = true
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -48.0
+margin_top = -48.0
+margin_right = 48.0
+margin_bottom = 48.0
+custom_styles/panel = SubResource( 23 )
+
+[node name="Segment1" type="Panel" parent="Title Bar/Window/HSplitContainer/Window2/Preview/Panel"]
+margin_right = 24.0
+margin_bottom = 12.0
+custom_styles/panel = SubResource( 24 )
+
+[node name="Segment2" type="Panel" parent="Title Bar/Window/HSplitContainer/Window2/Preview/Panel"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -12.0
+margin_right = 12.0
+margin_bottom = 12.0
+custom_styles/panel = SubResource( 24 )
+
+[node name="Segment3" type="Panel" parent="Title Bar/Window/HSplitContainer/Window2/Preview/Panel"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -24.0
+margin_bottom = 12.0
+custom_styles/panel = SubResource( 24 )
+
+[node name="Segment4" type="Panel" parent="Title Bar/Window/HSplitContainer/Window2/Preview/Panel"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_top = -12.0
+margin_right = 24.0
+custom_styles/panel = SubResource( 24 )
+
+[node name="Segment5" type="Panel" parent="Title Bar/Window/HSplitContainer/Window2/Preview/Panel"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -12.0
+margin_top = -12.0
+margin_right = 12.0
+custom_styles/panel = SubResource( 24 )
+
+[node name="Segment6" type="Panel" parent="Title Bar/Window/HSplitContainer/Window2/Preview/Panel"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -24.0
+margin_top = -12.0
+custom_styles/panel = SubResource( 24 )
+
+[node name="Segment7" type="Panel" parent="Title Bar/Window/HSplitContainer/Window2/Preview/Panel"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -12.0
+margin_bottom = 24.0
+custom_styles/panel = SubResource( 24 )
+
+[node name="Segment8" type="Panel" parent="Title Bar/Window/HSplitContainer/Window2/Preview/Panel"]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_left = -12.0
+margin_top = -12.0
+margin_bottom = 12.0
+custom_styles/panel = SubResource( 24 )
+
+[node name="Segment9" type="Panel" parent="Title Bar/Window/HSplitContainer/Window2/Preview/Panel"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -12.0
+margin_top = -24.0
+custom_styles/panel = SubResource( 24 )
+
+[node name="Segment10" type="Panel" parent="Title Bar/Window/HSplitContainer/Window2/Preview/Panel"]
+margin_right = 12.0
+margin_bottom = 24.0
+custom_styles/panel = SubResource( 24 )
+
+[node name="Segment11" type="Panel" parent="Title Bar/Window/HSplitContainer/Window2/Preview/Panel"]
+anchor_top = 0.5
+anchor_bottom = 0.5
+margin_top = -12.0
+margin_right = 12.0
+margin_bottom = 12.0
+custom_styles/panel = SubResource( 24 )
+
+[node name="Segment12" type="Panel" parent="Title Bar/Window/HSplitContainer/Window2/Preview/Panel"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_top = -24.0
+margin_right = 12.0
+custom_styles/panel = SubResource( 24 )
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Title Bar/Window/HSplitContainer/Window2"]
+anchor_left = 0.5
+anchor_top = 0.582
+anchor_right = 0.5
+anchor_bottom = 0.582
+margin_left = -96.0
+margin_top = -32.08
 margin_right = 96.0
-margin_bottom = 96.0
-theme = SubResource( 1 )
-custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
-custom_colors/font_color_focus = Color( 0, 0, 0, 1 )
-custom_styles/hover = ExtResource( 11 )
-custom_styles/pressed = ExtResource( 12 )
-custom_styles/disabled = ExtResource( 11 )
-custom_styles/normal = ExtResource( 11 )
-icon = ExtResource( 3 )
-script = ExtResource( 1 )
+margin_bottom = 31.92
+bbcode_enabled = true
+bbcode_text = "[center]No Tile Selected.[/center]"
+text = "No Tile Selected."
+script = SubResource( 21 )
 
-[node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/Conveyor"]
-margin_left = 16.0
-margin_top = 16.0
-margin_right = 40.0
-margin_bottom = 40.0
-texture = ExtResource( 3 )
-stretch_mode = 1
+[node name="Place" type="Panel" parent="Title Bar/Window/HSplitContainer/Window2"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -64.0
+margin_top = 156.0
+margin_right = 64.0
+margin_bottom = 196.0
+custom_styles/panel = SubResource( 25 )
+script = SubResource( 16 )
 
-[node name="Splitter" type="Button" parent="GUI/HBoxContainer"]
-margin_left = 100.0
-margin_right = 196.0
-margin_bottom = 96.0
-theme = SubResource( 1 )
-custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
-custom_colors/font_color_focus = Color( 0, 0, 0, 1 )
-custom_styles/hover = ExtResource( 11 )
-custom_styles/pressed = ExtResource( 12 )
-custom_styles/disabled = ExtResource( 11 )
-custom_styles/normal = ExtResource( 11 )
-icon = ExtResource( 5 )
-script = ExtResource( 6 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="Label" type="Label" parent="Title Bar/Window/HSplitContainer/Window2/Place"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -32.0
+margin_top = -16.0
+margin_right = 32.0
+margin_bottom = 16.0
+custom_fonts/font = SubResource( 8 )
+text = "Place"
+align = 1
+valign = 1
+script = SubResource( 27 )
 
-[node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/Splitter"]
-margin_left = 16.0
-margin_top = 16.0
-margin_right = 40.0
-margin_bottom = 40.0
-texture = ExtResource( 5 )
-stretch_mode = 1
+[node name="Control" type="Control" parent="Title Bar/Window/HSplitContainer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 39.0
 
-[node name="Producer" type="Button" parent="GUI/HBoxContainer"]
-margin_left = 200.0
-margin_right = 296.0
-margin_bottom = 96.0
-theme = SubResource( 2 )
-custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
-custom_colors/font_color_focus = Color( 0, 0, 0, 1 )
-custom_styles/hover = ExtResource( 11 )
-custom_styles/pressed = ExtResource( 12 )
-custom_styles/disabled = ExtResource( 11 )
-custom_styles/normal = ExtResource( 11 )
-icon = ExtResource( 14 )
-script = SubResource( 4 )
+[node name="Content" type="ScrollContainer" parent="Title Bar/Window/HSplitContainer/Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 38.0
+margin_bottom = -1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = SubResource( 28 )
 
-[node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/Producer"]
-margin_left = 16.0
-margin_top = 16.0
-margin_right = 40.0
-margin_bottom = 40.0
-texture = ExtResource( 13 )
-stretch_mode = 1
+[node name="Container" type="Container" parent="Title Bar/Window/HSplitContainer/Control/Content"]
+script = SubResource( 14 )
 
-[node name="Machine" type="Button" parent="GUI/HBoxContainer"]
-margin_left = 300.0
-margin_right = 396.0
-margin_bottom = 96.0
-theme = SubResource( 2 )
-custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
-custom_colors/font_color_focus = Color( 0, 0, 0, 1 )
-custom_styles/hover = ExtResource( 11 )
-custom_styles/pressed = ExtResource( 12 )
-custom_styles/disabled = ExtResource( 11 )
-custom_styles/normal = ExtResource( 11 )
-icon = ExtResource( 14 )
-script = ExtResource( 9 )
+[node name="Panel" type="Panel" parent="Title Bar/Window/HSplitContainer/Control"]
+margin_right = 640.0
+margin_bottom = 38.0
+size_flags_horizontal = 3
+custom_styles/panel = ExtResource( 2 )
+script = SubResource( 34 )
 
-[node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/Machine"]
-margin_left = 16.0
-margin_top = 16.0
-margin_right = 40.0
-margin_bottom = 40.0
-texture = ExtResource( 10 )
-stretch_mode = 1
+[node name="Label" type="Label" parent="Title Bar/Window/HSplitContainer/Control/Panel"]
+margin_right = 640.0
+margin_bottom = 38.0
+size_flags_horizontal = 3
+size_flags_vertical = 7
+text = "Test"
+align = 1
+valign = 1
+script = SubResource( 33 )
 
-[node name="Item" type="Button" parent="GUI/HBoxContainer"]
-margin_left = 400.0
-margin_right = 496.0
-margin_bottom = 96.0
-custom_styles/hover = ExtResource( 11 )
-custom_styles/pressed = ExtResource( 12 )
-custom_styles/disabled = ExtResource( 11 )
-custom_styles/normal = ExtResource( 11 )
-icon = ExtResource( 2 )
-script = ExtResource( 4 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="Close" type="Panel" parent="Title Bar"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -64.0
+margin_bottom = 32.0
+custom_styles/panel = SubResource( 7 )
+script = SubResource( 26 )
 
-[node name="Remove" type="Button" parent="GUI/HBoxContainer"]
-margin_left = 500.0
-margin_right = 596.0
-margin_bottom = 96.0
-theme = SubResource( 1 )
-custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
-custom_colors/font_color_focus = Color( 0, 0, 0, 1 )
-custom_styles/hover = ExtResource( 11 )
-custom_styles/pressed = ExtResource( 12 )
-custom_styles/disabled = ExtResource( 11 )
-custom_styles/normal = ExtResource( 11 )
-icon = ExtResource( 7 )
-script = ExtResource( 8 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="Label" type="Label" parent="Title Bar/Close"]
+margin_right = 64.0
+margin_bottom = 32.0
+custom_fonts/font = SubResource( 8 )
+text = "X"
+align = 1
+valign = 1
+script = SubResource( 17 )
 
-[node name="TextureRect" type="TextureRect" parent="GUI/HBoxContainer/Remove"]
-margin_left = 16.0
-margin_top = 16.0
-margin_right = 84.0
-margin_bottom = 80.0
-texture = ExtResource( 15 )
-stretch_mode = 1
+[node name="Label2" type="Label" parent="Title Bar"]
+margin_right = 832.0
+margin_bottom = 32.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 8 )
+text = "Tile Selector"
+align = 1
+valign = 1
+script = SubResource( 18 )
 
-[connection signal="gui_input" from="GUI/HBoxContainer/Conveyor" to="GUI/HBoxContainer/Conveyor" method="gui_input"]
-[connection signal="gui_input" from="GUI/HBoxContainer/Splitter" to="GUI/HBoxContainer/Splitter" method="gui_input"]
-[connection signal="gui_input" from="GUI/HBoxContainer/Producer" to="GUI/HBoxContainer/Producer" method="gui_input"]
-[connection signal="gui_input" from="GUI/HBoxContainer/Machine" to="GUI/HBoxContainer/Machine" method="gui_input"]
-[connection signal="gui_input" from="GUI/HBoxContainer/Item" to="GUI/HBoxContainer/Item" method="gui_input"]
-[connection signal="gui_input" from="GUI/HBoxContainer/Remove" to="GUI/HBoxContainer/Remove" method="gui_input"]
+[connection signal="gui_input" from="Title Bar" to="Title Bar" method="gui_input"]

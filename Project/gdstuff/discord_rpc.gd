@@ -7,7 +7,7 @@ func _ready():
 		get_tree().current_scene.get_node("RPCTimer").set_wait_time(0.5)
 		get_tree().current_scene.get_node("RPCTimer").start()
 		
-func start_rpc(statestuff, source) -> void:
+func start_rpc(statestuff) -> void:
 	if disabled:
 		print(disabled)
 		return
@@ -15,7 +15,7 @@ func start_rpc(statestuff, source) -> void:
 	activity.set_type(Discord.ActivityType.Playing)
 	var stuff = statestuff
 	activity.set_state(stuff)
-	activity.set_details(BaseFuncs.globalvar("Release Type") + BaseFuncs.globalvar("ReleaseNumber") + BaseFuncs.globalvar("Branch"))
+	activity.set_details("Playing on " + String(BaseFuncs.globalvar("ReleaseNumber")) + " (On " + String(BaseFuncs.globalvar("Branch")) + " Branch) With " + String(BaseFuncs.modcount) + " Mods")
 	var assets = activity.get_assets()
 	assets.set_large_image("icon-"+BaseFuncs.globalvar("Branch").to_lower())
 	assets.set_large_text("On " + BaseFuncs.globalvar("ReleaseNumber"))

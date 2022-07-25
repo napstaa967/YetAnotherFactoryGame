@@ -1,77 +1,318 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://scene/GUI.tscn" type="PackedScene" id=1]
-[ext_resource path="res://gdstuff/Camera2D.gd" type="Script" id=2]
-[ext_resource path="res://gdstuff/Main.gd" type="Script" id=3]
-[ext_resource path="res://gdstuff/bg.gd" type="Script" id=4]
 [ext_resource path="res://textures/misc/background.png" type="Texture" id=5]
 [ext_resource path="res://scene/Lock.tscn" type="PackedScene" id=6]
-[ext_resource path="res://gdstuff/GUI/border.gd" type="Script" id=7]
-[ext_resource path="res://textures/gui/border.png" type="Texture" id=8]
+[ext_resource path="res://scene/PlacementGui.tscn" type="PackedScene" id=9]
 [ext_resource path="res://scene/Stats.tscn" type="PackedScene" id=12]
 
+[sub_resource type="GDScript" id=6]
+script/source = "extends Node2D
+
+
+var _scene = \"Main\"
+var scene2: Node
+var placedata
+var camlock = true
+var camera
+var can_place
+var placingscene: Tile
+var money = BaseFuncs.BigInt.new(2000)
+var sourcepath = \"\"
+var due = 0
+var _enforce_placement_rules := true
+	
+func _ready():
+	$Camera2D.make_current()
+	get_tree().current_scene.camera = $Camera2D
+	for i in BaseFuncs.gamescr:
+		var _script = load(i).new()
+		if _script.has_method(\"runonce\"):
+			_script.runonce()
+	var d = Directory.new()
+	d.make_dir_recursive(\"user://saves/\")
+	var file = File.new()
+	if !file.file_exists(\"user://settings.json\"):
+		if file.open(\"user://settings.json\", File.WRITE) != OK:
+			print(\"Error opening file\")
+		else:
+			var defaults = {
+				\"texturepack\": null
+			}
+			file.store_string(to_json(defaults))
+			file.close()
+	get_tree().current_scene.get_node(\"DueTimer\").set_wait_time(20)
+	get_tree().current_scene.get_node(\"DueTimer\").start()
+	get_tree().current_scene.get_node(\"RPCTimer\").start()
+	DiscordRpc.start_rpc(\"Currently has \" + str(get_tree().current_scene.money.toString()) + \" Bucks\")
+	
+func update_currency(amount:int):
+	money = BaseFuncs.BigInt.new(amount)
+
+func place_item(scene: Node, data: Dictionary, keep_pos: bool = false, enforce_placement_rules: bool = true):
+	var oldpos = null
+	if placingscene != null:
+		if keep_pos:
+			oldpos = placingscene.position
+		placingscene.queue_free()
+	if scene == null:
+		placedata = null
+		scene2 = null
+		if placingscene != null:
+			placingscene.queue_free()
+		placingscene = null
+		_enforce_placement_rules = true
+		return
+	scene2 = scene.duplicate()
+	placedata = data.duplicate(true)
+	placingscene = scene2.duplicate()
+	if data != null and !data.empty():
+		scene2.persistent_values = BaseFuncs.dict_merge(scene2.persistent_values, data)
+		placingscene.persistent_values = BaseFuncs.dict_merge(placingscene.persistent_values, placedata)
+	placingscene.placing = true
+	var sb = StyleBoxFlat.new()
+	sb.set_bg_color(Color8(255,255,255,255))
+	var panel: Panel = Panel.new()
+	panel.add_stylebox_override(\"panel\", sb)
+	panel.rect_size = placingscene.tile_size
+	panel.name = \"Panel\"
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	placingscene.add_child(panel)
+	if oldpos != null:
+		placingscene.position = oldpos
+	get_tree().current_scene.add_child(get_tree().current_scene.placingscene)
+	_enforce_placement_rules = enforce_placement_rules
+	
+func _process(delta):
+	if placingscene != null:
+		var newpos: Vector2 = get_global_mouse_position().round()
+		var stuff = newpos.posmod(64).round()
+		if stuff != Vector2.ZERO:
+			newpos = (newpos - stuff).round()
+		if placingscene != null:
+			placingscene.position = placingscene.position.linear_interpolate(newpos, delta * 20)
+			if !placingscene.has_node(\"CollisionShape2D\"):
+				var shape = CollisionShape2D.new()
+				var shape2 = RectangleShape2D.new()
+				shape2.extents = placingscene.tile_size/2
+				shape.shape = shape2
+				shape.name = \"CollisionShape2D\"
+				shape.position += placingscene.tile_size/2
+				placingscene.add_child(shape)
+				shape.owner = placingscene
+			if _enforce_placement_rules:
+				if placingscene.get_overlapping_areas().empty() == false:
+					for area in placingscene.get_overlapping_areas():
+						if (BaseFuncs.vector2_both_gthan(area.position.round(), placingscene.position.round()) && BaseFuncs.vector2_both_lthan(area.position.round(), placingscene.position.round() + placingscene.tile_size - Vector2.ONE)) or area.position.round() == placingscene.position.round():
+							if placingscene.type == area.type and placingscene.type != Tile.TILE_MOVABLE and area.type != Tile.TILE_MOVABLE:
+								can_place = false
+								placingscene.get_node(\"Panel\").modulate = Color8(255, 0, 0)
+								break
+							else:
+								can_place = true
+								placingscene.get_node(\"Panel\").modulate = Color8(0, 255, 0)
+						else:
+							can_place = true
+							placingscene.get_node(\"Panel\").modulate = Color8(0, 255, 0)
+				else:
+					can_place = true
+					placingscene.get_node(\"Panel\").modulate = Color8(0, 255, 0)
+			else:
+				can_place = true
+				placingscene.get_node(\"Panel\").modulate = Color8(0, 255, 0)
+		
+func place_item_now(scene: Tile, meta: Dictionary, pos: Vector2, freepos: bool = false):
+	var scene3 = scene
+	scene3.persistent_values = BaseFuncs.dict_merge(scene3.persistent_values, meta)
+	scene3.position = (pos / 10).ceil() * 10
+	get_tree().current_scene.add_child(scene3)
+	scene3.set_owner(get_tree().current_scene)
+	if !freepos:
+		var stuff = scene3.position.posmod(64)
+		if stuff != Vector2.ZERO:
+			scene3.position = scene3.position - stuff
+	match scene3.type:
+		Tile.TILE_TRANSPARENT:
+			scene3.z_index = -1
+		Tile.TILE_SOLID:
+			scene3.z_index = 0
+		Tile.TILE_MOVABLE:
+			scene3.z_index = 1
+		Tile.TILE_OVERLAPPING:
+			scene3.z_index = 2
+	BaseFuncs.emit_signal(\"item_placed\", scene3)
+	BaseFuncs.emit_signal(\"item_placed_by_game\", scene3)
+	
+func _unhandled_input(event):
+	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_LEFT:
+		if scene2 != null && can_place == true && placedata != null:
+			if money.isLargerThanOrEqualTo(scene2.buy_cost):
+				var scene3: Tile = scene2.duplicate()
+				money = money.minus(scene3.buy_cost)
+				scene3.persistent_values = BaseFuncs.dict_merge(scene3.persistent_values, placedata.duplicate(true))
+				scene3.position = (get_global_mouse_position() / 10).round() * 10
+				get_tree().current_scene.add_child(scene3)
+				var stuff = scene3.position.posmod(64)
+				if stuff != Vector2.ZERO:
+					scene3.position = scene3.position - stuff;
+					match scene3.type:
+						Tile.TILE_TRANSPARENT:
+							scene3.z_index = -1
+						Tile.TILE_SOLID:
+							scene3.z_index = 0
+						Tile.TILE_MOVABLE:
+							scene3.z_index = 1
+						Tile.TILE_OVERLAPPING:
+							scene3.z_index = 2
+				BaseFuncs.emit_signal(\"item_placed\", scene3)
+				BaseFuncs.emit_signal(\"item_placed_by_player\", scene3)
+	if event is InputEventKey:
+		if event.pressed and event.scancode == KEY_ESCAPE:
+			if scene2:
+				scene2.owner = null
+				scene2 = null
+			if placingscene:
+				placingscene.owner = null
+				placingscene = null
+			placedata = null
+
+func on_due_pay():
+	get_tree().current_scene.get_node(\"/root/Main/DueTimer\").start()
+	money = money.minus(due)
+	due = 0 
+	get_tree().current_scene.get_node(\"CanvasLayer/Panel/Money/Electricity\").update()
+
+func RPCTimer_timeout():
+	DiscordRpc.start_rpc(\"Currently has \" + str(get_tree().current_scene.money.toString()) + \" Bucks\")
+	get_node(\"RPCTimer\").start()
+"
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Camera2D
+
+func _ready():
+	zoom = Vector2(BaseFuncs.load_settings().zoom, BaseFuncs.load_settings().zoom)
+
+func _process(delta):
+	if Input.is_action_pressed(\"ui_down\"):
+		position += Vector2.DOWN * delta * 256 * zoom
+	elif Input.is_action_pressed(\"ui_up\"):
+		position += Vector2.UP * delta * 256 * zoom
+	elif Input.is_action_pressed(\"ui_left\"):
+		position += Vector2.LEFT * delta * 256 * zoom
+	elif Input.is_action_pressed(\"ui_right\"):
+		position += Vector2.RIGHT * delta * 256 * zoom
+"
+
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0, 0, 0, 0.501961 )
+draw_center = false
+border_width_left = 16
+border_width_top = 16
+border_width_right = 16
+border_width_bottom = 16
+border_color = Color( 0, 0, 0, 0.501961 )
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends Panel
+
+func _process(_delta):
+	rect_size = get_viewport_rect().size
+"
+
+[sub_resource type="GDScript" id=4]
+script/source = "extends Sprite
+
+func _ready():
+	texture = BaseFuncs.set_state(\"builtins\", \"miscellaneous\", \"background\", Vector2(64,64), Texture.FLAG_REPEAT)
+	region_rect.size = Vector2(get_viewport_rect().size.x + 128, get_viewport_rect().size.y + 128)
+	
+func _process(_delta):
+	region_rect.size = Vector2(get_viewport_rect().size.x * get_node(\"../Camera2D\").zoom.x + 128, get_viewport_rect().size.y * get_node(\"../Camera2D\").zoom.y + 128)
+	region_rect.position = get_tree().current_scene.camera.position
+	position = get_tree().current_scene.camera.position
+"
+
+[sub_resource type="GDScript" id=5]
+script/source = "extends Sprite
+
+func _ready():
+	texture = BaseFuncs.set_state(\"builtins\", \"miscellaneous\", \"background_alt\", Vector2(64,64), Texture.FLAG_REPEAT)
+	region_rect.size = Vector2(get_viewport_rect().size.x + 128, get_viewport_rect().size.y + 128)
+	
+func _process(_delta):
+	region_rect.size = Vector2(get_viewport_rect().size.x * get_node(\"../Camera2D\").zoom.x + 128, get_viewport_rect().size.y * get_node(\"../Camera2D\").zoom.y + 128)
+	region_rect.position = get_tree().current_scene.camera.position
+	position = get_tree().current_scene.camera.position
+"
+
 [node name="Main" type="Node2D"]
-script = ExtResource( 3 )
+script = SubResource( 6 )
 
 [node name="Camera2D" type="Camera2D" parent="."]
 anchor_mode = 0
 current = true
-script = ExtResource( 2 )
+zoom = Vector2( 2, 2 )
+script = SubResource( 1 )
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="NinePatchRect" type="NinePatchRect" parent="CanvasLayer"]
+[node name="Panel" type="Panel" parent="CanvasLayer"]
 margin_right = 1024.0
 margin_bottom = 600.0
-texture = ExtResource( 8 )
-patch_margin_left = 16
-patch_margin_top = 16
-patch_margin_right = 16
-patch_margin_bottom = 16
-script = ExtResource( 7 )
+mouse_filter = 2
+custom_styles/panel = SubResource( 2 )
+script = SubResource( 3 )
 
-[node name="Lock" parent="CanvasLayer/NinePatchRect" instance=ExtResource( 6 )]
-anchor_left = 1.0
-anchor_right = 1.0
-margin_left = -408.0
-margin_top = 16.0
-margin_right = -16.0
-margin_bottom = 16.0
-
-[node name="GUI" parent="CanvasLayer/NinePatchRect" instance=ExtResource( 1 )]
+[node name="Lock" parent="CanvasLayer/Panel" instance=ExtResource( 6 )]
 anchor_top = 1.0
 anchor_bottom = 1.0
 margin_left = 16.0
-margin_top = -112.0
-margin_right = 16.0
-margin_bottom = -24.0
+margin_top = -80.0
+margin_right = 1008.0
+margin_bottom = -16.0
 
-[node name="Control" parent="CanvasLayer/NinePatchRect" instance=ExtResource( 12 )]
+[node name="Money" parent="CanvasLayer/Panel" instance=ExtResource( 12 )]
 margin_left = 16.0
 margin_top = 16.0
-margin_right = 16.0
-margin_bottom = 16.0
+margin_bottom = 80.0
 
-[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
-scroll_ignore_camera_zoom = true
+[node name="PlacementGui" parent="CanvasLayer/Panel" instance=ExtResource( 9 )]
+anchor_left = 0.984
+anchor_top = 0.027
+anchor_right = 0.984
+anchor_bottom = 0.027
+margin_left = -255.616
+margin_top = 63.8
+margin_right = 0.383972
+margin_bottom = 255.8
 
-[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
-
-[node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer"]
-texture = ExtResource( 5 )
-centered = false
-region_enabled = true
-region_rect = Rect2( 0, 0, 64, 64 )
-region_filter_clip = true
-script = ExtResource( 4 )
+[node name="GUI" parent="CanvasLayer/Panel" instance=ExtResource( 1 )]
+visible = false
+margin_bottom = 88.0
 
 [node name="RPCTimer" type="Timer" parent="."]
 wait_time = 0.5
 
 [node name="DueTimer" type="Timer" parent="."]
 
-[node name="ItemMoveTimer" type="Timer" parent="."]
+[node name="CanvasModulate" type="CanvasModulate" parent="."]
+
+[node name="Background" type="Sprite" parent="."]
+texture = ExtResource( 5 )
+centered = false
+region_enabled = true
+region_rect = Rect2( 0, 0, 64, 64 )
+region_filter_clip = true
+script = SubResource( 4 )
+
+[node name="Background2" type="Sprite" parent="."]
+texture = ExtResource( 5 )
+centered = false
+region_enabled = true
+region_rect = Rect2( 0, 0, 64, 64 )
+region_filter_clip = true
+script = SubResource( 5 )
 
 [connection signal="timeout" from="RPCTimer" to="." method="RPCTimer_timeout"]
 [connection signal="timeout" from="DueTimer" to="." method="on_due_pay"]
-[connection signal="timeout" from="ItemMoveTimer" to="." method="itemtimertimeout"]

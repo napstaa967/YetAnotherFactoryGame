@@ -1,0 +1,57 @@
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://scripts/translation_template.gd" type="Script" id=1]
+
+[resource]
+script = ExtResource( 1 )
+type = "builtins:translation"
+lang_id = "default_DEFAULT"
+keys = {
+	"name": "debug",
+	"icon": "textures/lang/default_DEFAULT.png",
+	"builtins:ts_load_game_button": "titlescreen_load_game",
+	"builtins:ts_load_game_dialog_title": "titlescreen_load_game_title",
+	"builtins:ts_save_game_button": "titlescreen_save_game",
+	"builtins:ts_save_game_dialog_title": "titlescreen_save_game_title",
+	"builtins:ts_settings": "titlescreen_settings",
+	"builtins:ts_credits": "titlescreen_credits",
+	"builtins:ts_changelogs": "titlescreen_changelogs",
+	"builtins:ts_made_by": "titlescreen_made_by",
+	"builtins:ts_mod_singular": "titlescreen_mod_loaded",
+	"builtins:ts_mod_plural": "titlescreen_mods_loaded",
+	"builtins:ts_namespace_singular": "titlescreen_namespace",
+	"builtins:ts_namespace_plural": "titlescreen_namespaces",
+	"builtins:ts_resources_singular": "titlescreen_resource",
+	"builtins:ts_resources_plural": "titlescreen_resources",
+	"builtins:credits_exit": "credits_exit",
+	"builtins:credits_text": "credits_credits",
+	"builtins:changelogs_text": "changelogs_title",
+	"builtins:placement_menu_title": "placement_menu_title",
+	"builtins:placement_menu_place": "placement_menu_place",
+	"builtins:placement_menu_ingameid": "placement_menu_id {id}",
+	"builtins:placement_menu_namespace": "placement_menu_namespace {ns}",
+	"builtins:placement_menu_cost": "placement_menu_cost {cost}",
+	"builtins:placement_menu_sell": "placement_menu_sell {sell}",
+	"builtins:placement_menu_elec_cost": "placement_menu_electrical_cost_singular {cost}",
+	"builtins:placement_menu_elec_cost_plural": "placement_menu_electrical_cost_plural {cost}/{time}",
+	"builtins:placement_menu_tsize": "placement_menu_tile_size {x}x{y}",
+	"builtins:placement_menu_desc": "placement_menu_description",
+	"builtins:placement_menu_no_tile": "placement_menu_no_tile",
+	"builtins:placement_gui_pos": "placement_gui_position",
+	"builtins:placement_gui_type": "placement_gui_type",
+	"builtins:placement_gui_type_movable": "placement_gui_type_move",
+	"builtins:placement_gui_type_overlapping": "placement_gui_type_overlap",
+	"builtins:placement_gui_type_transparent": "placement_gui_type_underlap",
+	"builtins:placement_gui_type_solid": "placement_gui_type_solid",
+	"builtins:settings_title": "settings_title",
+	"builtins:settings_main_tab": "settings_main_tab",
+	"builtins:settings_modding_tab": "settings_modding_tab",
+	"builtins:settings_modding_tab_open_folder": "settings_modding_tab_open_folder",
+	"builtins:settings_resources_tab": "settings_resources_tab",
+	"builtins:settings_resources_tab_open_folder": "settings_resources_tab_open_folder",
+	"builtins:settings_resources_tab_open_res_folder": "settings_resources_tab_open_resourcepack_folder",
+	"builtins:settings_main_tab_language_text": "settings_main_tab_language",
+	"builtins:settings_main_tab_zoom_text": "settings_main_tab_zoom",
+	"builtins:settings_modding_tab_modlist_text": "settings_modding_tab_modlist",
+	"builtins:settings_resources_tab_resourcelist_text": "settings_resources_tab_resourcelist"
+}
