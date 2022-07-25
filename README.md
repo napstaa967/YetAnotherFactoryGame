@@ -2,14 +2,15 @@
 
 Dependencies:
 https://github.com/samsface/godot-discord-game-sdk for discord rich presence
+https://godotengine.org/asset-library/asset/779 will be replaced on 3.5's release
+https://github.com/ChronoDK/GodotBigNumberClass for the money thing
 
 
 i use a modified version of [this script](https://github.com/iatenine/SimpleSave) for saving/loading
 
 this is a small factory game project that i started
 
-current ver is 2022.7.24 / 0.1
-indev ver is 0.1.1
+current ver is 2022.7.25 / 0.1.1
 
 ### Screenshots
 
