@@ -55,6 +55,7 @@ keys = {
 	"builtins:settings_resources_tab": "Paquetes de Recursos",
 	"builtins:settings_resources_tab_open_folder": "Abrir Carpeta de Recursos",
 	"builtins:settings_resources_tab_open_res_folder": "Abrir Carpeta del Paquete",
+	"builtins:settings_modding_tab_open_mod_folder": "Abrir Carpeta del Mod",
 	"builtins:settings_main_tab_language_text": "Lenguaje",
 	"builtins:settings_main_tab_zoom_text": "Zoom",
 	"builtins:settings_modding_tab_modlist_text": "Mods Cargados",

@@ -50,6 +50,7 @@ keys = {
 	"builtins:settings_resources_tab": "settings_resources_tab",
 	"builtins:settings_resources_tab_open_folder": "settings_resources_tab_open_folder",
 	"builtins:settings_resources_tab_open_res_folder": "settings_resources_tab_open_resourcepack_folder",
+	"builtins:settings_modding_tab_open_mod_folder": "settings_resources_tab_open_mod_folder",
 	"builtins:settings_main_tab_language_text": "settings_main_tab_language",
 	"builtins:settings_main_tab_zoom_text": "settings_main_tab_zoom",
 	"builtins:settings_modding_tab_modlist_text": "settings_modding_tab_modlist",

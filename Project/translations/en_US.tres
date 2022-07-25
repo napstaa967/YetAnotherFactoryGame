@@ -56,6 +56,7 @@ keys = {
 	"builtins:settings_resources_tab": "Resource Packs",
 	"builtins:settings_resources_tab_open_folder": "Open ResourcePack Folder",
 	"builtins:settings_resources_tab_open_res_folder": "Open Pack's Folder",
+	"builtins:settings_modding_tab_open_mod_folder": "Open Mod's Folder",
 	"builtins:settings_main_tab_language_text": "Language",
 	"builtins:settings_main_tab_zoom_text": "Zoom",
 	"builtins:settings_modding_tab_modlist_text": "Mods Loaded",

@@ -8,6 +8,7 @@ type = "builtins:translation"
 lang_id = "default_DEFAULT"
 keys = {
 	"changelogs:builtins:main_changelogs": "main_changelogs",
+	"builtins:changelogs_0.1.1": "changelogs_var_0_point_1_point_1",
 	"builtins:changelogs_0.1": "changelogs_ver_0_point_1",
 	"builtins:changelogs_0.-1": "changelogs_ver_0_point_negative_1",
 	"builtins:changelogs_-0.1": "changelogs_ver_negative_0_point_1",

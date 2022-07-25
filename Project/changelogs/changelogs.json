@@ -2,5 +2,5 @@
 	"type": "builtins:changelogs",
 	"id": "builtins:main_changelogs",
 	"name_translation_key": "changelogs:builtins:main_changelogs",
-	"content": ["builtins:changelogs_0.1", "builtins:changelogs_0.-1", "builtins:changelogs_-0.1", "builtins:changelogs_-0.2", "builtins:changelogs_-0.3", "builtins:changelogs_-0.3.9", "builtins:changelogs_-0.4"]
+	"content": ["builtins:changelogs_0.1.1", "builtins:changelogs_0.1", "builtins:changelogs_0.-1", "builtins:changelogs_-0.1", "builtins:changelogs_-0.2", "builtins:changelogs_-0.3", "builtins:changelogs_-0.3.9", "builtins:changelogs_-0.4"]
 }

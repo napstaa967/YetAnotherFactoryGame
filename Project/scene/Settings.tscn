@@ -452,7 +452,12 @@ script/source = "extends Button
 
 func _ready():
 	BaseFuncs.setup_button(self, \"\", \"\", \"\", Vector2(32, 32), \"\", 0,0,false, Vector2(232,24), false)
+	BaseFuncs.connect(\"translation_changed\", self, \"langchanged\")
+	langchanged(BaseFuncs.cur_lang)
 
+func langchanged(_l):
+	text = BaseFuncs.get_translation_key(\"builtins:settings_modding_tab_open_mod_folder\")
+	
 func _process(_delta):
 	rect_position = Vector2(get_parent().rect_size.x - 16 - rect_size.x, get_node(\"../Icon\").rect_position.y + 64)
 
@@ -647,6 +652,11 @@ script/source = "extends Button
 
 func _ready():
 	BaseFuncs.setup_button(self, \"\", \"\", \"\", Vector2(32, 32), \"\", 0,0,false, Vector2(152,24), false)
+	BaseFuncs.connect(\"translation_changed\", self, \"langchanged\")
+	langchanged(BaseFuncs.cur_lang)
+
+func langchanged(_l):
+	text = BaseFuncs.get_translation_key(\"builtins:settings_resources_tab_open_res_folder\")
 
 func _process(_delta):
 	rect_position = Vector2(get_parent().rect_size.x - 32 - get_node(\"../MoveDown\").rect_size.x - rect_size.x, get_node(\"../Icon\").rect_position.y + 64)
@@ -840,6 +850,7 @@ allow_greater = true
 script = SubResource( 42 )
 
 [node name="Modding" type="Panel" parent="Title Bar/Window/TabContainer"]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = 40.0
@@ -956,7 +967,6 @@ expand_icon = true
 script = SubResource( 77 )
 
 [node name="TexturePacks" type="Panel" parent="Title Bar/Window/TabContainer"]
-visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = 39.0

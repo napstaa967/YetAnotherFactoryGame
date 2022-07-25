@@ -8,6 +8,15 @@ type = "builtins:translation"
 lang_id = "en_US"
 keys = {
 	"changelogs:builtins:main_changelogs": "Main",
+	"builtins:changelogs_0.1.1": "[b]Version 0.1.1 (Release 2022-07.25):[/b]
+	
+[b]Changes[/b]
+- TextureState merging was fixed
+- Categories now work correctly
+- Modding menu now has an 'Open Mod's Folder button'
+- Updated game's version to actually display the release version
+- Made the category title more opaque
+- 'Open Pack's Folder' key is now used",
 	"builtins:changelogs_0.1": "[b]Version 0.1 (Release 2022-07.24):[/b]
 
 [b]Changes[/b]
