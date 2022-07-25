@@ -8,16 +8,8 @@ i use a modified version of [this script](https://github.com/iatenine/SimpleSave
 
 this is a small factory game project that i started
 
-indev ver is 2022.08.1 | 0.1
-
-### What Happened?
-
-if you noticed, this hasn't been updated since march.
-that's because i took a break from developing since i released a daily update at times
-i am going to get back into development now
-i expect v0.1 to release in late june if i put effort
-
-plans are to add support for android someday
+current ver is 2022.7.24 / 0.1
+indev ver is 0.1.1
 
 ### Screenshots
 
@@ -40,6 +32,3 @@ credits:
 -Testing: Me  
 -Coding: Myself  
 -Art: I  
-
-make sure to read the wiki for texture packs
-if i even add some
